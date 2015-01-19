@@ -1,44 +1,10 @@
-window['__onGCastApiAvailable'] = function(loaded, errorInfo) {
-  if (loaded) {
-    initializeCastApi();
-  } else {
-    console.log(errorInfo);
-  }
+var db = new PouchDB('offline-audiov1');
+
+// output information
+function Output(msg) {
+  var m = document.getElementById("messages");
+  m.innerHTML = msg + m.innerHTML;
 }
-
-initializeCastApi = function() {
-  var sessionRequest = new chrome.cast.SessionRequest(chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID);
-  var apiConfig = new chrome.cast.ApiConfig(sessionRequest,
-    function(){console.log('session listener cb')},
-    function(e){if( e === chrome.cast.ReceiverAvailability.AVAILABLE) {
-      console.log('cast devices available');
-      chrome.cast.requestSession(onRequestSessionSuccess, onLaunchError);
-  }});
-  chrome.cast.initialize(apiConfig, onInitSuccess, onError);
-};
-
-function onInitSuccess(e) { console.log('init successs cb');}
-function onError(e) { console.log('on error cb');}
-function onRequestSessionSuccess(e) {
-    isBroadcaster = true;
-    //TODO: instantiate playey object
-    session = e;
- }
-
-function onLaunchError (e) {
-    isBroadcaster = false;
-    broadcasterChkBox.checked = false;
-    console.log(e);
-}
-
-function onMediaDiscovered(how, media) {
-//    currentMedia = media;
-//    play();
-}
-
-function onMediaError(e){console.log(e)}
-
-
 
 // file drag hover
 function FileDragHover(e) {
@@ -57,33 +23,10 @@ function FileSelectHandler(e) {
   var files = e.target.files || e.dataTransfer.files;
 
   // process all File objects
-    ProcessFile(files[0])
-//  for (var i = 0, f; f = files[i]; i++) {
-//    ParseMp3(f);
-//  }
+  for (var i = 0, f; f = files[i]; i++) {
+    ParseMp3(f);
+  }
 
-}
-
-function ProcessFile(file){
-    return new Promise(function(resolve, reject) {
-        var reader = new FileReader();
-        
-        // Closure to capture the file information.
-        reader.onload = (function(theFile) {
-            return function(e) {
-                var mediaInfo = new chrome.cast.media.MediaInfo(e.target.result, 'video/webm');
-                var request = new chrome.cast.media.LoadRequest(mediaInfo);
-                session.loadMedia(request, onMediaDiscovered.bind(this, 'loadMedia'), onMediaError);
-                // Render thumbnail.
-//                var span = document.createElement('span');
-//                span.innerHTML = ['<img class="thumb" src="', e.target.result,
-//                            '" title="', escape(theFile.name), '"/>'].join('');
-//                document.getElementById('list').insertBefore(span, null);
-            };
-        })(file);
-        
-        reader.readAsDataURL(file);
-    })
 }
 
 function ParseMp3(file) {
