@@ -9,7 +9,10 @@ var FileUploader = React.createClass({
     	registerType(NativeDragItemTypes.FILE, {
       		dropTarget: {
         		acceptDrop(item) {
-        			FileUploadActions.uploadFiles(item.files);
+              let audioFiles = item.files.filter((file) => file.type.startsWith("audio/"));
+              if (audioFiles.length) {
+        			  FileUploadActions.uploadFiles(item.files);
+              }
           			// MusicStore.saveSong(item.files);
           			// console.log(item.files);
         		}

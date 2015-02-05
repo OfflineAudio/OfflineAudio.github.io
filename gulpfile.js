@@ -2,12 +2,12 @@ var gulp = require('gulp');
 var fs = require('fs');
 var browserify = require('browserify');
 var watchify = require('watchify');
-var to5Browserify = require('6to5-browserify');
 var rimraf = require('rimraf');
 var source = require('vinyl-source-stream');
 var _ = require('lodash');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+var to5ify = require("6to5ify");
 
 var config = {
   entryFile: './js/app.js',
@@ -30,7 +30,7 @@ function getBundler() {
 
 function bundle() {
   return getBundler()
-    .transform(to5Browserify)
+    .transform(to5ify)
     .bundle()
     .on('error', function(err) { console.log('Error: ' + err.message); })
     .pipe(source(config.outputFile))

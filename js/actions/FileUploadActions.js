@@ -7,6 +7,7 @@ var FileUploadActions = {
 
 	// Receive initial product data
 	uploadFiles: function(data) {
+		debugger;
 		Library.addSong(data).then(function(data) {
 			// debugger;
 			AppDispatcher.handleAction({
