@@ -4,7 +4,7 @@ var TrackList = require('./TrackList.react');
 
 var Album = React.createClass({
   	render() {
-      debugger;
+      // debugger;
     	return (
       		<ul>
           <li>{this.props.name}</li>

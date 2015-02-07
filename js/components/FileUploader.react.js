@@ -11,7 +11,7 @@ var FileUploader = React.createClass({
         		acceptDrop(item) {
               let audioFiles = item.files.filter((file) => file.type.startsWith("audio/"));
               if (audioFiles.length) {
-        			  FileUploadActions.uploadFiles(item.files);
+        			  FileUploadActions.uploadFiles(audioFiles);
               }
           			// MusicStore.saveSong(item.files);
           			// console.log(item.files);
