@@ -2,7 +2,45 @@ importScripts('../../pouchdb.js');
 importScripts('../../bluebird.js');
 importScripts('../../id3js.js');
 importScripts('../../blob-util.js');
-var db = new PouchDB('offline-audiov43');
+importScripts("../../runtime.js");
+// PouchDB.debug.enable('*');
+var db = new PouchDB('offlineAudio-V1');
+
+function async(makeGenerator){
+  return function (){
+    var generator = makeGenerator.apply(this, arguments);
+
+    function handle(result){ // { done: [Boolean], value: [Object] }
+      if (result.done) return result.value;
+
+      return result.value.then(function (res){
+        return handle(generator.next(res));
+      }, function (err){
+        return handle(generator.throw(err));
+      });
+    }
+
+    return handle(generator.next());
+  };
+}
+
+let a = async(function* chunkFiles(files) {
+  let chunkedFiles = files.map(file => [file])
+  // .reduce(function(arr, file) {
+  //   if (!arr.length) {
+  //     arr.push([]);
+  //   }
+  //   if (arr[arr.length - 1].length === 10) {
+  //     arr.push([]);
+  //   }
+  //   arr[arr.length - 1].push(file);
+  //   return arr;
+  // }, []);
+
+  for (let file of chunkedFiles) {
+    yield addSongs(file);
+  }
+});
 
 function generateDoc(tags) {
 	var artist = tags.artist || "Unknown Artist";
@@ -32,7 +70,6 @@ function ID3Tags(file) {
 		})
 	});
 }
-
 
 function songExists(file) {
 	return ID3Tags(file).then(function(tags) {
@@ -64,8 +101,6 @@ function stripFilesWhichExist(files) {
 	}.bind(files))
 }
 
-
-
 function generateDocs(tags) {
 	return Promise.map(tags, function(tag) {
 		return generateDoc(tag)
@@ -79,14 +114,6 @@ function addSongs(files) {
 			return Promise.map(songs, function(song) {
 				return ID3Tags(song)
 			})
-			.then(function(tags) {
-				return Promise.settle(tags)
-			})
-			.then(function(results) {
-				return results.map(function(result) {
-					return result.value()
-				})
-			})
 		})
 		.then(generateDocs)
 		.then(function(docs) {
@@ -98,11 +125,11 @@ function addSongs(files) {
 			})
 		})
 		.then(function(docsWithReaders) {
-			return docsWithReaders.map(function(docWithReader, index) {
+			return Promise.map(docsWithReaders, function(docWithReader, index) {
 				return new Promise(function(resolve, reject) {
 					docWithReader.reader.onload = (function(file, doc) {
 						return function (e) {
-							console.debug("File read into memory. Converting into Blob.");
+							console.debug("File read into memory. Converting into Blob.", Date(Date.now()));
 							resolve({
 								arrayBuffer: e.target.result,
 								name: file.name,
@@ -115,15 +142,7 @@ function addSongs(files) {
 			})
 		})
 		.then(function(results) {
-			return Promise.settle(results)
-		})
-		.then(function(results) {
-			return results.map(function(result) {
-				return result.value()
-			})
-		})
-		.then(function(results) {
-			return results.map(function(result) {
+			return Promise.map(results, function(result) {
 				return new Promise(function(resolve, reject) {
 					blobUtil.arrayBufferToBlob(result.arrayBuffer, 'audio/mpeg')
 					.then(function(blob) {
@@ -134,14 +153,6 @@ function addSongs(files) {
 						})
 					})
 				})
-			})
-		})
-		.then(function(results) {
-			return Promise.settle(results)
-		})
-		.then(function(results) {
-			return results.map(function(result) {
-				return result.value()
 			})
 		})
 		.then(function(results) {
@@ -163,9 +174,11 @@ function addSongs(files) {
 			})
 		})
 		.then(function(docs) {
+			console.debug("Executing bulkDocs", Date(Date.now()))
 			return db.bulkDocs(docs)
 		})
 		.then(function(docs) {
+			console.debug("Finished Executing bulkDocs", Date(Date.now()))
 			var ids = docs.map(function(doc) { return doc.id });
 			return db.allDocs({
 				include_docs: true,
@@ -183,16 +196,21 @@ function addSongs(files) {
 				return docs;
 			})
 			.then(function(docs) {
-				return resolve(docs)
+				return docs
 			})
-		})
+		}).then(function(songs){
+    		self.postMessage(songs);
+    		resolve();
+    	})
+    	.catch(function(err) {
+    		debugger;
+    		console.error(err);
+    	})
 	}.bind(files)) //TODO: WTF IS THIS JAKE, SUCH A HACK
 }
 
 self.addEventListener('message',function (ev){
     var files = ev.data;
-    addSongs(files).then(function(songs){
-    	self.postMessage(songs);
-    })
+    a(files)
 });
 

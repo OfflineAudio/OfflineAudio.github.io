@@ -1,7 +1,8 @@
 var PouchDB = require('pouchdb');
 var Promise = require('bluebird');
+PouchDB.debug.enable('*');
 
-var db = new PouchDB('offline-audiov43');
+var db = new PouchDB('offlineAudio-V1');
 
 function addSongs(files, cb) {
 	let w = new Worker('./js/utils/worker.js');
