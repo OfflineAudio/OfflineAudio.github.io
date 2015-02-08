@@ -1,5 +1,7 @@
 "use strict";
 
+var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
+
 importScripts("../../pouchdb.js");
 importScripts("../../bluebird.js");
 importScripts("../../id3js.js");
@@ -33,7 +35,7 @@ var a = async(regeneratorRuntime.mark(function chunkFiles(files) {
 		while (1) switch (context$1$0.prev = context$1$0.next) {
 			case 0:
 				chunkedFiles = files.map(function (file) {
-					return [file];
+					return file;
 				});
 				_iterator = chunkedFiles[Symbol.iterator]();
 			case 2:
@@ -43,7 +45,7 @@ var a = async(regeneratorRuntime.mark(function chunkFiles(files) {
 				}
 				file = _step.value;
 				context$1$0.next = 6;
-				return addSongs(file);
+				return addSong(file);
 			case 6:
 				context$1$0.next = 2;
 				break;
@@ -53,6 +55,61 @@ var a = async(regeneratorRuntime.mark(function chunkFiles(files) {
 		}
 	}, chunkFiles, this);
 }));
+
+function addSong(file) {
+	return new Promise((function (resolve, reject) {
+		var file = this;
+		songExists(file).then(function (exists) {
+			if (exists) {
+				resolve();
+			} else {
+				ID3Tags(file).then(generateDoc).then(function (doc) {
+					return new Promise(function (resolve, reject) {
+						var reader = new FileReader();
+						reader.onload = (function (file, doc) {
+							return function (e) {
+								console.debug("File read into memory. Converting into Blob.", Date(Date.now()));
+								resolve({
+									arrayBuffer: e.target.result,
+									name: file.name,
+									doc: doc
+								});
+							};
+						})(file, doc);
+						reader.readAsArrayBuffer(file);
+					});
+				}).then(function (result) {
+					return blobUtil.arrayBufferToBlob(result.arrayBuffer, "audio/mpeg").then(function (blob) {
+						return {
+							blob: blob,
+							name: result.name,
+							doc: result.doc
+						};
+					});
+				}).then(function (result) {
+					result.doc._attachments = _defineProperty({}, result.name, {
+						data: result.blob,
+						content_type: "audio/mpeg"
+					});
+					return result.doc;
+				}).then(function (doc) {
+					console.debug("Executing db.post", Date(Date.now()));
+					return db.post(doc);
+				}).then(function (doc) {
+					console.debug("Executed db.post", Date(Date.now()));
+					return db.get(doc.id);
+				}).then(function (song) {
+					self.postMessage([song]);
+					resolve();
+				})["catch"](function (err) {
+					console.error(err);
+				});
+			}
+		});
+	}).bind(file)) //TODO: WTF IS THIS JAKE, SUCH A HACK
+	;
+}
+
 
 function generateDoc(tags) {
 	var artist = tags.artist || "Unknown Artist";
@@ -99,129 +156,7 @@ function songExists(file) {
 	});
 }
 
-function stripFilesWhichExist(files) {
-	// TODO: switch this out for Bluebird.filter
-	var songsCheck = files.map(function (file) {
-		songExists(file);
-	});
-
-	return Promise.settle(songsCheck).then((function (songsExist) {
-		// use .isFulfilled && .value()
-		return this.filter(function (file, index) {
-			return songsExist[index]._settledValue ? false : true;
-		});
-	}).bind(files));
-}
-
-function generateDocs(tags) {
-	return Promise.map(tags, function (tag) {
-		return generateDoc(tag);
-	});
-}
-
-function addSongs(files) {
-	return new Promise((function (resolve, reject) {
-		var files = stripFilesWhichExist(this);
-		files.then(function songsToTags(songs) {
-			return Promise.map(songs, function (song) {
-				return ID3Tags(song);
-			});
-		}).then(generateDocs).then(function (docs) {
-			return files.value().map(function (file, index) {
-				return {
-					reader: new FileReader(),
-					doc: docs[index]
-				};
-			});
-		}).then(function (docsWithReaders) {
-			return Promise.map(docsWithReaders, function (docWithReader, index) {
-				return new Promise(function (resolve, reject) {
-					docWithReader.reader.onload = (function (file, doc) {
-						return function (e) {
-							console.debug("File read into memory. Converting into Blob.", Date(Date.now()));
-							resolve({
-								arrayBuffer: e.target.result,
-								name: file.name,
-								doc: doc
-							});
-						};
-					})(files.value()[index], docWithReader.doc);
-					docWithReader.reader.readAsArrayBuffer(files.value()[index]);
-				});
-			});
-		}).then(function (results) {
-			return Promise.map(results, function (result) {
-				return new Promise(function (resolve, reject) {
-					blobUtil.arrayBufferToBlob(result.arrayBuffer, "audio/mpeg").then(function (blob) {
-						resolve({
-							blob: blob,
-							name: result.name,
-							doc: result.doc
-						});
-					});
-				});
-			});
-		}).then(function (results) {
-			return results.map(function (result) {
-				var $__Object$defineProperty = Object.defineProperty;
-				var $__0;
-
-				result.doc._attachments = ($__0 = {}, $__Object$defineProperty($__0, result.name, {
-					value: {
-						data: result.blob,
-						content_type: "audio/mpeg"
-					},
-					enumerable: true,
-					configurable: true,
-					writable: true
-				}), $__0);
-
-				return result.doc;
-			});
-		}).then(function (docs) {
-			console.debug("Executing bulkDocs", Date(Date.now()));
-			return db.bulkDocs(docs);
-		}).then(function (docs) {
-			console.debug("Finished Executing bulkDocs", Date(Date.now()));
-			var ids = docs.map(function (doc) {
-				return doc.id;
-			});
-			return db.allDocs({
-				include_docs: true,
-				keys: ids
-			}).then(function (docs) {
-				return docs.rows;
-			}).then(function (docs) {
-				return docs.map(function (doc) {
-					return doc.doc;
-				});
-			}).then(function (docs) {
-				return docs;
-			}).then(function (docs) {
-				return docs;
-			});
-		}).then(function (songs) {
-			self.postMessage(songs);
-			resolve();
-		})["catch"](function (err) {
-			debugger;
-			console.error(err);
-		});
-	}).bind(files)) //TODO: WTF IS THIS JAKE, SUCH A HACK
-	;
-}
-
 self.addEventListener("message", function (ev) {
 	var files = ev.data;
 	a(files);
 });
-// .reduce(function(arr, file) {
-//   if (!arr.length) {
-//     arr.push([]);
-//   }
-//   if (arr[arr.length - 1].length === 10) {
-//     arr.push([]);
-//   }
-//   arr[arr.length - 1].push(file);
-//   return arr;
-// }, []);
