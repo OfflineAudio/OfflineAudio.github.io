@@ -127,11 +127,9 @@ AppDispatcher.register(function(payload) {
 
     // Respond to FILE_ADD_SUCCESS action
     case FileUploaderConstants.FILE_ADD_SUCCESS:
-    debugger;
       add(action.data); // TODO
       break;
     case LibraryConstants.LIBRARY_UPDATE_SUCCESS:
-      // debugger;
       update(action.data);
       break;
     default:
