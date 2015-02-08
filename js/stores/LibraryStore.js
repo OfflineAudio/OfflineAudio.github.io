@@ -24,41 +24,37 @@ function update(library) {
 }
 
 // Add songs to library
-function add(files) {
-  var tracks = files.map(function(file) {
-    debugger;
-    var artist = file.artist;
-    var album = file.album;
-    var title = file.title;
-    var _id = file._id;
-    var _rev = file._rev;
-    if (artistExists(artist)) {
-      if (albumExistsByArtist(artist, album)) {
-        if (trackExistsInAlbum(artist, album, title)) {
-          console.warn("What do?");
-        } else {
-          _library[artist][album][title] = {
-            id: _id,
-            rev: _rev
-          };
-        }
+function add(file) {
+  var artist = file.artist;
+  var album = file.album;
+  var title = file.title;
+  var _id = file._id;
+  var _rev = file._rev;
+  if (artistExists(artist)) {
+    if (albumExistsByArtist(artist, album)) {
+      if (trackExistsInAlbum(artist, album, title)) {
+        console.warn("What do?");
       } else {
-        _library[artist][album] = {};
         _library[artist][album][title] = {
           id: _id,
           rev: _rev
         };
       }
     } else {
-      _library[artist] = {};
-      _library[artist][album]= {};
+      _library[artist][album] = {};
       _library[artist][album][title] = {
         id: _id,
         rev: _rev
       };
     }
-  })
-
+  } else {
+    _library[artist] = {};
+    _library[artist][album]= {};
+    _library[artist][album][title] = {
+      id: _id,
+      rev: _rev
+    };
+  }
 }
 
 // Remove item from cart

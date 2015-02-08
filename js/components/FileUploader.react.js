@@ -1,6 +1,7 @@
 var React = require('react');
 var { DragDropMixin, NativeDragItemTypes } = require('react-dnd');
 var FileUploadActions = require('../actions/FileUploadActions');
+require('string.prototype.startswith'); // TODO: Figure out why this is needed as we use 6to5 for everything else...
 
 var FileUploader = React.createClass({
 	mixins: [DragDropMixin],

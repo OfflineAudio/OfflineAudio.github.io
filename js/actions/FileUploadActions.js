@@ -8,43 +8,23 @@ var FileUploadActions = {
 
 	// Receive initial product data
 	uploadFiles: function(data) {
-		// debugger;
-		Library.addSongs(data)
-		.then(function(data) {
-			debugger;
-			console.log(data);
-			AppDispatcher.handleAction({
-				actionType: FileUploaderConstants.FILE_ADD_SUCCESS,
-				data: data
-			});
-		}).catch(function(err) {
-			// debugger;
-			AppDispatcher.handleAction({
-				actionType: FileUploaderConstants.FILE_ADD_FAIL,
-				data: data
-			});
-		});
-		// let songs = Library.addSongs(data);
-		// Bluebird.settle(songs)
-		// .then(function(data) {
-		// 	debugger;
-		// 	console.log(data);
-		// 	AppDispatcher.handleAction({
-		// 		actionType: FileUploaderConstants.FILE_ADD_SUCCESS,
-		// 		data: data
-		// 	});
-		// }).catch(function(err) {
-		// 	debugger;
-		// 	AppDispatcher.handleAction({
-		// 		actionType: FileUploaderConstants.FILE_ADD_FAIL,
-		// 		data: data
-		// 	});
-		// });
-		//TODO: show progress indicator when adding songs?
-		// AppDispatcher.handleAction({
-		// 	actionType: FileUploaderConstants.FILE_ADD,
-		// 	data: data
-		// });
+		Library.addSongs(data, function(err, data) {
+			if (err) {
+				AppDispatcher.handleAction({
+					actionType: FileUploaderConstants.FILE_ADD_FAIL,
+					data: data // err?
+				});
+			} else {
+				data.forEach(function(data) {
+					console.log(data);
+					AppDispatcher.handleAction({
+						actionType: FileUploaderConstants.FILE_ADD_SUCCESS,
+						data: data
+					});
+				})
+
+			}
+		})
 	}
 };
 
