@@ -32,69 +32,59 @@ let a = async(function* chunkFiles(files) {
   }
 });
 
+function readFile(file) {
+	return new Promise(function(resolve, reject) {
+		let reader = new FileReader()
+		reader.onload = (function(file) {
+			return function (e) {
+				console.debug("File read into memory", Date(Date.now()))
+				resolve(e.target.result)
+			}
+		})(file)
+		reader.readAsArrayBuffer(file)
+	})
+}
+
+function addBlobAsAttachment(doc, blob, name, type) {
+	doc["_attachments"] = {
+		[name]: {
+			data: blob,
+			content_type: type
+		}
+	}
+	return doc
+}
+
 function addSong(file) {
 	return new Promise(function(resolve, reject) {
-		var file = this;
 		songExists(file).then(function(exists) {
 			if (exists) {
 				resolve()
 			} else {
-				ID3Tags(file)
-				.then(generateDoc)
-				.then(function(doc) {
-					return new Promise(function(resolve, reject) {
-						let reader = new FileReader();
-						reader.onload = (function(file, doc) {
-							return function (e) {
-								console.debug("File read into memory. Converting into Blob.", Date(Date.now()));
-								resolve({
-									arrayBuffer: e.target.result,
-									name: file.name,
-									doc: doc
-								});
-							}
-		        		})(file, doc);
-						reader.readAsArrayBuffer(file)
-					})
-				})
-				.then(function(result) {
-					return blobUtil.arrayBufferToBlob(result.arrayBuffer, 'audio/mpeg')
-					.then(function(blob) {
-						return {
-							blob: blob,
-							name: result.name,
-							doc: result.doc
-						}
-					})
-				})
-				.then(function(result) {
-					result.doc["_attachments"] = {
-						[result.name]: {
-							data: result.blob,
-							content_type: "audio/mpeg"
-						}
-					}
-					return result.doc
-				})
+				let name = file.name
+				let type = file.type
+				let doc = ID3Tags(file).then(generateDoc)
+				let blob = readFile(file).then(arrayBuffer => blobUtil.arrayBufferToBlob(arrayBuffer, type))
+
+				Promise.join(doc, blob, name, type, addBlobAsAttachment)
 				.then(function(doc) {
 					console.debug("Executing db.post", Date(Date.now()))
 					return db.post(doc)
 				})
 				.then(function(doc) {
 					console.debug("Executed db.post", Date(Date.now()))
+					console.debug("Executing db.get", Date(Date.now()))
 					return db.get(doc.id)
-				}).then(function(song){
-		    		self.postMessage([song]);
-		    		resolve();
-		    	})
-		    	.catch(function(err) {
-		    		console.error(err);
-		    	})
+				})
+				.then(function(song) {
+					console.debug("Executed db.get", Date(Date.now()))
+					return resolve(self.postMessage([song]))
+				})
+		    	.catch(err => console.error(err))
 			}
 		})
-	}.bind(file)) //TODO: WTF IS THIS JAKE, SUCH A HACK
+	})
 }
-
 
 function generateDoc(tags) {
 	var artist = tags.artist || "Unknown Artist";

@@ -56,60 +56,59 @@ var a = async(regeneratorRuntime.mark(function chunkFiles(files) {
 	}, chunkFiles, this);
 }));
 
+function readFile(file) {
+	return new Promise(function (resolve, reject) {
+		var reader = new FileReader();
+		reader.onload = (function (file) {
+			return function (e) {
+				console.debug("File read into memory", Date(Date.now()));
+				resolve(e.target.result);
+			};
+		})(file);
+		reader.readAsArrayBuffer(file);
+	});
+}
+
+function addBlobAsAttachment(doc, blob, name, type) {
+	doc._attachments = _defineProperty({}, name, {
+		data: blob,
+		content_type: type
+	});
+	return doc;
+}
+
 function addSong(file) {
-	return new Promise((function (resolve, reject) {
-		var file = this;
+	return new Promise(function (resolve, reject) {
 		songExists(file).then(function (exists) {
 			if (exists) {
 				resolve();
 			} else {
-				ID3Tags(file).then(generateDoc).then(function (doc) {
-					return new Promise(function (resolve, reject) {
-						var reader = new FileReader();
-						reader.onload = (function (file, doc) {
-							return function (e) {
-								console.debug("File read into memory. Converting into Blob.", Date(Date.now()));
-								resolve({
-									arrayBuffer: e.target.result,
-									name: file.name,
-									doc: doc
-								});
-							};
-						})(file, doc);
-						reader.readAsArrayBuffer(file);
+				(function () {
+					var name = file.name;
+					var type = file.type;
+					var doc = ID3Tags(file).then(generateDoc);
+					var blob = readFile(file).then(function (arrayBuffer) {
+						return blobUtil.arrayBufferToBlob(arrayBuffer, type);
 					});
-				}).then(function (result) {
-					return blobUtil.arrayBufferToBlob(result.arrayBuffer, "audio/mpeg").then(function (blob) {
-						return {
-							blob: blob,
-							name: result.name,
-							doc: result.doc
-						};
+
+					Promise.join(doc, blob, name, type, addBlobAsAttachment).then(function (doc) {
+						console.debug("Executing db.post", Date(Date.now()));
+						return db.post(doc);
+					}).then(function (doc) {
+						console.debug("Executed db.post", Date(Date.now()));
+						console.debug("Executing db.get", Date(Date.now()));
+						return db.get(doc.id);
+					}).then(function (song) {
+						console.debug("Executed db.get", Date(Date.now()));
+						return resolve(self.postMessage([song]));
+					})["catch"](function (err) {
+						return console.error(err);
 					});
-				}).then(function (result) {
-					result.doc._attachments = _defineProperty({}, result.name, {
-						data: result.blob,
-						content_type: "audio/mpeg"
-					});
-					return result.doc;
-				}).then(function (doc) {
-					console.debug("Executing db.post", Date(Date.now()));
-					return db.post(doc);
-				}).then(function (doc) {
-					console.debug("Executed db.post", Date(Date.now()));
-					return db.get(doc.id);
-				}).then(function (song) {
-					self.postMessage([song]);
-					resolve();
-				})["catch"](function (err) {
-					console.error(err);
-				});
+				})();
 			}
 		});
-	}).bind(file)) //TODO: WTF IS THIS JAKE, SUCH A HACK
-	;
+	});
 }
-
 
 function generateDoc(tags) {
 	var artist = tags.artist || "Unknown Artist";
