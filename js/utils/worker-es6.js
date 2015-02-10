@@ -25,11 +25,11 @@ function async(makeGenerator){
 }
 
 let a = async(function* chunkFiles(files) {
-  let chunkedFiles = files.map(file => file)
-
-  for (let file of chunkedFiles) {
-    yield addSong(file);
+  let overallSize = 0;
+  for (let file of files) {
+    overallSize += yield addSong(file);
   }
+  console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024 )
 });
 
 function readFile(file) {
@@ -78,7 +78,8 @@ function addSong(file) {
 				})
 				.then(function(song) {
 					console.debug("Executed db.get", Date(Date.now()))
-					return resolve(self.postMessage([song]))
+					self.postMessage([song])
+					return resolve(file.size)
 				})
 		    	.catch(err => console.error(err))
 			}
