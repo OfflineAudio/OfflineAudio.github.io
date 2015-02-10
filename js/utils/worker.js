@@ -30,26 +30,28 @@ function async(makeGenerator) {
 }
 
 var a = async(regeneratorRuntime.mark(function chunkFiles(files) {
-	var chunkedFiles, _iterator, _step, file;
+	var overallSize, _iterator, _step, file;
 	return regeneratorRuntime.wrap(function chunkFiles$(context$1$0) {
 		while (1) switch (context$1$0.prev = context$1$0.next) {
 			case 0:
-				chunkedFiles = files.map(function (file) {
-					return file;
-				});
-				_iterator = chunkedFiles[Symbol.iterator]();
+				overallSize = 0;
+				_iterator = files[Symbol.iterator]();
 			case 2:
 				if ((_step = _iterator.next()).done) {
-					context$1$0.next = 8;
+					context$1$0.next = 9;
 					break;
 				}
 				file = _step.value;
 				context$1$0.next = 6;
 				return addSong(file);
 			case 6:
+				overallSize += context$1$0.sent;
+			case 7:
 				context$1$0.next = 2;
 				break;
-			case 8:
+			case 9:
+				console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024);
+			case 10:
 			case "end":
 				return context$1$0.stop();
 		}
@@ -86,7 +88,7 @@ function addSong(file) {
 				(function () {
 					var name = file.name;
 					var type = file.type;
-					var doc = ID3Tags(file).then(generateDoc);
+					var doc = generateDoc(file);
 					var blob = readFile(file).then(function (arrayBuffer) {
 						return blobUtil.arrayBufferToBlob(arrayBuffer, type);
 					});
@@ -100,7 +102,8 @@ function addSong(file) {
 						return db.get(doc.id);
 					}).then(function (song) {
 						console.debug("Executed db.get", Date(Date.now()));
-						return resolve(self.postMessage([song]));
+						self.postMessage([song]);
+						return resolve(file.size);
 					})["catch"](function (err) {
 						return console.error(err);
 					});
@@ -110,22 +113,25 @@ function addSong(file) {
 	});
 }
 
-function generateDoc(tags) {
-	var artist = tags.artist || "Unknown Artist";
-	var album = tags.album || "Unknown Album";
-	var title = tags.title || "Unknown Title - " + Date.now() + Math.random() * 100000000000000000;
-	var genre = tags.v1.genre || "Unknown Genre";
-	var trackNumber = tags.v1.track || 0;
-	var year = tags.year || 0;
-	return {
-		_id: [artist, album, title].join(" - "),
-		artist: artist,
-		title: title,
-		album: album,
-		track: trackNumber,
-		genre: genre,
-		year: year
-	};
+function generateDoc(file) {
+	return ID3Tags(file).then(function (tags) {
+		var artist = tags.artist || "Unknown Artist";
+		var album = tags.album || "Unknown Album";
+		var title = tags.title || file.size + " " + file.name;
+		var genre = tags.v1.genre || "Unknown Genre";
+		var trackNumber = tags.v1.track || 0;
+		var year = tags.year || 0;
+
+		return {
+			_id: [artist, album, title].join("-||-||-"),
+			artist: artist,
+			title: title,
+			album: album,
+			track: trackNumber,
+			genre: genre,
+			year: year
+		};
+	});
 }
 
 function ID3Tags(file) {
@@ -140,18 +146,16 @@ function ID3Tags(file) {
 }
 
 function songExists(file) {
-	return ID3Tags(file).then(function (tags) {
-		var doc = generateDoc(tags);
-
-		return db.get(doc._id).then(function (data) {
-			return true;
-		})["catch"](function (err) {
-			if (err.status === 404) {
-				return false;
-			}
-		});
+	return generateDoc(file).then(function (doc) {
+		return db.get(doc._id);
+	}).then(function (data) {
+		return true;
 	})["catch"](function (err) {
-		console.log("here", err);
+		if (err.status === 404) {
+			return false;
+		} else {
+			throw err;
+		}
 	});
 }
 
