@@ -63,7 +63,7 @@ function addSong(file) {
 			} else {
 				let name = file.name
 				let type = file.type
-				let doc = ID3Tags(file).then(generateDoc)
+				let doc = generateDoc(file)
 				let blob = readFile(file).then(arrayBuffer => blobUtil.arrayBufferToBlob(arrayBuffer, type))
 
 				Promise.join(doc, blob, name, type, addBlobAsAttachment)
@@ -86,22 +86,25 @@ function addSong(file) {
 	})
 }
 
-function generateDoc(tags) {
-	var artist = tags.artist || "Unknown Artist";
-	var album = tags.album || "Unknown Album";
-	var title = tags.title || "Unknown Title - " + Date.now() + Math.random() * 100000000000000000;
-	var genre = tags.v1.genre || "Unknown Genre";
-	var trackNumber = tags.v1.track || 0;
-	var year = tags.year || 0;
-	return {
-		"_id": [artist, album, title].join(' - '),
-		"artist": artist,
-		"title": title,
-		"album": album,
-		"track": trackNumber,
-		"genre": genre,
-		"year": year
-	};
+function generateDoc(file) {
+	return ID3Tags(file).then(function(tags) {
+		var artist = tags.artist || "Unknown Artist";
+		var album = tags.album || "Unknown Album";
+		var title = tags.title || file.size + ' ' + file.name;
+		var genre = tags.v1.genre || "Unknown Genre";
+		var trackNumber = tags.v1.track || 0;
+		var year = tags.year || 0;
+
+		return {
+			"_id": [artist, album, title].join('-||-||-'),
+			"artist": artist,
+			"title": title,
+			"album": album,
+			"track": trackNumber,
+			"genre": genre,
+			"year": year
+		};
+	})
 }
 
 function ID3Tags(file) {
@@ -116,19 +119,16 @@ function ID3Tags(file) {
 }
 
 function songExists(file) {
-	return ID3Tags(file).then(function(tags) {
-		var doc = generateDoc(tags);
-
-		return db.get(doc._id).then(function(data) {
-			return true;
-		}).catch(function(err) {
-			if (err["status"] === 404) {
-				return false;
-			}
-		});
-	}).catch(function(err) {
-		console.log('here', err)
-	});
+	return generateDoc(file)
+			.then(doc => db.get(doc._id))
+			.then(data => true)
+			.catch(function(err) {
+				if (err["status"] === 404) {
+					return false
+				} else {
+					throw(err)
+				}
+			})
 }
 
 self.addEventListener('message',function (ev){
