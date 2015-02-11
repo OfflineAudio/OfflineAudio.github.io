@@ -7,8 +7,6 @@ var LibraryActions = require('../actions/LibraryActions');
 // Method to retrieve state from Stores
 function getState() {
   return {
-    artists: LibraryStore.getArtists(),
-    library: LibraryStore.getLibrary()
   };
 }
 
@@ -33,10 +31,14 @@ var MusicPlayer = React.createClass({
 
   // Render our child components, passing state via props
   render: function() {
+    let library = LibraryStore.getLibrary();
+    let artists = LibraryStore.getArtists();
+    let albums = LibraryStore.getAlbums();
+
     return (
       <div className="flux-musicplayer-app">
         <FileUploader />
-        <Library library={this.state.library} />
+        <Library library={library} artists={artists} showOnlyArtists = {this.state.showOnlyArtists} />
       </div>
     );
   },
