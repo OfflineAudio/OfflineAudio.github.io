@@ -7,6 +7,7 @@ var LibraryActions = require('../actions/LibraryActions');
 // Method to retrieve state from Stores
 function getState() {
   return {
+    showOnlyArtists: false
   };
 }
 
@@ -16,6 +17,10 @@ var MusicPlayer = React.createClass({
   // Get initial state from stores
   getInitialState: function() {
     return getState();
+  },
+
+  handleClick: function() {
+    this.setState({showOnlyArtists: true})
   },
 
   // Add change listeners to stores
@@ -37,6 +42,7 @@ var MusicPlayer = React.createClass({
 
     return (
       <div className="flux-musicplayer-app">
+        <button onClick={this.handleClick}>Show only artists</button>
         <FileUploader />
         <Library library={library} artists={artists} showOnlyArtists = {this.state.showOnlyArtists} />
       </div>
