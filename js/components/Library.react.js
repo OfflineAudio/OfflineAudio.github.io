@@ -1,18 +1,19 @@
-var React = require('react');
-var FileUploadActions = require('../actions/FileUploadActions');
-var Artist = require('./Artist.react');
+let React = require('react');
+let FileUploadActions = require('../actions/FileUploadActions');
+let Artist = require('./Artist.react');
+// let ArtistList = require('./ArtistList.react');
 
-var Library = React.createClass({
+let Library = React.createClass({
   	render() {
-      var library = this.props.library
-      var artists = Object.keys(library);
-      var Artists = artists.map(function(artist) {
-            return <Artist name={artist} albums={library[artist]} />
-          });
+      let showOnlyArtists = this.props.showOnlyArtists
+      let artists = this.props.artists
+      let library = this.props.library
+      let Artists = artists.map(function(artist) { return <Artist name={artist} albums={library[artist]} showOnlyArtists={showOnlyArtists} />})
+
     	return (
-      		<ul>
-            {Artists}
-      		</ul>
+        <ul>
+          {Artists}
+        </ul>
     	);
   	}
 });
