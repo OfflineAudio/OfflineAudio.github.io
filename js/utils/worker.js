@@ -8,6 +8,7 @@ importScripts("../../id3js.js");
 importScripts("../../blob-util.js");
 importScripts("../../runtime.js");
 // PouchDB.debug.enable('*');
+
 var db = new PouchDB("offlineAudio-V1");
 var readTags = Promise.promisify(id3js);
 
@@ -29,35 +30,6 @@ function async(makeGenerator) {
 		return handle(generator.next());
 	};
 }
-
-var a = async(regeneratorRuntime.mark(function chunkFiles(files) {
-	var overallSize, _iterator, _step, file;
-	return regeneratorRuntime.wrap(function chunkFiles$(context$1$0) {
-		while (1) switch (context$1$0.prev = context$1$0.next) {
-			case 0:
-				overallSize = 0;
-				_iterator = files[Symbol.iterator]();
-			case 2:
-				if ((_step = _iterator.next()).done) {
-					context$1$0.next = 9;
-					break;
-				}
-				file = _step.value;
-				context$1$0.next = 6;
-				return addSong(file);
-			case 6:
-				overallSize += context$1$0.sent;
-			case 7:
-				context$1$0.next = 2;
-				break;
-			case 9:
-				console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024);
-			case 10:
-			case "end":
-				return context$1$0.stop();
-		}
-	}, chunkFiles, this);
-}));
 
 function readFile(file) {
 	return new Promise(function (resolve, reject) {
@@ -158,7 +130,36 @@ function songExists(file) {
 	});
 }
 
-self.addEventListener("message", function (ev) {
-	var files = ev.data;
-	a(files);
+var importFiles = async(regeneratorRuntime.mark(function chunkFiles(files) {
+	var overallSize, _iterator, _step, file;
+	return regeneratorRuntime.wrap(function chunkFiles$(context$1$0) {
+		while (1) switch (context$1$0.prev = context$1$0.next) {
+			case 0:
+				overallSize = 0;
+				_iterator = files[Symbol.iterator]();
+			case 2:
+				if ((_step = _iterator.next()).done) {
+					context$1$0.next = 9;
+					break;
+				}
+				file = _step.value;
+				context$1$0.next = 6;
+				return addSong(file);
+			case 6:
+				overallSize += context$1$0.sent;
+			case 7:
+				context$1$0.next = 2;
+				break;
+			case 9:
+				console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024);
+			case 10:
+			case "end":
+				return context$1$0.stop();
+		}
+	}, chunkFiles, this);
+}));
+
+self.addEventListener("message", function (event) {
+	var files = event.data;
+	importFiles(files);
 });
