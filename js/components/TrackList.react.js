@@ -1,5 +1,4 @@
 var React = require('react');
-var FileUploadActions = require('../actions/FileUploadActions');
 
 var ListItemWrapper = React.createClass({
   render: function() {
