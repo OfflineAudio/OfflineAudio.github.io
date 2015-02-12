@@ -4,11 +4,13 @@ importScripts('../../id3js.js');
 importScripts('../../blob-util.js');
 importScripts("../../runtime.js");
 // PouchDB.debug.enable('*');
-var db = new PouchDB('offlineAudio-V1');
+
+let db = new PouchDB('offlineAudio-V1');
+let readTags = Promise.promisify(id3js);
 
 function async(makeGenerator){
   return function (){
-    var generator = makeGenerator.apply(this, arguments);
+    let generator = makeGenerator.apply(this, arguments);
 
     function handle(result){ // { done: [Boolean], value: [Object] }
       if (result.done) return result.value;
@@ -23,14 +25,6 @@ function async(makeGenerator){
     return handle(generator.next());
   };
 }
-
-let a = async(function* chunkFiles(files) {
-  let overallSize = 0;
-  for (let file of files) {
-    overallSize += yield addSong(file);
-  }
-  console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024 )
-});
 
 function readFile(file) {
 	return new Promise(function(resolve, reject) {
@@ -88,52 +82,52 @@ function addSong(file) {
 }
 
 function generateDoc(file) {
-	return ID3Tags(file).then(function(tags) {
-		var artist = tags.artist || "Unknown Artist";
-		var album = tags.album || "Unknown Album";
-		var title = tags.title || file.size + ' ' + file.name;
-		var genre = tags.v1.genre || "Unknown Genre";
-		var trackNumber = tags.v1.track || 0;
-		var year = tags.year || 0;
+	return readTags(file).then(function(tags) {
+		let {artist, album, title, year} = tags
+		let {genre, track} = tags.v1
+
+		artist = artist || "Unknown Artist";
+		album = album || "Unknown Album";
+		title = title || file.size + ' ' + file.name;
+		year = year || 0;
+		genre = genre || "Unknown Genre";
+		track = track || 0;
 
 		return {
 			"_id": [artist, album, title].join('-||-||-'),
 			"artist": artist,
 			"title": title,
 			"album": album,
-			"track": trackNumber,
+			"track": track,
 			"genre": genre,
 			"year": year
 		};
 	})
 }
 
-function ID3Tags(file) {
-	return new Promise(function(resolve, reject) {
-		id3js(file, function(err, tags) {
-			if(err){
-				reject(err);
-			}
-			resolve(tags);
-		})
-	});
-}
-
 function songExists(file) {
 	return generateDoc(file)
-			.then(doc => db.get(doc._id))
-			.then(data => true)
-			.catch(function(err) {
-				if (err["status"] === 404) {
-					return false
-				} else {
-					throw(err)
-				}
-			})
+	.then(doc => db.get(doc._id))
+	.then(data => true)
+	.catch(function(err) {
+		if (err["status"] === 404) {
+			return false
+		} else {
+			throw(err)
+		}
+	})
 }
 
-self.addEventListener('message',function (ev){
-    var files = ev.data;
-    a(files)
+let importFiles = async(function* chunkFiles(files) {
+  let overallSize = 0;
+  for (let file of files) {
+    overallSize += yield addSong(file);
+  }
+  console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024 )
+});
+
+self.addEventListener('message',function (event){
+    let files = event.data;
+    importFiles(files)
 });
 

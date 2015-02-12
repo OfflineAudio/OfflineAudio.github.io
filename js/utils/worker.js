@@ -9,6 +9,7 @@ importScripts("../../blob-util.js");
 importScripts("../../runtime.js");
 // PouchDB.debug.enable('*');
 var db = new PouchDB("offlineAudio-V1");
+var readTags = Promise.promisify(id3js);
 
 function async(makeGenerator) {
 	return function () {
@@ -114,34 +115,32 @@ function addSong(file) {
 }
 
 function generateDoc(file) {
-	return ID3Tags(file).then(function (tags) {
-		var artist = tags.artist || "Unknown Artist";
-		var album = tags.album || "Unknown Album";
-		var title = tags.title || file.size + " " + file.name;
-		var genre = tags.v1.genre || "Unknown Genre";
-		var trackNumber = tags.v1.track || 0;
-		var year = tags.year || 0;
+	return readTags(file).then(function (tags) {
+		var artist = tags.artist;
+		var album = tags.album;
+		var title = tags.title;
+		var year = tags.year;
+		var _tags$v1 = tags.v1;
+		var genre = _tags$v1.genre;
+		var track = _tags$v1.track;
+
+
+		artist = artist || "Unknown Artist";
+		album = album || "Unknown Album";
+		title = title || file.size + " " + file.name;
+		year = year || 0;
+		genre = genre || "Unknown Genre";
+		track = track || 0;
 
 		return {
 			_id: [artist, album, title].join("-||-||-"),
 			artist: artist,
 			title: title,
 			album: album,
-			track: trackNumber,
+			track: track,
 			genre: genre,
 			year: year
 		};
-	});
-}
-
-function ID3Tags(file) {
-	return new Promise(function (resolve, reject) {
-		id3js(file, function (err, tags) {
-			if (err) {
-				reject(err);
-			}
-			resolve(tags);
-		});
 	});
 }
 
