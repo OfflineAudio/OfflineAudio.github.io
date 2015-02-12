@@ -4,7 +4,11 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "test": "standard"
+    "test": "jest",
+    "standard": "standard",
+    "build": "gulp build && npm run build_worker",
+    "serve": "serve",
+    "build_worker": "6to5 ./js/utils/worker-es6.js --out-file ./js/utils/worker.js"
   },
   "author": "",
   "license": "MIT",
@@ -25,14 +29,16 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
+    "6to5": "^3.6.0",
     "6to5-browserify": "^1.3.0",
     "6to5ify": "^3.1.2",
     "browser-sync": "^1.7.1",
     "browserify": "^6.3.3",
-    "gulp": "~3.8.10",
+    "gulp": "^3.8.11",
     "gulp-rename": "^1.2.0",
     "lodash": "^2.4.1",
     "rimraf": "~2.2.8",
+    "serve": "^1.4.0",
     "standard": "^2.4.1",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.1.1"
