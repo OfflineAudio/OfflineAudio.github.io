@@ -1,23 +1,23 @@
-var PouchDB = require('pouchdb');
-var Promise = require('bluebird');
-PouchDB.debug.enable('*');
+let PouchDB = require('pouchdb')
+let Promise = require('bluebird')
+PouchDB.debug.enable('*')
 
-var db = new PouchDB('offlineAudio-V1');
+let db = new PouchDB('offlineAudio-V1')
 
 function addSongs(files, cb) {
-	let w = new Worker('./js/utils/worker.js');
-	w.addEventListener('message', function (ev) {
-	    cb(null, ev.data);
-	});
+  let w = new Worker('./js/utils/worker.js')
+  w.addEventListener('message', function (ev) {
+    cb(null, ev.data)
+  })
 
-	w.postMessage(files); // send the worker a message
+  w.postMessage(files) // send the worker a message
 }
 
 function read() {
-	return db.allDocs({include_docs: true});
+  return db.allDocs({include_docs: true})
 }
 
 module.exports = {
-	addSongs: addSongs,
-	read: read
+  addSongs: addSongs,
+  read: read
 }

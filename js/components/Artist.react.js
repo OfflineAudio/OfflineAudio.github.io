@@ -1,6 +1,6 @@
-let React = require('react');
-let FileUploadActions = require('../actions/FileUploadActions');
-let Album = require('./Album.react');
+let React = require('react')
+let FileUploadActions = require('../actions/FileUploadActions')
+let Album = require('./Album.react')
 
 let Artist = React.createClass({
 	render() {
@@ -8,13 +8,12 @@ let Artist = React.createClass({
     let showOnlyArtists = this.props.showOnlyArtists
     let albums = this.props.albums
     let albumNames = Object.keys(albums)
-
     let Albums
-    debugger
+
     if (!showOnlyArtists) {
       Albums = albumNames.map(function(album) {
         return <Album name={album} tracks={albums[album]} />
-      });
+      })
     }
 
   	return (
@@ -22,8 +21,8 @@ let Artist = React.createClass({
   			<li>{name}</li>
   			{Albums}
   		</ul>
-  	);
+  	)
 	}
-});
+})
 
-module.exports = Artist;
+module.exports = Artist

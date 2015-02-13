@@ -46,7 +46,12 @@
   "standard": {
     "ignore": [
       "dist/**",
-      "id3-minimized.js"
+      "id3js.js",
+      "blob-util.js",
+      "bluebird.js",
+      "pouchdb.js",
+      "runtime.js",
+      "js/utils/worker.js"
     ]
   }
 }
