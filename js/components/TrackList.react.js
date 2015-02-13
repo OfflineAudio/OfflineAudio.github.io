@@ -1,12 +1,12 @@
-var React = require('react');
+const React = require('react');
 
-var ListItemWrapper = React.createClass({
+const ListItemWrapper = React.createClass({
   render: function() {
     return <li>{this.props.text}</li>;
   }
 });
 
-var TrackList = React.createClass({
+const TrackList = React.createClass({
   	render() {
   		var tracks = this.props.tracks
   		var trackNames = Object.keys(tracks);

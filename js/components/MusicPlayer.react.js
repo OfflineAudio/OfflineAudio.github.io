@@ -1,8 +1,8 @@
-var React = require('react')
-var LibraryStore = require('../stores/LibraryStore')
-var FileUploader = require('./FileUploader.react')
-var Library = require('./Library.react')
-var LibraryActions = require('../actions/LibraryActions')
+const React = require('react')
+const LibraryStore = require('../stores/LibraryStore')
+const FileUploader = require('./FileUploader.react')
+const Library = require('./Library.react')
+const LibraryActions = require('../actions/LibraryActions')
 
 // Method to retrieve state from Stores
 function getState() {
@@ -12,7 +12,7 @@ function getState() {
 }
 
 // Define main Controller View
-var MusicPlayer = React.createClass({
+const MusicPlayer = React.createClass({
 
   // Get initial state from stores
   getInitialState: function() {

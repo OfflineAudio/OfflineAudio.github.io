@@ -1,8 +1,8 @@
-let React = require('react')
-let FileUploadActions = require('../actions/FileUploadActions')
-let Artist = require('./Artist.react')
+const React = require('react')
+const FileUploadActions = require('../actions/FileUploadActions')
+const Artist = require('./Artist.react')
 
-let Library = React.createClass({
+const Library = React.createClass({
 	render() {
     let showOnlyArtists = this.props.showOnlyArtists
     let artists = this.props.artists

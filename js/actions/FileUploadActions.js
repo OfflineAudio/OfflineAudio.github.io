@@ -1,9 +1,9 @@
-var AppDispatcher = require('../dispatcher/AppDispatcher')
-var FileUploaderConstants = require('../constants/FileUploaderConstants')
-var Library = require('../utils/Library')
+const AppDispatcher = require('../dispatcher/AppDispatcher')
+const FileUploaderConstants = require('../constants/FileUploaderConstants')
+const Library = require('../utils/Library')
 
 // Define actions object
-var FileUploadActions = {
+const FileUploadActions = {
   // Receive initial product data
   uploadFiles: function(data) {
     Library.addSongs(data, function(err, data) {

@@ -1,8 +1,8 @@
-var React = require('react')
-var FileUploadActions = require('../actions/FileUploadActions')
-var TrackList = require('./TrackList.react')
+const React = require('react')
+const FileUploadActions = require('../actions/FileUploadActions')
+const TrackList = require('./TrackList.react')
 
-var Album = React.createClass({
+const Album = React.createClass({
   render() {
     return (
       <ul>

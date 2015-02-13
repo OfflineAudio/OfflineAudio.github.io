@@ -5,12 +5,12 @@ importScripts('../../blob-util.js')
 importScripts("../../runtime.js")
 // PouchDB.debug.enable('*')
 
-let db = new PouchDB('offlineAudio-V1')
-let readTags = Promise.promisify(id3js)
+const db = new PouchDB('offlineAudio-V1')
+const readTags = Promise.promisify(id3js)
 
 function async(makeGenerator){
   return function (){
-    let generator = makeGenerator.apply(this, arguments)
+    const generator = makeGenerator.apply(this, arguments)
 
     function handle(result){ // { done: [Boolean], value: [Object] }
       if (result.done) return result.value
@@ -55,10 +55,10 @@ function addSong(file) {
       if (exists) {
         resolve()
       } else {
-        let name = file.name
-        let type = file.type
-        let doc = generateDoc(file)
-        let blob = readFile(file).then(arrayBuffer => blobUtil.arrayBufferToBlob(arrayBuffer, type))
+        const name = file.name
+        const type = file.type
+        const doc = generateDoc(file)
+        const blob = readFile(file).then(arrayBuffer => blobUtil.arrayBufferToBlob(arrayBuffer, type))
 
         Promise.join(doc, blob, name, type, addBlobAsAttachment)
         .then(function(doc) {
@@ -118,7 +118,7 @@ function songExists(file) {
   })
 }
 
-let importFiles = async(function* chunkFiles(files) {
+const importFiles = async(function* chunkFiles(files) {
   let overallSize = 0;
   for (let file of files) {
     overallSize += yield addSong(file)
@@ -127,6 +127,6 @@ let importFiles = async(function* chunkFiles(files) {
 })
 
 self.addEventListener('message',function (event){
-  let files = event.data;
+  const files = event.data;
   importFiles(files)
 })

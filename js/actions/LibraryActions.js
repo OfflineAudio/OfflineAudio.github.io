@@ -1,6 +1,6 @@
-let AppDispatcher = require('../dispatcher/AppDispatcher')
-let LibraryConstants = require('../constants/LibraryConstants')
-let Library = require('../utils/Library')
+const AppDispatcher = require('../dispatcher/AppDispatcher')
+const LibraryConstants = require('../constants/LibraryConstants')
+const Library = require('../utils/Library')
 
 function createLibrary (docs) {
   return docs.reduce(function(library, b) {
@@ -28,7 +28,7 @@ function dispatchErrorUpdate(err) {
   console.error(err)
 }
 
-let LibraryActions = {
+const LibraryActions = {
   update: function() {
     Library.read()
     .then(pluckDocs)

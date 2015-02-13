@@ -1,6 +1,6 @@
-let React = require('react');
+const React = require('react');
 
-let Track = React.createClass({
+const Track = React.createClass({
   	render() {
   		let {trackNumber, duration, title, playing, favourite} = this.props
 

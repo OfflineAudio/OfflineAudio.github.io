@@ -1,8 +1,8 @@
-var AppDispatcher = require('../dispatcher/AppDispatcher')
-var EventEmitter = require('events').EventEmitter
-var FileUploaderConstants = require('../constants/FileUploaderConstants')
-var LibraryConstants = require('../constants/LibraryConstants')
-var _ = require('lodash')
+const AppDispatcher = require('../dispatcher/AppDispatcher')
+const EventEmitter = require('events').EventEmitter
+const FileUploaderConstants = require('../constants/FileUploaderConstants')
+const LibraryConstants = require('../constants/LibraryConstants')
+const _ = require('lodash')
 
 // Define initial data points
 var _library = {} // Artist -> Album -> Title
