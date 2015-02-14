@@ -8,24 +8,6 @@ importScripts("../../runtime.js")
 const db = new PouchDB('offlineAudio-V1')
 const readTags = Promise.promisify(id3js)
 
-function async(makeGenerator){
-  return function (){
-    const generator = makeGenerator.apply(this, arguments)
-
-    function handle(result){ // { done: [Boolean], value: [Object] }
-      if (result.done) return result.value
-
-      return result.value.then(function (res){
-        return handle(generator.next(res))
-      }, function (err){
-        return handle(generator.throw(err))
-      })
-    }
-
-    return handle(generator.next())
-  }
-}
-
 function readFile(file) {
   return new Promise(function(resolve, reject) {
     let reader = new FileReader()
@@ -111,7 +93,7 @@ function songExists(file) {
   })
 }
 
-const importFiles = async(function* chunkFiles(files) {
+const importFiles = Promise.coroutine(function* chunkFiles(files) {
   let overallSize = 0;
   for (let file of files) {
     overallSize += yield addSong(file)

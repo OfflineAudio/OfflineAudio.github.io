@@ -123,7 +123,7 @@ function songExists(file) {
   });
 }
 
-var importFiles = async(regeneratorRuntime.mark(function chunkFiles(files) {
+var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(files) {
   var overallSize, _iterator, _step, file;
   return regeneratorRuntime.wrap(function chunkFiles$(context$1$0) {
     while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -144,6 +144,9 @@ var importFiles = async(regeneratorRuntime.mark(function chunkFiles(files) {
         context$1$0.next = 2;
         break;
       case 9:
+
+
+        // const overallSize = files.reduce((size, file) => size += yield addSong(file), 0)
         console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024);
       case 10:
       case "end":
