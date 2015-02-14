@@ -97,21 +97,14 @@ function generateDoc(file) {
     var track = _tags$v1.track;
 
 
-    artist = artist || "Unknown Artist";
-    album = album || "Unknown Album";
-    title = title || file.size + " " + file.name;
-    year = year || 0;
-    genre = genre || "Unknown Genre";
-    track = track || 0;
-
     return {
       _id: [artist, album, title].join("-||-||-"),
-      artist: artist,
-      title: title,
-      album: album,
-      track: track,
-      genre: genre,
-      year: year
+      artist: artist || "Unknown Artist",
+      title: title || file.size + " " + file.name,
+      album: album || "Unknown Album",
+      track: track || 0,
+      genre: genre || "Unknown Genre",
+      year: year || 0
     };
   });
 }
