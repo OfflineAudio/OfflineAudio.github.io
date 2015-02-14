@@ -25,11 +25,11 @@ function update(library) {
 
 // Add songs to library
 function addSong(file) {
-  let artist = file.artist
-  let album = file.album
-  let title = file.title
-  let _id = file._id
-  let _rev = file._rev
+  const artist = file.artist
+  const album = file.album
+  const title = file.title
+  const _id = file._id
+  const _rev = file._rev
   if (artistExists(artist)) {
     if (albumExistsByArtist(artist, album)) {
       if (trackExistsInAlbum(artist, album, title)) {

@@ -5,7 +5,7 @@ PouchDB.debug.enable('*')
 const db = new PouchDB('offlineAudio-V1')
 
 function addSongs(files, cb) {
-  let w = new Worker('./js/utils/worker.js')
+  const w = new Worker('./js/utils/worker.js')
   w.addEventListener('message', function (ev) {
     cb(null, ev.data)
   })

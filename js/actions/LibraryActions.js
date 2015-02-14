@@ -4,9 +4,9 @@ const Library = require('../utils/Library')
 
 function createLibrary (docs) {
   return docs.reduce(function(library, b) {
-    let artist = library[b.artist] || (library[b.artist] = Object.create(null))
-    let album = artist[b.album] || (artist[b.album] = Object.create(null))
-    let track = album[b.title] || (album[b.title] = Object.create(null))
+    const artist = library[b.artist] || (library[b.artist] = Object.create(null))
+    const album = artist[b.album] || (artist[b.album] = Object.create(null))
+    const track = album[b.title] || (album[b.title] = Object.create(null))
     track['id'] = b._id
     track['rev'] = b._rev
     return library

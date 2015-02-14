@@ -2,7 +2,7 @@ const React = require('react');
 
 const Track = React.createClass({
   	render() {
-  		let {trackNumber, duration, title, playing, favourite} = this.props
+  		const {trackNumber, duration, title, playing, favourite} = this.props
 
     	return (
         <li>

@@ -4,10 +4,10 @@ const Album = require('./Album.react')
 
 const Artist = React.createClass({
 	render() {
-		let name = this.props.name
-    let showOnlyArtists = this.props.showOnlyArtists
-    let albums = this.props.albums
-    let albumNames = Object.keys(albums)
+		const name = this.props.name
+    const showOnlyArtists = this.props.showOnlyArtists
+    const albums = this.props.albums
+    const albumNames = Object.keys(albums)
     let Albums
 
     if (!showOnlyArtists) {

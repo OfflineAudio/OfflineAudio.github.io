@@ -8,11 +8,11 @@ const ListItemWrapper = React.createClass({
 
 const TrackList = React.createClass({
   	render() {
-  		var tracks = this.props.tracks
-  		var trackNames = Object.keys(tracks);
-  		var Tracks = trackNames.map(function(track) {
-			return <ListItemWrapper key={track} text={track} />
-		});
+  		const tracks = this.props.tracks
+  		const trackNames = Object.keys(tracks);
+  		const Tracks = trackNames.map(function(track) {
+  			return <ListItemWrapper key={track} text={track} />
+  		});
     	return (
       		<ul>
       			{Tracks}

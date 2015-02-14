@@ -10,7 +10,7 @@ const FileUploader = React.createClass({
   	registerType(NativeDragItemTypes.FILE, {
   		dropTarget: {
     		acceptDrop(item) {
-          let audioFiles = item.files.filter((file) => file.type.startsWith("audio/"))
+          const audioFiles = item.files.filter((file) => file.type.startsWith("audio/"))
           if (audioFiles.length) {
     			  FileUploadActions.uploadFiles(audioFiles)
           }

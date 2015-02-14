@@ -83,24 +83,17 @@ function addSong(file) {
 
 function generateDoc(file) {
   return readTags(file).then(function(tags) {
-    let {artist, album, title, year} = tags
-    let {genre, track} = tags.v1
-
-    artist = artist || "Unknown Artist"
-    album = album || "Unknown Album"
-    title = title || file.size + ' ' + file.name
-    year = year || 0
-    genre = genre || "Unknown Genre"
-    track = track || 0
+    const {artist, album, title, year} = tags
+    const {genre, track} = tags.v1
 
     return {
       "_id": [artist, album, title].join('-||-||-'),
-      "artist": artist,
-      "title": title,
-      "album": album,
-      "track": track,
-      "genre": genre,
-      "year": year
+      "artist": artist || "Unknown Artist",
+      "title": title || file.size + ' ' + file.name,
+      "album": album || "Unknown Album",
+      "track": track || 0,
+      "genre": genre || "Unknown Genre",
+      "year": year || 0
     }
   })
 }

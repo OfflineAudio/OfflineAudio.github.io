@@ -36,9 +36,9 @@ const MusicPlayer = React.createClass({
 
   // Render our child components, passing state via props
   render: function() {
-    let library = LibraryStore.getLibrary()
-    let artists = LibraryStore.getArtists()
-    let albums = LibraryStore.getAlbums()
+    const library = LibraryStore.getLibrary()
+    const artists = LibraryStore.getArtists()
+    const albums = LibraryStore.getAlbums()
 
     return (
       <div className="flux-musicplayer-app">
