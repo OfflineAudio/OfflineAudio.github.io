@@ -1,51 +1,59 @@
-var React = require('react');
-var LibraryStore = require('../stores/LibraryStore');
-var FileUploader = require('./FileUploader.react');
-var Library = require('./Library.react');
-var LibraryActions = require('../actions/LibraryActions');
+const React = require('react')
+const LibraryStore = require('../stores/LibraryStore')
+const FileUploader = require('./FileUploader.react')
+const Library = require('./Library.react')
+const LibraryActions = require('../actions/LibraryActions')
 
 // Method to retrieve state from Stores
 function getState() {
   return {
-    artists: LibraryStore.getArtists(),
-    library: LibraryStore.getLibrary()
-  };
+    showOnlyArtists: false
+  }
 }
 
 // Define main Controller View
-var MusicPlayer = React.createClass({
+const MusicPlayer = React.createClass({
 
   // Get initial state from stores
   getInitialState: function() {
-    return getState();
+    return getState()
+  },
+
+  handleClick: function() {
+    this.setState({showOnlyArtists: true})
   },
 
   // Add change listeners to stores
   componentDidMount: function() {
-    LibraryStore.addChangeListener(this._onChange);
-    LibraryActions.update();
+    LibraryStore.addChangeListener(this._onChange)
+    LibraryActions.update()
   },
 
   // Remove change listers from stores
   componentWillUnmount: function() {
-    LibraryStore.removeChangeListener(this._onChange);
+    LibraryStore.removeChangeListener(this._onChange)
   },
 
   // Render our child components, passing state via props
   render: function() {
+    const library = LibraryStore.getLibrary()
+    const artists = LibraryStore.getArtists()
+    const albums = LibraryStore.getAlbums()
+
     return (
       <div className="flux-musicplayer-app">
+        <button onClick={this.handleClick}>Show only artists</button>
         <FileUploader />
-        <Library library={this.state.library} />
+        <Library library={library} artists={artists} showOnlyArtists = {this.state.showOnlyArtists} />
       </div>
-    );
+    )
   },
 
   // Method to setState based upon Store changes
   _onChange: function() {
-    this.setState(getState());
+    this.setState(getState())
   }
 
-});
+})
 
-module.exports = MusicPlayer;
+module.exports = MusicPlayer

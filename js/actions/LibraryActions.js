@@ -1,33 +1,46 @@
-var AppDispatcher = require('../dispatcher/AppDispatcher');
-var LibraryConstants = require('../constants/LibraryConstants');
-var Library = require('../utils/Library');
+const AppDispatcher = require('../dispatcher/AppDispatcher')
+const LibraryConstants = require('../constants/LibraryConstants')
+const Library = require('../utils/Library')
 
-var LibraryActions = {
-	update: function() {
-		Library.read().then(function(data) {
-			// debugger;
-			data = data.rows.map(function(row) {
-			  return row.doc
-			}).reduce(function(library, b) {
-			  var artist = library[b.artist] || (library[b.artist] = Object.create(null));
-			  var album = artist[b.album] || (artist[b.album] = Object.create(null));
-			  var track = album[b.title] || (album[b.title] = Object.create(null));
-			  track["id"] = b._id;
-			  track["rev"] = b._rev;
-			  return library;
-			}, Object.create(null))
-			AppDispatcher.handleAction({
-				actionType: LibraryConstants.LIBRARY_UPDATE_SUCCESS,
-				data: data
-			});
-		}).catch(function(err) {
-			debugger;
-		});
-		AppDispatcher.handleAction({
-			actionType: LibraryConstants.LIBRARY_UPDATE,
-			data: null
-		});
-	}
-};
+function createLibrary (docs) {
+  return docs.reduce(function(library, b) {
+    const artist = library[b.artist] || (library[b.artist] = Object.create(null))
+    const album = artist[b.album] || (artist[b.album] = Object.create(null))
+    const track = album[b.title] || (album[b.title] = Object.create(null))
+    track['id'] = b._id
+    track['rev'] = b._rev
+    return library
+  }, Object.create(null))
+}
 
-module.exports = LibraryActions;
+function pluckDocs (data) {
+  return data.rows.map(row => row.doc)
+}
+
+function dispatchSuccessUpdate(library) {
+  AppDispatcher.handleAction({
+    actionType: LibraryConstants.LIBRARY_UPDATE_SUCCESS,
+    data: library
+  })
+}
+
+function dispatchErrorUpdate(err) {
+  console.error(err)
+}
+
+const LibraryActions = {
+  update: function() {
+    Library.read()
+    .then(pluckDocs)
+    .then(createLibrary)
+    .then(dispatchSuccessUpdate)
+    .catch(dispatchErrorUpdate)
+
+    AppDispatcher.handleAction({
+      actionType: LibraryConstants.LIBRARY_UPDATE,
+      data: null
+    })
+  }
+}
+
+module.exports = LibraryActions

@@ -1,22 +1,28 @@
-var React = require('react');
-var FileUploadActions = require('../actions/FileUploadActions');
-var Album = require('./Album.react');
+const React = require('react')
+const FileUploadActions = require('../actions/FileUploadActions')
+const Album = require('./Album.react')
 
-var Artist = React.createClass({
-  	render() {
-  		var albums = this.props.albums
-  		var albumNames = Object.keys(albums);
-  		var Albums = albumNames.map(function(album) {
-			return <Album name={album} tracks={albums[album]} />
-		});
-		var name = this.props.name;
-    	return (
-      		<ul>
-      			<li>{name}</li>
-      			{Albums}
-      		</ul>
-    	);
-  	}
-});
+const Artist = React.createClass({
+	render() {
+		const name = this.props.name
+    const showOnlyArtists = this.props.showOnlyArtists
+    const albums = this.props.albums
+    const albumNames = Object.keys(albums)
+    let Albums
 
-module.exports = Artist;
+    if (!showOnlyArtists) {
+      Albums = albumNames.map(function(album) {
+        return <Album name={album} tracks={albums[album]} />
+      })
+    }
+
+  	return (
+  		<ul>
+  			<li>{name}</li>
+  			{Albums}
+  		</ul>
+  	)
+	}
+})
+
+module.exports = Artist

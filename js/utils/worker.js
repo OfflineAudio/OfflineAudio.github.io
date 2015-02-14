@@ -1,0 +1,161 @@
+"use strict";
+
+var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
+
+importScripts("../../pouchdb.js");
+importScripts("../../bluebird.js");
+importScripts("../../id3js.js");
+importScripts("../../blob-util.js");
+importScripts("../../runtime.js");
+// PouchDB.debug.enable('*')
+
+var db = new PouchDB("offlineAudio-V1");
+var readTags = Promise.promisify(id3js);
+
+function async(makeGenerator) {
+  return function () {
+    var generator = makeGenerator.apply(this, arguments);
+
+    function handle(result) {
+      // { done: [Boolean], value: [Object] }
+      if (result.done) return result.value;
+
+      return result.value.then(function (res) {
+        return handle(generator.next(res));
+      }, function (err) {
+        return handle(generator["throw"](err));
+      });
+    }
+
+    return handle(generator.next());
+  };
+}
+
+function readFile(file) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = (function (file) {
+      return function (e) {
+        console.debug("File read into memory", Date(Date.now()));
+        resolve(e.target.result);
+      };
+    })(file);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function addBlobAsAttachment(doc, blob, name, type) {
+  doc._attachments = _defineProperty({}, name, {
+    data: blob,
+    content_type: type
+  });
+  return doc;
+}
+
+function addSong(file) {
+  return new Promise(function (resolve, reject) {
+    songExists(file).then(function (exists) {
+      if (exists) {
+        resolve();
+      } else {
+        (function () {
+          var name = file.name;
+          var type = file.type;
+          var doc = generateDoc(file);
+          var blob = readFile(file).then(function (arrayBuffer) {
+            return blobUtil.arrayBufferToBlob(arrayBuffer, type);
+          });
+
+          Promise.join(doc, blob, name, type, addBlobAsAttachment).then(function (doc) {
+            console.debug("Executing db.post", Date(Date.now()));
+            return db.post(doc);
+          }).then(function (doc) {
+            console.debug("Executed db.post", Date(Date.now()));
+            console.debug("Executing db.get", Date(Date.now()));
+            return db.get(doc.id);
+          }).then(function (song) {
+            console.debug("Executed db.get", Date(Date.now()));
+            self.postMessage([song]);
+            return resolve(file.size);
+          })["catch"](function (err) {
+            return console.error(err);
+          });
+        })();
+      }
+    });
+  });
+}
+
+function generateDoc(file) {
+  return readTags(file).then(function (tags) {
+    var artist = tags.artist;
+    var album = tags.album;
+    var title = tags.title;
+    var year = tags.year;
+    var _tags$v1 = tags.v1;
+    var genre = _tags$v1.genre;
+    var track = _tags$v1.track;
+
+
+    return {
+      _id: [artist, album, title].join("-||-||-"),
+      artist: artist || "Unknown Artist",
+      title: title || file.size + " " + file.name,
+      album: album || "Unknown Album",
+      track: track || 0,
+      genre: genre || "Unknown Genre",
+      year: year || 0
+    };
+  });
+}
+
+function songExists(file) {
+  return generateDoc(file).then(function (doc) {
+    return db.get(doc._id);
+  }).then(function (data) {
+    return true;
+  })["catch"](function (err) {
+    if (err.status === 404) {
+      return false;
+    } else {
+      throw err;
+    }
+  });
+}
+
+var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(files) {
+  var overallSize, _iterator, _step, file;
+  return regeneratorRuntime.wrap(function chunkFiles$(context$1$0) {
+    while (1) switch (context$1$0.prev = context$1$0.next) {
+      case 0:
+        overallSize = 0;
+        _iterator = files[Symbol.iterator]();
+      case 2:
+        if ((_step = _iterator.next()).done) {
+          context$1$0.next = 9;
+          break;
+        }
+        file = _step.value;
+        context$1$0.next = 6;
+        return addSong(file);
+      case 6:
+        overallSize += context$1$0.sent;
+      case 7:
+        context$1$0.next = 2;
+        break;
+      case 9:
+
+
+        // const overallSize = files.reduce((size, file) => size += yield addSong(file), 0)
+        console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024);
+      case 10:
+      case "end":
+        return context$1$0.stop();
+    }
+  }, chunkFiles, this);
+}));
+
+self.addEventListener("message", function (event) {
+  var files = event.data;
+  importFiles(files);
+});

@@ -1,31 +1,28 @@
-var AppDispatcher = require('../dispatcher/AppDispatcher');
-var FileUploaderConstants = require('../constants/FileUploaderConstants');
-var Library = require('../utils/Library');
+const AppDispatcher = require('../dispatcher/AppDispatcher')
+const FileUploaderConstants = require('../constants/FileUploaderConstants')
+const Library = require('../utils/Library')
 
 // Define actions object
-var FileUploadActions = {
+const FileUploadActions = {
+  // Receive initial product data
+  uploadFiles: function(data) {
+    Library.addSongs(data, function(err, data) {
+      if (err) {
+        AppDispatcher.handleAction({
+          actionType: FileUploaderConstants.FILE_ADD_FAIL,
+          data: data // err?
+        })
+      } else {
+        data.forEach(function(data) {
+          console.log(data)
+          AppDispatcher.handleAction({
+            actionType: FileUploaderConstants.FILE_ADD_SUCCESS,
+            data: data
+          })
+        })
+      }
+    })
+  }
+}
 
-	// Receive initial product data
-	uploadFiles: function(data) {
-		debugger;
-		Library.addSong(data).then(function(data) {
-			// debugger;
-			AppDispatcher.handleAction({
-				actionType: FileUploaderConstants.FILE_ADD_SUCCESS,
-				data: data
-			});
-		}).catch(function(err) {
-			debugger;
-			AppDispatcher.handleAction({
-				actionType: FileUploaderConstants.FILE_ADD_FAIL,
-				data: data
-			});
-		});
-		AppDispatcher.handleAction({
-			actionType: FileUploaderConstants.FILE_ADD,
-			data: data
-		});
-	}
-};
-
-module.exports = FileUploadActions;
+module.exports = FileUploadActions
