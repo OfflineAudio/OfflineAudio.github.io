@@ -1,8 +1,8 @@
-importScripts('../../pouchdb.js')
-importScripts('../../bluebird.js')
-importScripts('../../id3js.js')
-importScripts('../../blob-util.js')
-importScripts("../../runtime.js")
+importScripts('../../pouchdb.min.js')
+importScripts('../../bluebird.min.js')
+importScripts('../../id3js.min.js')
+importScripts('../../blob-util.min.js')
+importScripts("../../runtime.min.js")
 // PouchDB.debug.enable('*')
 
 const db = new PouchDB('offlineAudio-V1')
