@@ -1,0 +1,11 @@
+/*------------------------------------*\
+    $ADD-PLAYLIST
+\*------------------------------------*/
+.add-playlist {
+    float: right;
+    color: $secondary-text-color;
+
+    &:hover {
+        color: $base-link-color;
+    }
+}

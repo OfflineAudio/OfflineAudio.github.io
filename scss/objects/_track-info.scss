@@ -1,0 +1,42 @@
+/*------------------------------------*\
+    $TRACK-INFO
+\*------------------------------------*/
+.track-info {
+    display: inline-block;
+    height: $tracklist-item-thickness;
+    line-height: $tracklist-item-thickness;
+}
+
+    .track-info--number {
+        width: $tracklist-item-thickness;
+        text-align: center;
+    }
+
+    .track-info--current-track {
+        width: $base-spacing-unit;
+        vertical-align: middle;
+        font-size: 160%;
+        color: transparent;
+        text-align: left;
+    }
+
+        .track-info--current-track--active {
+            color: $tracklist-curent-item-color;
+        }
+
+    .track-info--title {
+        color: $secondary-text-color;
+    }
+
+    .track-info--total-time {
+        margin-left: $base-spacing-unit;
+        color: $secondary-text-color;
+        font-size: 85%;
+    }
+
+    .track-info--block {
+        display: block;
+        height: auto;
+        margin: 0;
+        line-height: $line-height-ratio;
+    }

@@ -5,10 +5,7 @@ const TrackList = require('./TrackList.react')
 const Album = React.createClass({
   render() {
     return (
-      <ul>
-        <li>{this.props.name}</li>
-        <TrackList tracks={this.props.tracks} />
-      </ul>
+      <TrackList tracks={this.props.tracks} />
     )
   }
 })

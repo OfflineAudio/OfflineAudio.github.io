@@ -1,0 +1,28 @@
+/*------------------------------------*\
+    $BUTTONS
+\*------------------------------------*/
+.btn {
+    display: inline-block;
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    @include vendor(transition, $base-transition $base-transition-time);
+    vertical-align: bottom;
+}
+
+
+    .btn--dark {
+        background-color: $base-button-background-color;
+
+        &:hover {
+            background-color: $active-button-background-color;
+        }
+    }
+
+    .btn--light {
+        background-color: $secondary-button-background-color;
+
+        &:hover {
+            background-color: $active-button-background-color;
+        }
+    }

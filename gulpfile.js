@@ -6,7 +6,7 @@ var source = require('vinyl-source-stream')
 var _ = require('lodash')
 var browserSync = require('browser-sync')
 var reload = browserSync.reload
-var to5ify = require('6to5ify')
+var babelify = require("babelify")
 
 var config = {
   entryFile: './js/app.js',
@@ -29,7 +29,7 @@ function getBundler () {
 
 function bundle () {
   return getBundler()
-    .transform(to5ify)
+    .transform(babelify)
     .bundle()
     .on('error', function (err) { console.log('Error: ' + err.message) })
     .pipe(source(config.outputFile))

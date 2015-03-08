@@ -2,34 +2,16 @@
 
 var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
 
-importScripts("../../pouchdb.js");
-importScripts("../../bluebird.js");
-importScripts("../../id3js.js");
-importScripts("../../blob-util.js");
-importScripts("../../runtime.js");
+importScripts("../../pouchdb.min.js");
+importScripts("../../bluebird.min.js");
+importScripts("../../id3js.min.js");
+importScripts("../../blob-util.min.js");
+importScripts("../../runtime.min.js");
+importScripts("../../array-from.js");
 // PouchDB.debug.enable('*')
 
-var db = new PouchDB("offlineAudio-V1");
+var db = new PouchDB("offlineAudio-V4");
 var readTags = Promise.promisify(id3js);
-
-function async(makeGenerator) {
-  return function () {
-    var generator = makeGenerator.apply(this, arguments);
-
-    function handle(result) {
-      // { done: [Boolean], value: [Object] }
-      if (result.done) return result.value;
-
-      return result.value.then(function (res) {
-        return handle(generator.next(res));
-      }, function (err) {
-        return handle(generator["throw"](err));
-      });
-    }
-
-    return handle(generator.next());
-  };
-}
 
 function readFile(file) {
   return new Promise(function (resolve, reject) {
@@ -75,7 +57,7 @@ function addSong(file) {
             return db.get(doc.id);
           }).then(function (song) {
             console.debug("Executed db.get", Date(Date.now()));
-            self.postMessage([song]);
+            self.postMessage(song);
             return resolve(file.size);
           })["catch"](function (err) {
             return console.error(err);
@@ -88,14 +70,17 @@ function addSong(file) {
 
 function generateDoc(file) {
   return readTags(file).then(function (tags) {
-    var artist = tags.artist;
     var album = tags.album;
     var title = tags.title;
     var year = tags.year;
     var _tags$v1 = tags.v1;
     var genre = _tags$v1.genre;
     var track = _tags$v1.track;
+    var artist = tags.artist;
 
+    artist = Array.from(artist).filter(function (c) {
+      return c !== "\u0000";
+    }).join("");
 
     return {
       _id: [artist, album, title].join("-||-||-"),
@@ -104,7 +89,9 @@ function generateDoc(file) {
       album: album || "Unknown Album",
       track: track || 0,
       genre: genre || "Unknown Genre",
-      year: year || 0
+      year: year || 0,
+      favourite: false,
+      duration: 0 // Need to find a way to grab duration from file
     };
   });
 }
@@ -123,39 +110,157 @@ function songExists(file) {
   });
 }
 
+function read() {
+  return db.allDocs({ include_docs: true }).then(function (docs) {
+    return self.postMessage(docs);
+  });
+}
+
+function getTracksByArtist(artist) {
+  return db.allDocs().then(function (response) {
+    return response.rows.filter(function (doc) {
+      return doc.id.split("-||-||-")[0] === artist;
+    });
+  }).then(function (tracks) {
+    return self.postMessage(tracks);
+  });
+}
+
+function getArtists() {
+  return db.allDocs().then(function (response) {
+    console.log(response.rows.reduce(function (artists, doc) {
+      var artist = doc.id.split("-||-||-")[0];
+      artists.add(artist);
+      return artists;
+    }, new Set()));
+  });
+}
+
+function getAlbums() {
+  return db.allDocs().then(function (response) {
+    console.log(response.rows.reduce(function (artists, doc) {
+      var artist = doc.id.split("-||-||-")[1];
+      artists.add(artist);
+      return artists;
+    }, new Set()));
+  });
+}
+
+function getTracks() {
+  return db.allDocs().then(function (response) {
+    console.log(response.rows.reduce(function (artists, doc) {
+      var artist = doc.id.split("-||-||-")[2];
+      artists.add(artist);
+      return artists;
+    }, new Set()));
+  });
+}
+
+function getAttachment(id, attachment) {
+  return db.getAttachment(id, attachment).then(function (attachment) {
+    return self.postMessage(attachment);
+  });
+}
+
 var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(files) {
-  var overallSize, _iterator, _step, file;
+  var overallSize, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, file;
+
   return regeneratorRuntime.wrap(function chunkFiles$(context$1$0) {
     while (1) switch (context$1$0.prev = context$1$0.next) {
       case 0:
         overallSize = 0;
+        _iteratorNormalCompletion = true;
+        _didIteratorError = false;
+        _iteratorError = undefined;
+        context$1$0.prev = 4;
         _iterator = files[Symbol.iterator]();
-      case 2:
-        if ((_step = _iterator.next()).done) {
-          context$1$0.next = 9;
+
+      case 6:
+        if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+          context$1$0.next = 14;
           break;
         }
+
         file = _step.value;
-        context$1$0.next = 6;
+        context$1$0.next = 10;
         return addSong(file);
-      case 6:
-        overallSize += context$1$0.sent;
-      case 7:
-        context$1$0.next = 2;
-        break;
-      case 9:
 
-
-        // const overallSize = files.reduce((size, file) => size += yield addSong(file), 0)
-        console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024);
       case 10:
+        overallSize += context$1$0.sent;
+
+      case 11:
+        _iteratorNormalCompletion = true;
+        context$1$0.next = 6;
+        break;
+
+      case 14:
+        context$1$0.next = 20;
+        break;
+
+      case 16:
+        context$1$0.prev = 16;
+        context$1$0.t0 = context$1$0["catch"](4);
+        _didIteratorError = true;
+        _iteratorError = context$1$0.t0;
+
+      case 20:
+        context$1$0.prev = 20;
+        context$1$0.prev = 21;
+
+        if (!_iteratorNormalCompletion && _iterator["return"]) {
+          _iterator["return"]();
+        }
+
+      case 23:
+        context$1$0.prev = 23;
+
+        if (!_didIteratorError) {
+          context$1$0.next = 26;
+          break;
+        }
+
+        throw _iteratorError;
+
+      case 26:
+        return context$1$0.finish(23);
+
+      case 27:
+        return context$1$0.finish(20);
+
+      case 28:
+        console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024);
+
+      case 29:
       case "end":
         return context$1$0.stop();
     }
-  }, chunkFiles, this);
+  }, chunkFiles, this, [[4, 16, 20, 28], [21,, 23, 27]]);
 }));
 
 self.addEventListener("message", function (event) {
-  var files = event.data;
-  importFiles(files);
+
+  var data = event.data;
+  switch (data.cmd) {
+    case "addSongs":
+      importFiles(data.data);
+      break;
+    case "read":
+      read();
+      break;
+    case "getArtists":
+      getArtists();
+      break;
+    case "getAlbums":
+      getAlbums();
+      break;
+    case "getTracks":
+      getTracks();
+      break;
+    case "getTracksByArtist":
+      getTracksByArtist(data.data);
+      break;
+    case "getAttachment":
+      getAttachment(data.data.id, data.data.attachment);
+      break;
+  }
 });

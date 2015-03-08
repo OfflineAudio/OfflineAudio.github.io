@@ -9,6 +9,13 @@ function createLibrary (docs) {
     const track = album[b.title] || (album[b.title] = Object.create(null))
     track['id'] = b._id
     track['rev'] = b._rev
+    track['album'] = b.album
+    track['artist'] = b.artist
+    track['genre'] = b.genre
+    track['title'] = b.title
+    track['number'] = b.track
+    track['year'] = b.year
+    track['_attachments'] = b._attachments
     return library
   }, Object.create(null))
 }

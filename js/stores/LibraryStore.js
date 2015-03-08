@@ -40,23 +40,44 @@ function addSong(file) {
         // }
       } else {
         _library[artist][album][title] = {
-          id: _id,
-          rev: _rev
+          id: file._id,
+          rev: file._rev,
+          album: file.album,
+          artist: file.artist,
+          genre: file.genre,
+          title: file.title,
+          number: file.track,
+          year: file.year,
+          _attachments: file._attachments
         }
       }
     } else {
       _library[artist][album] = {}
       _library[artist][album][title] = {
-        id: _id,
-        rev: _rev
+        id: file._id,
+        rev: file._rev,
+        album: file.album,
+        artist: file.artist,
+        genre: file.genre,
+        title: file.title,
+        number: file.track,
+        year: file.year,
+        _attachments: file._attachments
       }
     }
   } else {
     _library[artist] = {}
     _library[artist][album]= {}
     _library[artist][album][title] = {
-      id: _id,
-      rev: _rev
+      id: file._id,
+      rev: file._rev,
+      album: file.album,
+      artist: file.artist,
+      genre: file.genre,
+      title: file.title,
+      number: file.track,
+      year: file.year,
+      _attachments: file._attachments
     }
   }
 }
@@ -67,8 +88,28 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
     return Object.keys(_library)
   },
 
+  getTracks: function(){
+    let tracks = []
+    for (let artist of _library) {
+      for (let album of artist) {
+        for (let track of album) {
+          tracks.push(track)
+        }
+      }
+    }
+  },
+
+  getTracksOfAlbums: function(album) {
+    return _.map(album, function(doc,trackName){
+      return {[trackName]: doc}
+    })
+  },
+
+  getTracksByArtist: function(artist) {
+    return _.flatten(_.map(this.getAlbumsByArtist(artist, true), this.getTracksOfAlbums))
+  },
+
   getAlbums: function() {
-    debugger
     return _.flatten(this.getAllAlbumsSortedByArtist())
   },
 
@@ -77,13 +118,17 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
   },
 
   // Return cart cost total
-  getAlbumsByArtist: function(artist) {
-    return Object.keys(_library[artist])
+  getAlbumsByArtist: function(artist, include_tracks) {
+    if (include_tracks) {
+      return _library[artist]
+    } else {
+      return Object.keys(_library[artist])
+    }
   },
 
   getAlbumByArtist: function(artist, album) {
-    if (this.albumExistsByArtist(artist, album)) {
-      _library[artist][album]
+    if (albumExistsByArtist(artist, album)) {
+      return _library[artist][album]
     } else {
       console.warn("What do?!")
     }

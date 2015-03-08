@@ -1,0 +1,12 @@
+/*------------------------------------*\
+    $LINKS
+\*------------------------------------*/
+a {
+    color: $base-link-color;
+    text-decoration: none;
+    @include vendor(transition, $base-transition $base-transition-time);
+
+    &:hover {
+        color: $secondary-link-color;
+    }
+}

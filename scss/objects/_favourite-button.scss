@@ -1,0 +1,28 @@
+/*------------------------------------*\
+    $FAVOURITE-BUTTON
+\*------------------------------------*/
+/**
+ * 1. Hiding check box from user
+ */
+.favourite-button__checkbox {
+    display: none; /* [1] */
+}
+
+/**
+ * 1. Removing default margin on labels.
+ */
+.favourite-button__icon {
+    margin: 0; /* [1] */
+    cursor: pointer;
+}
+
+    /* Not checked */
+    .favourite-button__checkbox:not(:checked) + .favourite-button__icon:before {
+        content: '\e812';
+    }
+
+    /* Checked */
+    .favourite-button__checkbox:checked + .favourite-button__icon:after {
+        content: '\e811';
+        color: $base-link-color;
+    }

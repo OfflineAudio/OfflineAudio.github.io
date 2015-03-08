@@ -1,0 +1,45 @@
+/*------------------------------------*\
+    $FILTERS
+\*------------------------------------*/
+.filter {
+    display: block;
+    margin-top: $gutter;
+    @include font-size($milli-size);
+}
+
+
+    .filter__item {
+        display: block;
+    }
+
+        .filter__item__button {
+            display: block;
+
+            &:hover {
+                color: $secondary-link-color;
+            }
+        }
+
+        /**
+         * 1. Adds horizontal gaps between side borders.
+         * 2. Adds vertical gaps between heading and bottom border.
+         */
+        .filter__item--heading {
+            margin: 0 $gutter $half-spacing-unit; /* [1] */
+            padding: $half-spacing-unit 0; /* [2] */
+            color: $secondary-text-color;
+            border-bottom: $side-menu-border-thickness solid;
+            border-color: $side-menu-border-color;
+        }
+
+        .filter__item--button {
+            width: 100%;
+            padding: $half-spacing-unit $gutter;
+            color: $base-text-color;
+            text-align: left;
+        }
+
+        .filter__item--active {
+            background-color: $side-menu-active-background-color;
+            color: $secondary-text-color;
+        }

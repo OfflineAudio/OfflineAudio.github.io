@@ -25,16 +25,8 @@ const FileUploader = React.createClass({
   	var fileDropState = this.getDropState(NativeDragItemTypes.FILE)
 
   	return (
-  		<div {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
-    		{fileDropState.isDragging && !fileDropState.isHovering &&
-    			<p>Drag file here</p>
-    		}
-    		{!fileDropState.isHovering && !fileDropState.isDragging &&
-    			<p>Default</p>
-    		}
-    		{fileDropState.isHovering &&
-    			<p>Release to upload a file</p>
-    		}
+  		<div className="upload-field icon--upload"
+      {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
   		</div>
   	)
 	}

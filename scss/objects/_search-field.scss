@@ -1,0 +1,14 @@
+/*------------------------------------*\
+    $SEARCH-FIELD
+\*------------------------------------*/
+.search-field {
+    display: block;
+    width: $side-menu-width - ($gutter * 2);
+    margin: 0 $gutter;
+    padding: $half-spacing-unit;
+    background-color: $search-field-background-color;
+    color: $search-field-text-color;
+    border: 0;
+    font-size: 80%;
+    @include vendor(border-radius, $base-radius);
+}

@@ -1,0 +1,58 @@
+/*------------------------------------*\
+    $GRIDS
+\*------------------------------------*/
+/**
+ * Fluid and nestable grid system, e.g.:
+ *
+   <div class="grid">
+       <div class="grid__item  one-third">
+           <p>One third grid</p>
+       </div>
+       <div class="grid__item  two-thirds">
+           <p>Two thirds grid</p>
+       </div>
+       <div class="grid__item  one-half">
+           <p>One half grid</p>
+       </div>
+       <div class="grid__item  one-quarter">
+           <p>One quarter grid</p>
+       </div>
+       <div class="grid__item  one-quarter">
+           <p>One quarter grid</p>
+       </div>
+   </div>
+ *
+ */
+
+
+/**
+ * Grid wrapper.
+ *
+ * 1. Allow the grid system to be used on lists.
+ * 2. Remove any margins and paddings that might affect the grid system.
+ * 3. Apply a negative `margin-left` to negate the columns’ gutters.
+ */
+.grid {
+    position: relative;
+    list-style: none;                /* [1] */
+    margin: 0;                       /* [2] */
+    padding: 0;                      /* [2] */
+    margin-left: -$gutter;           /* [3] */
+}
+
+
+    /**
+     * 1. Cause columns to stack side-by-side.
+     * 2. Space columns apart.
+     * 3. Align columns to the tops of each other.
+     * 4. Full-width unless told to behave otherwise.
+     */
+    .grid__item {
+        position: relative;
+        display: inline-block;           /* [1] */
+        padding-left: $gutter;           /* [2] */
+        vertical-align: top;             /* [3] */
+        @if $mobile-first {
+            width: 100%;                 /* [4] */
+        }
+    }

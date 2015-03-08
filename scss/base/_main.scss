@@ -1,0 +1,22 @@
+/*------------------------------------*\
+    $MAIN
+\*------------------------------------*/
+html {
+    font: #{($base-font-size/16px)*1em}/#{$line-height-ratio} $base-font-family;
+    height: 100%;
+    color: $base-text-color;
+    background-color: $base-background-color;
+    @if $global-border-box == true {
+        box-sizing: border-box; /* apply a natural box layout model to all elements, but allowing components to change */
+    }
+}
+
+body {
+    height: 100%;
+}
+
+@if $global-border-box == true {
+    *, *:before, *:after {
+        box-sizing: border-box !important;
+    }
+}

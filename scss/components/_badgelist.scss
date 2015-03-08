@@ -1,0 +1,13 @@
+/*------------------------------------*\
+    $BADGELIST
+\*------------------------------------*/
+.badgelist {
+    display: block;
+}
+
+    .badgelist__item {
+        float: left;
+        display: inline-block;
+        position: relative;
+        padding: $gutter;
+    }

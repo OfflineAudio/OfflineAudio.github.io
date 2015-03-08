@@ -17,10 +17,9 @@ const Artist = React.createClass({
     }
 
   	return (
-  		<ul>
-  			<li>{name}</li>
+  		<div>
   			{Albums}
-  		</ul>
+  		</div>
   	)
 	}
 })

@@ -1,0 +1,68 @@
+/*------------------------------------*\
+    $BADGE
+\*------------------------------------*/
+.badge {
+    display: block;
+    position: relative;
+}
+
+    .badge__artwork {
+        background-color: $badge-background-color;
+    }
+
+    /**
+     * 1. Moves icon 50% down.
+     * 2. Moves actual icon 25% back to the top to center it.
+     */
+    .badge__icon {
+        position: absolute;
+        top: 50%; /* [1] */
+        margin-top: -25%; /* [2] */
+        width: 100%;
+        font-size: 450%;
+        text-align: center;
+        color: $badge-text-color;
+    }
+
+
+    .badge__current-track {
+        position: absolute;
+        top: 0;
+        width: $tracklist-item-thickness;
+        line-height: $tracklist-item-thickness;
+        font-size: 160%;
+        text-align: center;
+        color: transparent;
+    }
+
+        .badge__current-track--active {
+            color: $tracklist-curent-item-color;
+        }
+
+    .badge__favourite {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: $tracklist-item-thickness;
+        line-height: $tracklist-item-thickness;
+        font-size: 160%;
+        text-align: center;
+    }
+
+    .badge__button {
+        color: $badge-text-color;
+
+        &:hover {
+            color: $base-link-color;
+        }
+    }
+
+    .badge__options {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+    .badge__track-info {
+        margin-top: $half-spacing-unit;
+    }

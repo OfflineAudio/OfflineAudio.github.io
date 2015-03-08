@@ -1,0 +1,13 @@
+/*------------------------------------*\
+    $PLAYER-BUTTON
+\*------------------------------------*/
+.player-button {
+    width: $play-button-dimensions;
+    height: $play-button-dimensions;
+    line-height: $play-button-dimensions;
+    margin: 0;
+}
+
+    .player-button--hidden {
+        display: none;
+    }

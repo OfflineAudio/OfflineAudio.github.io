@@ -13,12 +13,11 @@ const FileUploadActions = {
           data: data // err?
         })
       } else {
-        data.forEach(function(data) {
-          console.log(data)
-          AppDispatcher.handleAction({
-            actionType: FileUploaderConstants.FILE_ADD_SUCCESS,
-            data: data
-          })
+        debugger
+        //look at the data
+        AppDispatcher.handleAction({
+          actionType: FileUploaderConstants.FILE_ADD_SUCCESS,
+          data: data
         })
       }
     })

@@ -1,0 +1,16 @@
+/*------------------------------------*\
+    $PROGRESS
+\*------------------------------------*/
+/**
+ * 1. Moves progress bar to the left side of it's parent.
+ * 2. Moves progress bar to the bottom side of it's parent.
+ * 3. Should be specified with decimal point for better precision.
+ */
+.progress {
+    position: absolute;
+    left: 0; /* [1] */
+    bottom: 0; /* [2] */
+    height: $bar-thickness;
+    width: 50%; /* [3] */
+    background-color: $progress-background-color;
+}

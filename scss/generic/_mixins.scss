@@ -1,0 +1,131 @@
+/*------------------------------------*\
+    $MIXINS
+\*------------------------------------*/
+
+/**
+ * Create vendor-prefixed CSS in one go, e.g.
+ *
+   `@include vendor(border-radius, 4px);`
+ *
+ */
+@mixin vendor($property, $value) {
+    -webkit-#{$property}: $value;
+       -moz-#{$property}: $value;
+        -ms-#{$property}: $value;
+         -o-#{$property}: $value;
+            #{$property}: $value;
+}
+
+
+/**
+ * Create a fully formed type style (sizing and vertical rhythm) by passing in a
+ * single value, e.g.:
+ *
+   `@include font-size(10px);`
+ *
+ * Thanks to @redclov3r for the `line-height` Sass:
+ * twitter.com/redclov3r/status/250301539321798657
+ */
+@mixin font-size($font-size, $line-height:true) {
+    font-size: $font-size;
+    font-size: ($font-size / $base-font-size) * 1rem;
+    @if $line-height == true{
+        line-height: ceil($font-size / $base-line-height) * ($base-line-height / $font-size);
+    }
+}
+
+
+/**
+ * Style any number of headings in one fell swoop, e.g.:
+ *
+    @include headings(1, 3){
+        color: #BADA55;
+    }
+ *
+ * With thanks to @lar_zzz, @paranoida, @rowanmanning and ultimately
+ * @thierrylemoulec for refining and improving my initial mixin.
+ */
+@mixin headings($from: 1, $to: 6) {
+    %base-heading {
+        @content
+    }
+
+    @if $from >= 1 and $to <= 6 {
+        @for $i from $from through $to {
+            h#{$i} {
+                @extend %base-heading;
+            }
+        }
+    }
+}
+
+
+/**
+ * Cross browser opacity all the way down to Internet Explorer.
+ *
+    `@include opacity(0.8);`
+ *
+ * css-tricks.com/css-transparency-settings-for-all-broswers/
+ */
+@mixin opacity($opacity) {
+    zoom: 1;
+    filter: alpha(opacity=#{$opacity * 100});
+    opacity: $opacity;
+}
+
+
+/**
+ * Grid media query mixin.
+ *
+ * This mixin is used only for generating media queries for our grid breakpoints.
+ */
+@mixin grid-media-query($media-query) {
+    $breakpoint-found: false;
+
+    @each $breakpoint in $breakpoints {
+        $name: nth($breakpoint, 1);
+        $declaration: nth($breakpoint, 2);
+
+        @if $media-query == $name and $declaration {
+            $breakpoint-found: true;
+
+            @media only screen and #{$declaration} {
+                @content;
+            }
+        }
+    }
+
+    @if not $breakpoint-found {
+        @warn "Breakpoint ‘#{$media-query}’ does not exist";
+    }
+}
+
+
+/**
+ * Scrolling shadows mixin.
+ */
+@mixin scrolling-shadows($background-color: #ffffff, $shadow-intensity: 0.35, $shadow-color: #000000, $cover-size: 40px, $shadow-size: 20px) {
+
+    background:
+        // Shadow covers 
+        linear-gradient($background-color 30%, rgba($background-color,0)),
+        linear-gradient(rgba($background-color, 0), $background-color 70%) 0 100%,
+
+        // Shadows 
+        radial-gradient(50% 0, farthest-side, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)),
+        radial-gradient(50% 100%,farthest-side, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)) 0 100%;
+    background:
+        // Shadow covers 
+        linear-gradient($background-color 30%, rgba($background-color,0)),
+        linear-gradient(rgba($background-color,0), $background-color 70%) 0 100%,
+
+        // Shadows 
+        radial-gradient(farthest-side at 50% 0, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)),
+        radial-gradient(farthest-side at 50% 100%, rgba($shadow-color,$shadow-intensity), rgba($shadow-color,0)) 0 100%;
+    background-repeat: no-repeat;
+    background-color: $background-color;
+    background-size: 100% $cover-size, 100% $cover-size, 100% $shadow-size, 100% $shadow-size;
+
+    // Opera doesn't support this in the shorthand 
+    background-attachment: local, local, scroll, scroll;
+}

@@ -1,0 +1,15 @@
+/*------------------------------------*\
+    $SIDE-MENU
+\*------------------------------------*/
+.side-menu {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: $side-menu-width;
+    background: $side-menu-background-color;
+    border-right: $side-menu-border-thickness solid;
+    border-color: $side-menu-border-color;
+    padding: $gutter 0;
+    overflow-y: auto;
+}
