@@ -4,5 +4,6 @@ const keyMirror = require('react/lib/keyMirror')
 module.exports = keyMirror({
 	CURRENT_TIME: null,
 	DURATION: null,
-	PLAY_FILE: null
+	PLAY_FILE: null,
+	PLAYING: null
 })

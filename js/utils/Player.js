@@ -10,6 +10,18 @@ function playFile(blob, cb) {
   audio.addEventListener('timeupdate', cb, false)
 }
 
+function playCurrentFile(cb) {
+  audio.play()
+  audio.addEventListener('timeupdate', cb, false)
+}
+
+function pauseCurrentFile(cb) {
+  audio.pause()
+  audio.addEventListener('timeupdate', cb, false)
+}
+
 module.exports = {
-  playFile: playFile
+  playFile: playFile,
+  playCurrentFile: playCurrentFile,
+  pauseCurrentFile: pauseCurrentFile
 }

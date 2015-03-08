@@ -8,13 +8,9 @@ const Track = React.createClass({
   },
   handleClick(event) {
     if (event.target.nodeName !== "LABEL") {
-      debugger
       const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
       const file = this.props.file
       PlayerActions.playSong(id, file)
-      // grab attachment from this.props and pass it to the player component as a file or something, if efficient to do so
-      // var audio = new Audio('audio_file.mp3');
-      // audio.play();
     }
   },
 	render() {

@@ -21,7 +21,6 @@ const PlayerActions = {
           actionType: PlayerConstants.CURRENT_TIME,
           data: currentTime
         })
-
       })
 
       const [artist, album, title] = id.split('-||-||-')
@@ -34,6 +33,49 @@ const PlayerActions = {
         actionType: PlayerConstants.PLAY_FILE,
         data: data
       })
+
+      AppDispatcher.handleAction({
+          actionType: PlayerConstants.PLAYING,
+          data: true
+        })
+    })
+  },
+  playCurrentSong: function() {
+    Player.playCurrentFile(function(event) {
+        const duration = event.currentTarget.duration
+        AppDispatcher.handleAction({
+          actionType: PlayerConstants.DURATION,
+          data: duration
+        })
+
+        const currentTime = event.currentTarget.currentTime
+        AppDispatcher.handleAction({
+          actionType: PlayerConstants.CURRENT_TIME,
+          data: currentTime
+        })
+      })
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.PLAYING,
+      data: true
+    })
+  },
+  pauseCurrentSong: function() {
+    Player.pauseCurrentFile(function(event) {
+        const duration = event.currentTarget.duration
+        AppDispatcher.handleAction({
+          actionType: PlayerConstants.DURATION,
+          data: duration
+        })
+
+        const currentTime = event.currentTarget.currentTime
+        AppDispatcher.handleAction({
+          actionType: PlayerConstants.CURRENT_TIME,
+          data: currentTime
+        })
+      })
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.PLAYING,
+      data: false
     })
   }
 }
