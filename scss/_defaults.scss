@@ -1,0 +1,261 @@
+/*------------------------------------*\
+    $DEFAULTS
+\*------------------------------------*/
+/**
+* Control panel of all components, objects and abrastractions. To introduce 
+* objects and abstractions simply switch false to true and vice versa.
+*/
+
+
+
+
+
+/*------------------------------------*\
+    $BORDER-BOX
+\*------------------------------------*/
+/**
+ * Do you want all elements to adopt `box-sizing:border-box;` as per
+ * paulirish.com/2012/box-sizing-border-box-ftw ?
+ */
+$global-border-box: true !default;
+
+
+
+
+
+/*------------------------------------*\
+    $MOBILE-FIRST
+\*------------------------------------*/
+$mobile-first: true !default;
+
+
+
+
+
+/*------------------------------------*\
+    $COLOUR-PALETTE
+\*------------------------------------*/
+$base-color--a: #e9eaea !default; // light grey
+$base-color--b: #ffffff !default; // white
+$base-color--c: #8f9498 !default; // dark grey
+$base-color--d: #516269 !default; // dark blue
+$base-color--e: #f24a57 !default; // red
+$base-color--f: #d2dadd !default; // light blue
+
+
+
+
+
+/*------------------------------------*\
+    $BASE-SETTINGS
+\*------------------------------------*/
+$base-width: 1280px !default; // Wrapper's max width
+
+$base-radius: 4px !default;
+
+$base-transition: all ease-in-out;
+$base-transition-time: 0.2s;
+
+$base-font-family: 'Varela Round', sans-serif !default;
+$secondary-font-family: helvetica !default;
+
+$base-font-size: 16px !default;
+$base-line-height: 24px !default;
+
+$base-text-color: $base-color--c;
+$secondary-text-color: $base-color--d;
+
+$base-background-color: $base-color--f;
+$secondary-background-color: $base-color--b;
+
+$base-link-color: $base-color--e;
+$secondary-link-color: $base-color--d;
+
+$base-button-background-color: $base-color--d;
+$secondary-button-background-color: $base-color--e;
+$active-button-background-color: $base-color--f;
+
+/**
+ * Component dimensions
+ */
+$player-menu-button-dimensions: 50px;
+$play-button-dimensions: 85px;
+$side-menu-width: 300px;
+$side-menu-border-thickness: 2px;
+$bar-thickness: 6px;
+$volume-slider-width: 130px;
+$tracklist-item-thickness: 40px;
+$yell-icon-dimensions: 150px;
+ 
+
+/**
+ * Component colours
+ *
+ * Having colour vars for each component gives us more flexibility 
+ * and ease of control.
+ */
+$player-menu-background-color: $base-color--c;
+$player-menu-text-color: $base-color--b;
+$player-menu-controls-background-color: $base-color--d;
+
+
+
+
+
+$side-menu-background-color: $base-color--b;
+$side-menu-border-color: $base-color--a;
+$side-menu-active-background-color: $base-color--a;
+
+
+
+
+
+$player-contents-background-color: $base-color--b;
+
+
+
+
+
+$player-controls-background-color: $base-color--c;
+$player-controls-text-color: $base-color--b;
+
+
+
+
+
+$tracklist-item-background-color: $base-color--a;
+$tracklist-curent-item-color: $base-color--e;
+
+
+
+
+
+/**
+ * Object colours
+ */
+$search-field-background-color: $base-color--a;
+$search-field-text-color: $base-color--d;
+
+
+
+
+
+$upload-field-border-color: $base-color--a;
+
+
+
+
+$progress-background-color: $base-color--e;
+
+
+
+
+$volume-slider-background-color: $base-color--c;
+$volume-range-background-color: $base-color--e;
+
+
+
+
+
+$badge-background-color: $base-color--a;
+$badge-text-color: $base-color--b;
+
+
+
+
+
+$yell-text-color--primary: $base-color--d;
+$yell-text-color--secondary: $base-color--c;
+$yell-icon-background-color: $base-color--f;
+
+
+
+
+
+/*------------------------------------*\
+    $TYPOGRAPHY
+\*------------------------------------*/
+/**
+ * Font-sizes (in pixels). Refer to relevant sections for their implementations.
+ */
+$giga-size:         96px!default;
+$mega-size:         72px!default;
+$kilo-size:         48px!default;
+
+$h1-size:           36px!default; // .alpha
+$h2-size:           30px!default; // .beta
+$h3-size:           24px!default; // .gamma
+$h4-size:           21px!default; // .delta
+$h5-size:           16px!default; // .epsilon
+$h6-size:           14px!default; // .zeta
+
+$milli-size:        14px!default;
+$micro-size:        10px!default;
+
+
+
+
+
+/*------------------------------------*\
+    $FRAMEWORK
+\*------------------------------------*/
+/**
+ * SASS will work these next ones out for use within the framework.
+ *
+ * Assign our `$base-line-height` to a new spacing var for more transparency.
+ */
+$base-spacing-unit: $base-line-height;
+$half-spacing-unit: $base-spacing-unit / 2 !default;
+$line-height-ratio: $base-line-height / $base-font-size;
+
+
+
+
+
+/*------------------------------------*\
+    $BREAKPOINTS
+\*------------------------------------*/
+/**
+ * palm     --  palm-based devices, like phones and small tablets
+ * lap      --  lap-based devices, like iPads or laptops
+ * portable --  all of the above
+ * desk     --  stationary devices, like desktop computers
+ * regular  --  any/all types of device
+ *
+ * These namespaces are then used in the library to give you the ability to
+ * manipulate your layouts based around them, for example:
+ *
+   <div class="grid__item  one-whole  lap--one-half  desk--one-third">
+ */
+$breakpoints: (
+    'palm' '(max-width: 480px)',
+    'lap' '(min-width: 481px) and (max-width: 1024px)',
+    'portable' '(max-width: 1024px)',
+    'desk' '(min-width: 1025px)'
+) !default;
+
+
+/**
+ * Define which namespaced breakpoints you would like to generate for each of
+ * widths and push. This is handy if you only need pull on, say, desk, or
+ * you only need a new width breakpoint at mobile sizes. It allows you to only
+ * compile as much CSS as you need. `lap`+ are turned on by default, but you can
+ * add and remove breakpoints at will.
+ */
+$breakpoint-has-widths: ('palm', 'lap', 'portable', 'desk') !default;
+
+
+/**
+ * Would you like push classes enabled?
+ */
+$push:                  false !default;
+$breakpoint-has-push:   ('lap', 'portable', 'desk') !default;
+
+
+
+
+
+/*------------------------------------*\
+    $GRID
+\*------------------------------------*/
+$gutter: 30px !default;

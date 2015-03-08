@@ -1,0 +1,40 @@
+/*------------------------------------*\
+    $VOLUME
+\*------------------------------------*/
+/**
+ * 1. Relative position required to keep slider and range within
+ * wrapper's area.
+ */
+.volume-slider-wrapper {
+    display: inline-block;
+    position: relative; /* [1] */
+    margin: 0 $half-spacing-unit;
+    width: $volume-slider-width;
+    height: $player-menu-button-dimensions;
+    vertical-align: top;
+}
+
+/**
+ * 1. Calculating middle position.
+ */
+.volume-slider {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: $player-menu-button-dimensions / 2 - $bar-thickness / 2; /* [1] */
+    height: $bar-thickness;
+    background-color: $volume-slider-background-color;
+}
+
+    /**
+     * 1. Should be specified with decimal point for better precision.
+     */
+    .volume-slider__range {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: $bar-thickness;
+        width: 10%; /* [1] */
+        background-color: $volume-range-background-color;
+    }

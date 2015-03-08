@@ -1,0 +1,40 @@
+/*------------------------------------*\
+    $YELL
+\*------------------------------------*/
+.yell {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    max-width: none;
+}
+
+    .yell__container {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .yell__icon {
+        display: block;
+        height: $yell-icon-dimensions;
+        width: $yell-icon-dimensions;
+        line-height: $yell-icon-dimensions;
+        background-color: $yell-icon-background-color;
+        margin: $gutter auto;
+        font-size: $mega-size;
+        color: $yell-text-color--primary;
+        @include vendor(border-radius, 50%);
+    }
+
+    .yell__sub-message {
+        display: block;
+        font-size: $h4-size;
+        color: $yell-text-color--secondary;
+    }
+
+    .yell__message {
+        display: block;
+        font-size: $h2-size;
+        color: $yell-text-color--primary;
+    }

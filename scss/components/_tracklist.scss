@@ -1,0 +1,18 @@
+/*------------------------------------*\
+    $TRACKLIST
+\*------------------------------------*/
+.tracklist {
+    display: block;
+}
+
+    .tracklist__item {
+        display: block;
+        position: relative;
+        height: $tracklist-item-thickness;
+        line-height: $tracklist-item-thickness;
+        font-size: 85%;
+
+        &:nth-child(odd) {
+            background-color: $tracklist-item-background-color;
+        }
+    }

@@ -1,0 +1,28 @@
+/*------------------------------------*\
+    $PLAYBACK
+\*------------------------------------*/
+.playback {
+    position: absolute;
+    line-height: $line-height-ratio;
+}
+
+
+    .playback--title {
+        top: $base-spacing-unit;
+        left: $gutter;
+        font-size: 115%;
+    }
+
+
+    .playback--current-time {
+        bottom: $half-spacing-unit;
+        left: $gutter;
+        font-size: 85%;
+    }
+
+
+    .playback--total-time {
+        bottom: $half-spacing-unit;
+        right: $gutter;
+        font-size: 85%;
+    }

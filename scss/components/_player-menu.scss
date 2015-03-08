@@ -1,0 +1,24 @@
+/*------------------------------------*\
+    $PLAYER-MENU
+\*------------------------------------*/
+.player-menu {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: $player-menu-button-dimensions;
+    line-height: $player-menu-button-dimensions;
+    background-color: $player-menu-background-color;
+    color: $player-menu-text-color;
+}
+
+
+    .player-menu__app-title {
+    
+    }
+
+    .player-menu__controls {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: $player-menu-controls-background-color;
+    }

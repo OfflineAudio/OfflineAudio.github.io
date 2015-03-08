@@ -1,0 +1,28 @@
+/*------------------------------------*\
+    $PLAY-CONTROLS
+\*------------------------------------*/
+.play-controls {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: $play-button-dimensions;
+    line-height: $play-button-dimensions;
+    background-color: $player-controls-background-color;
+    color: $player-controls-text-color;
+}
+
+    .play-controls__secondary {
+        float: right;
+    }
+
+    /**
+     * 1. More progress X pixels from left side times number of buttons
+     * 2. More progress bar X pixels from right side times number of buttons
+     */
+    .play-controls__playback {
+        position: absolute;
+        left: $play-button-dimensions * 3; /* [1] */
+        right: $play-button-dimensions * 2; /* [2] */
+        top: 0;
+        height: $play-button-dimensions;
+    }

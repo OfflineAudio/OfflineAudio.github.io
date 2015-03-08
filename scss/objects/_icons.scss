@@ -1,0 +1,73 @@
+/*------------------------------------*\
+    $ICONS
+\*------------------------------------*/
+/*!
+ * By Daniel Bruce (entypo.com, @danielbruce_)
+ * Licence: CC BY-SA 4.0
+ */
+  @font-face {
+    font-family: 'fontello';
+    src: url('fonts/fontello.eot'); /* IE9 Compat Modes */
+    src: url('fonts/fontello.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/fontello.woff') format('woff'), /* Pretty Modern Browsers */
+       url('fonts/fontello.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('fonts/fontello.svg#fontello') format('svg'); /* Legacy iOS */
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon--"]:before,
+[class*=" icon--"]:before,
+.icon {
+    font-family: "fontello";
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    text-align: center;
+    /* opacity: .8; */
+
+    /* For safety - reset parent styles, that can break glyph codes*/
+    font-variant: normal;
+    text-transform: none;
+
+    /* fix buttons height, for twitter bootstrap */
+    line-height: 1em;
+
+    /* Animation center compensation - margins should be symmetric */
+    /* remove if not needed */
+    margin-left: .2em;
+}
+
+
+.icon--note-beamed:before { content: '\e800'; }
+.icon--layout:before { content: '\e801'; }
+.icon--menu:before { content: '\e802'; }
+.icon--play:before { content: '\e803'; }
+.icon--fast-forward:before { content: '\e804'; }
+.icon--fast-backward:before { content: '\e805'; }
+.icon--dot:before { content: '\e806'; }
+.icon--dot-2:before { content: '\e807'; }
+.icon--cog:before { content: '\e808'; }
+.icon--shuffle:before { content: '\e809'; }
+.icon--loop:before { content: '\e80a'; }
+.icon--pencil:before { content: '\e80b'; }
+.icon--trash:before { content: '\e80c'; }
+.icon--sound:before { content: '\e80d'; }
+.icon--mute:before { content: '\e80e'; }
+.icon--resize--full:before { content: '\e80f'; }
+.icon--resize--small:before { content: '\e810'; }
+.icon--heart:before { content: '\e811'; }
+.icon--heart--empty:before { content: '\e812'; }
+.icon--cancel:before { content: '\e813'; }
+.icon--upload:before { content: '\e814'; }
+.icon--help:before { content: '\e815'; }
+.icon--arrows-ccw:before { content: '\e816'; }
+.icon--search:before { content: '\e817'; }
+.icon--list:before { content: '\e818'; }
+.icon--list-add:before { content: '\e819'; }
+.icon--pause:before { content: '\e81d'; }

@@ -1,0 +1,142 @@
+@charset "UTF-8";
+/*!
+ * Author: Eduards Torba
+ * Author URI: http://edtorba.com
+ * Version: 0.0.2
+ */
+/*
+ * Contents
+ * 
+ * GENERIC
+ * Defaults...............Globally-available variales and config.
+ * Mixins.................Mixins that are required for our framework.
+ * Normalize..............CSS Normalize.
+ *
+ *
+ * BASE
+ * Main...................High-level elements e.g. `html`, `body`, etc.
+ * Links..................`<a href="#" ...>` elements.
+ * Headings...............H1-H6 Styles.
+ * Images.................`<img... />` elements.
+ *
+ *
+ * OBJECTS
+ * Grids..................Grid elements.
+ * Buttons................Button elements.
+ * Icons..................Icon elements.
+ * List Block.............Blocky list object.
+ * List Inline............Inline list object.
+ * Search Field...........Side menu search field.
+ * Add Playlist...........Add playlist button.
+ * Player Button..........Play control buttons.
+ * Menu Button............Top menu buttons.
+ * Progress...............Track progress bar.
+ * Playback...............Track title, total time, current time above progress bar.
+ * Volume.................
+ * Track Info.............Track number, length, title - displayed in tracklist.
+ * Track Option...........Track options.
+ * Badge..................Badge elements.
+ * Upload.................Upload element.
+ * Favourite Button.......Favourite track button.
+ * Yell...................Yell message.
+ *
+ *
+ * COMPONENTS
+ * Main Container.........Container that contains side menu and player contents.
+ * Wrapper................Wrapping and constraining elements.
+ * Player Conents.........Player's main area - tracklists, etc.
+ * Play Controls..........Player controls area such as 'play, next, prev, etc.'
+ * Player Menu............Top Bar with the volume control, app name, album title.
+ * Side Menu..............Left side menu.
+ * Filters................Side menu filters.
+ * Tracklist..............Track list elements.
+ * Badgelist..............Grid track list.
+ *
+ *
+ * 
+ * TRUMPS
+ * Clearfix...............
+ * Push...................Push classes, to move grid items over to the right by certain amounts.
+ * Widths.................Build our responsive widths around our breakpoints.
+ */
+
+
+
+
+
+/*------------------------------------*\
+    $IMPORTS
+\*------------------------------------*/
+/*!
+ * Generic utility styles etc.
+ */
+@import 'defaults';
+@import 'generic/mixins';
+@import 'generic/normalize';
+
+
+
+
+
+/*!
+ * Base styles; unclassed HTML elements etc.
+ */
+@import 'base/main';
+@import 'base/links';
+@import 'base/headings';
+@import 'base/images';
+
+
+
+
+
+
+/*!
+ * Objects
+ */
+@import 'objects/grids';
+@import 'objects/buttons';
+@import 'objects/icons';
+@import 'objects/list-block';
+@import 'objects/list-inline';
+@import 'objects/search-field';
+@import 'objects/add-playlist';
+@import 'objects/player-button';
+@import 'objects/menu-button';
+@import 'objects/progress';
+@import 'objects/playback';
+@import 'objects/volume';
+@import 'objects/track-info';
+@import 'objects/track-option';
+@import 'objects/badge';
+@import 'objects/upload-field';
+@import 'objects/favourite-button';
+@import 'objects/yell';
+
+
+
+
+
+/*!
+ * Components
+ */
+@import 'components/main-container';
+@import 'components/wrapper';
+@import 'components/player-contents';
+@import 'components/play-controls';
+@import 'components/player-menu';
+@import 'components/side-menu';
+@import 'components/filters';
+@import 'components/tracklist';
+@import 'components/badgelist';
+
+
+
+
+
+/*!
+ * Style trumps; helper and brand classes.
+ */
+@import 'trumps/clearfix';
+@import 'trumps/push';
+@import 'trumps/widths';

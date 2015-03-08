@@ -1,0 +1,64 @@
+/*------------------------------------*\
+    $TRACK-OPTION
+\*------------------------------------*/
+.track-option {
+    display: inline-block;
+}
+
+    .track-option--horizontal {
+        position: absolute;
+        right: 0;
+    }
+
+    .track-option--vertical {
+        position: absolute;
+        bottom: 0;
+    }
+
+    .track-option__item {
+        float: left;
+        width: $tracklist-item-thickness;
+        text-align: center;
+        font-size: 150%;
+        @include vendor(transition, $base-transition $base-transition-time);
+
+        &:hover,
+        &--active {
+            background-color: $base-background-color;
+        }
+    }
+
+        /**
+         * 1. Stretching label to right dimensions.
+         */
+        .track-option__item__button {
+            width: $tracklist-item-thickness; /* [1] */
+            height: $tracklist-item-thickness; /* [1] */
+            line-height: $tracklist-item-thickness; /* [1] */
+            color: $secondary-link-color;
+
+            &:hover {
+                color: $base-link-color;
+            }
+        }
+
+    .track-option__sub-menu {
+        display: none;
+        position: absolute;
+        background-color: $base-background-color;
+        font-size: 75%;
+        z-index: 1000;
+    }
+
+        .track-option__sub-menu--horizontal {
+            top: 0;
+            left: -$tracklist-item-thickness;
+        }
+
+        .track-option__sub-menu--vertical {
+            bottom: 0;
+        }
+
+        .track-option__item:hover .track-option__sub-menu {
+            display: block;
+        }

@@ -1,0 +1,12 @@
+/*------------------------------------*\
+    $PLAYER-CONTENTS
+\*------------------------------------*/
+.player-contents {
+    position: absolute;
+    left: $side-menu-width;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    @include scrolling-shadows($player-contents-background-color);
+}

@@ -1,0 +1,12 @@
+/*------------------------------------*\
+    $WRAPPER
+\*------------------------------------*/
+/**
+ * 1. Stretches wrapper to full width.
+ * 2. Adds gaps on left and right side between border 
+ * and wrapper's contents. 
+ */
+.container {
+    display: block; /* [1] */
+    margin: 0 $gutter; /* [2] */
+}

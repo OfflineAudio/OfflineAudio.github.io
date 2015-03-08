@@ -3,9 +3,10 @@ importScripts('../../bluebird.min.js')
 importScripts('../../id3js.min.js')
 importScripts('../../blob-util.min.js')
 importScripts("../../runtime.min.js")
+importScripts("../../array-from.js")
 // PouchDB.debug.enable('*')
 
-const db = new PouchDB('offlineAudio-V1')
+const db = new PouchDB('offlineAudio-V4')
 const readTags = Promise.promisify(id3js)
 
 function readFile(file) {
@@ -54,7 +55,7 @@ function addSong(file) {
         })
         .then(function(song) {
           console.debug("Executed db.get", Date(Date.now()))
-          self.postMessage([song])
+          self.postMessage(song)
           return resolve(file.size)
         })
           .catch(err => console.error(err))
@@ -65,8 +66,11 @@ function addSong(file) {
 
 function generateDoc(file) {
   return readTags(file).then(function(tags) {
-    const {artist, album, title, year} = tags
+    const {album, title, year} = tags
     const {genre, track} = tags.v1
+    let {artist} = tags
+
+    artist = Array.from(artist).filter(function(c){return c !== "\x00"}).join("")
 
     return {
       "_id": [artist, album, title].join('-||-||-'),
@@ -75,7 +79,9 @@ function generateDoc(file) {
       "album": album || "Unknown Album",
       "track": track || 0,
       "genre": genre || "Unknown Genre",
-      "year": year || 0
+      "year": year || 0,
+      "favourite": false,
+      "duration": 0 // Need to find a way to grab duration from file
     }
   })
 }
@@ -93,6 +99,59 @@ function songExists(file) {
   })
 }
 
+function read() {
+  return db.allDocs({include_docs: true})
+  .then(docs => self.postMessage(docs))
+}
+
+function getTracksByArtist(artist) {
+  return db.allDocs()
+    .then(function(response) {
+      return response.rows.filter(function(doc) {
+        return doc.id.split("-||-||-")[0] === artist
+      })
+    })
+    .then(tracks => self.postMessage(tracks))
+}
+
+function getArtists() {
+  return db.allDocs()
+  .then(function(response) {
+    console.log(response.rows.reduce(function(artists, doc) {
+      let artist = doc.id.split("-||-||-")[0]
+      artists.add(artist)
+      return artists
+    }, new Set()))
+  });
+}
+
+function getAlbums() {
+  return db.allDocs()
+  .then(function(response) {
+    console.log(response.rows.reduce(function(artists, doc) {
+      let artist = doc.id.split("-||-||-")[1]
+      artists.add(artist)
+      return artists
+    }, new Set()))
+  });
+}
+
+function getTracks() {
+  return db.allDocs()
+  .then(function(response) {
+    console.log(response.rows.reduce(function(artists, doc) {
+      let artist = doc.id.split("-||-||-")[2]
+      artists.add(artist)
+      return artists
+    }, new Set()))
+  });
+}
+
+function getAttachment(id, attachment) {
+  return db.getAttachment(id, attachment)
+  .then(attachment => self.postMessage(attachment))
+}
+
 const importFiles = Promise.coroutine(function* chunkFiles(files) {
   let overallSize = 0;
   for (let file of files) {
@@ -102,6 +161,29 @@ const importFiles = Promise.coroutine(function* chunkFiles(files) {
 })
 
 self.addEventListener('message',function (event){
-  const files = event.data;
-  importFiles(files)
+
+  const data = event.data
+  switch (data.cmd) {
+    case 'addSongs':
+      importFiles(data.data)
+      break
+    case 'read':
+      read()
+      break
+    case 'getArtists':
+      getArtists()
+      break
+    case 'getAlbums':
+      getAlbums()
+      break
+    case 'getTracks':
+      getTracks()
+      break
+    case 'getTracksByArtist':
+      getTracksByArtist(data.data)
+      break
+    case 'getAttachment':
+      getAttachment(data.data.id, data.data.attachment)
+      break
+  }
 })

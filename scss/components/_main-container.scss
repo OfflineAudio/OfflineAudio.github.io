@@ -1,0 +1,10 @@
+/*------------------------------------*\
+    $MAIN-CONTAINER
+\*------------------------------------*/
+.main-container {
+    position: absolute;
+    top: $player-menu-button-dimensions;
+    bottom: $play-button-dimensions;
+    right: 0;
+    left: 0;
+}

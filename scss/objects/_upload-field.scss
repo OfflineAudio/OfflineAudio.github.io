@@ -1,0 +1,13 @@
+/*------------------------------------*\
+    $UPLOAD-FIELD
+\*------------------------------------*/
+.upload-field {
+    display: block;
+    width: $side-menu-width - ($gutter * 2);
+    margin: 0 $gutter $gutter;
+    padding: $half-spacing-unit;
+    @include vendor(border-radius, $base-radius);
+    text-align: center;
+    border: $side-menu-border-thickness dashed;
+    border-color: $upload-field-border-color;
+}
