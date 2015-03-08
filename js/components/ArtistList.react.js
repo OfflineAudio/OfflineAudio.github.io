@@ -5,7 +5,6 @@ var Link = Router.Link;
 
 const Artist = React.createClass({
 	handleClick(event) {
-		// debugger
 	},
 	render() {
 		const {artist} = this.props

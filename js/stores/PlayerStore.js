@@ -10,6 +10,7 @@ let _title
 let _currentTime
 let _duration
 let _progress
+let _playing
 
 function switchFile(data) {
   _album = data.album
@@ -27,6 +28,10 @@ function updateDuration(duration) {
 
 function updateProgress() {
   _progress = (100 / _duration) * _currentTime
+}
+
+function updatePlaying(playing) {
+  _playing = playing
 }
 
 var PlayerStore = _.extend({}, EventEmitter.prototype, {
@@ -52,6 +57,10 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
 
   getProgress: function() {
     return _progress
+  },
+
+  getPlaying: function() {
+    return _playing
   },
 
   // Emit Change event
@@ -84,6 +93,9 @@ AppDispatcher.register(function(payload) {
       break
     case PlayerConstants.DURATION:
       updateDuration(action.data)
+      break
+    case PlayerConstants.PLAYING:
+      updatePlaying(action.data)
       break
     default:
       return true
