@@ -77,6 +77,13 @@ const PlayerActions = {
       actionType: PlayerConstants.PLAYING,
       data: false
     })
+  },
+  updateVolume: function(value) {
+    Player.updateVolume(value)
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.PLAYING,
+      data: value
+    })
   }
 }
 
