@@ -70,11 +70,11 @@ function generateDoc(file) {
     const {genre, track} = tags.v1
     let {artist} = tags
 
-    artist = Array.from(artist).filter(function(c){return c !== "\x00"}).join("")
+    artist = Array.from(artist || "Unknown Artist").filter(function(c){return c !== "\x00"}).join("")
 
     return {
       "_id": [artist, album, title].join('-||-||-'),
-      "artist": artist || "Unknown Artist",
+      "artist": artist,
       "title": title || file.size + ' ' + file.name,
       "album": album || "Unknown Album",
       "track": track || 0,

@@ -78,13 +78,13 @@ function generateDoc(file) {
     var track = _tags$v1.track;
     var artist = tags.artist;
 
-    artist = Array.from(artist).filter(function (c) {
+    artist = Array.from(artist || "Unknown Artist").filter(function (c) {
       return c !== "\u0000";
     }).join("");
 
     return {
       _id: [artist, album, title].join("-||-||-"),
-      artist: artist || "Unknown Artist",
+      artist: artist,
       title: title || file.size + " " + file.name,
       album: album || "Unknown Album",
       track: track || 0,
