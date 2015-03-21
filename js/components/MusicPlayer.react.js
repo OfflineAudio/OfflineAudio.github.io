@@ -48,10 +48,11 @@ const MusicPlayer = React.createClass({
     const duration = PlayerStore.getDuration() || ""
     const progress = PlayerStore.getProgress() || ""
     const playing = PlayerStore.getPlaying() || false
+    const volume = PlayerStore.getVolume() || 0
 
     return (
       <div>
-      <PlayerMenu title="Offline Audio"/>
+      <PlayerMenu title="Offline Audio" volume={volume}/>
 
       <div className="main-container">
         <PlayerSideMenu artists={artists}/>

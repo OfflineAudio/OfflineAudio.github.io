@@ -5,5 +5,6 @@ module.exports = keyMirror({
 	CURRENT_TIME: null,
 	DURATION: null,
 	PLAY_FILE: null,
-	PLAYING: null
+	PLAYING: null,
+	VOLUME: null
 })

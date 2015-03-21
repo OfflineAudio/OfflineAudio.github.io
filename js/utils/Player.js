@@ -20,8 +20,13 @@ function pauseCurrentFile(cb) {
   audio.addEventListener('timeupdate', cb, false)
 }
 
+function updateVolume(value) {
+  audio.volume = value / 100
+}
+
 module.exports = {
   playFile: playFile,
   playCurrentFile: playCurrentFile,
-  pauseCurrentFile: pauseCurrentFile
+  pauseCurrentFile: pauseCurrentFile,
+  updateVolume: updateVolume
 }
