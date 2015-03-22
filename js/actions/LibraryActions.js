@@ -3,7 +3,7 @@ const LibraryConstants = require('../constants/LibraryConstants')
 const Library = require('../utils/Library')
 
 function createLibrary (docs) {
-  return docs.reduce(function(library, b) {
+  return docs.reduce(function (library, b) {
     const artist = library[b.artist] || (library[b.artist] = Object.create(null))
     const album = artist[b.album] || (artist[b.album] = Object.create(null))
     const track = album[b.title] || (album[b.title] = Object.create(null))
@@ -24,24 +24,24 @@ function pluckDocs (data) {
   return data.rows.map(row => row.doc)
 }
 
-function dispatchSuccessUpdate(library) {
+function dispatchSuccessUpdate (library) {
   AppDispatcher.handleAction({
     actionType: LibraryConstants.LIBRARY_UPDATE_SUCCESS,
     data: library
   })
 }
 
-function dispatchErrorUpdate(err) {
+function dispatchErrorUpdate (err) {
   console.error(err)
 }
 
 const LibraryActions = {
-  update: function() {
+  update: function () {
     Library.read()
-    .then(pluckDocs)
-    .then(createLibrary)
-    .then(dispatchSuccessUpdate)
-    .catch(dispatchErrorUpdate)
+      .then(pluckDocs)
+      .then(createLibrary)
+      .then(dispatchSuccessUpdate)
+      .catch(dispatchErrorUpdate)
 
     AppDispatcher.handleAction({
       actionType: LibraryConstants.LIBRARY_UPDATE,

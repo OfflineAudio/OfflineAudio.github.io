@@ -6,7 +6,7 @@ var source = require('vinyl-source-stream')
 var _ = require('lodash')
 var browserSync = require('browser-sync')
 var reload = browserSync.reload
-var babelify = require("babelify")
+var babelify = require('babelify')
 
 var config = {
   entryFile: './js/app.js',

@@ -59,7 +59,9 @@
       "bluebird.js",
       "pouchdb.js",
       "runtime.js",
-      "js/utils/worker.js"
+      "js/utils/worker.js",
+      "www/**",
+      "array-from.js"
     ]
   }
 }

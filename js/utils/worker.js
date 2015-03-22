@@ -238,7 +238,6 @@ var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(
 }));
 
 self.addEventListener("message", function (event) {
-
   var data = event.data;
   switch (data.cmd) {
     case "addSongs":

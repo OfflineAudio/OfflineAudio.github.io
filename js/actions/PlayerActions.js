@@ -5,11 +5,10 @@ const Player = require('../utils/Player')
 
 const PlayerActions = {
   // Receive initial product data
-  playSong: function(id, attachment) {
-
+  playSong: function (id, attachment) {
     Library.getAttachment(id, attachment)
-    .then(function(blob) {
-      Player.playFile(blob, function(event) {
+    .then(function (blob) {
+      Player.playFile(blob, function (event) {
         const duration = event.currentTarget.duration
         AppDispatcher.handleAction({
           actionType: PlayerConstants.DURATION,
@@ -40,8 +39,8 @@ const PlayerActions = {
         })
     })
   },
-  playCurrentSong: function() {
-    Player.playCurrentFile(function(event) {
+  playCurrentSong: function () {
+    Player.playCurrentFile(function (event) {
         const duration = event.currentTarget.duration
         AppDispatcher.handleAction({
           actionType: PlayerConstants.DURATION,
@@ -59,8 +58,8 @@ const PlayerActions = {
       data: true
     })
   },
-  pauseCurrentSong: function() {
-    Player.pauseCurrentFile(function(event) {
+  pauseCurrentSong: function () {
+    Player.pauseCurrentFile(function (event) {
         const duration = event.currentTarget.duration
         AppDispatcher.handleAction({
           actionType: PlayerConstants.DURATION,
@@ -78,7 +77,7 @@ const PlayerActions = {
       data: false
     })
   },
-  updateVolume: function(value) {
+  updateVolume: function (value) {
     Player.updateVolume(value)
     AppDispatcher.handleAction({
       actionType: PlayerConstants.PLAYING,

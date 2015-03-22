@@ -13,102 +13,102 @@ let _progress
 let _playing
 let _volume
 
-function switchFile(data) {
+function switchFile (data) {
   _album = data.album
   _artist = data.artist
   _title = data.title
 }
 
-function updateCurrentTime(currentTime) {
+function updateCurrentTime (currentTime) {
   _currentTime = currentTime
 }
 
-function updateDuration(duration) {
+function updateDuration (duration) {
   _duration = duration
 }
 
-function updateProgress() {
+function updateProgress () {
   _progress = (100 / _duration) * _currentTime
 }
 
-function updatePlaying(playing) {
+function updatePlaying (playing) {
   _playing = playing
 }
 
-function updateVolume(volume) {
+function updateVolume (volume) {
   _volume = volume
 }
 
 var PlayerStore = _.extend({}, EventEmitter.prototype, {
-  getAlbum: function() {
+  getAlbum: function () {
     return _album
   },
 
-  getArtist: function() {
+  getArtist: function () {
     return _artist
   },
 
-  getCurrentTime: function() {
+  getCurrentTime: function () {
     return _currentTime
   },
 
-  getDuration: function() {
+  getDuration: function () {
     return _duration
   },
 
-  getTitle: function() {
+  getTitle: function () {
     return _title
   },
 
-  getProgress: function() {
+  getProgress: function () {
     return _progress
   },
 
-  getPlaying: function() {
+  getPlaying: function () {
     return _playing
   },
 
-  getVolume: function() {
+  getVolume: function () {
     return _volume
   },
 
   // Emit Change event
-  emitChange: function() {
+  emitChange: function () {
     this.emit('change')
   },
 
   // Add change listener
-  addChangeListener: function(callback) {
+  addChangeListener: function (callback) {
     this.on('change', callback)
   },
 
   // Remove change listener
-  removeChangeListener: function(callback) {
+  removeChangeListener: function (callback) {
     this.removeListener('change', callback)
   }
 })
 
 // Register callback with AppDispatcher
-AppDispatcher.register(function(payload) {
+AppDispatcher.register(function (payload) {
   var action = payload.action
 
-  switch(action.actionType) {
+  switch (action.actionType) {
     case PlayerConstants.PLAY_FILE:
       switchFile(action.data)
-      break
+    break
     case PlayerConstants.CURRENT_TIME:
       updateCurrentTime(action.data)
       updateProgress()
-      break
+    break
     case PlayerConstants.DURATION:
       updateDuration(action.data)
-      break
+    break
     case PlayerConstants.PLAYING:
       updatePlaying(action.data)
-      break
+    break
     case PlayerConstants.VOLUME:
       updateVolume(action.data)
-      break
+    break
     default:
       return true
   }

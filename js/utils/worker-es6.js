@@ -2,19 +2,19 @@ importScripts('../../pouchdb.min.js')
 importScripts('../../bluebird.min.js')
 importScripts('../../id3js.min.js')
 importScripts('../../blob-util.min.js')
-importScripts("../../runtime.min.js")
-importScripts("../../array-from.js")
+importScripts('../../runtime.min.js')
+importScripts('../../array-from.js')
 // PouchDB.debug.enable('*')
 
 const db = new PouchDB('offlineAudio-V4')
 const readTags = Promise.promisify(id3js)
 
-function readFile(file) {
-  return new Promise(function(resolve, reject) {
+function readFile (file) {
+  return new Promise(function (resolve, reject) {
     let reader = new FileReader()
-    reader.onload = (function(file) {
+    reader.onload = (function (file) {
       return function (e) {
-        console.debug("File read into memory", Date(Date.now()))
+        console.debug('File read into memory', Date(Date.now()))
         resolve(e.target.result)
       }
     })(file)
@@ -22,8 +22,8 @@ function readFile(file) {
   })
 }
 
-function addBlobAsAttachment(doc, blob, name, type) {
-  doc["_attachments"] = {
+function addBlobAsAttachment (doc, blob, name, type) {
+  doc['_attachments'] = {
     [name]: {
       data: blob,
       content_type: type
@@ -32,9 +32,9 @@ function addBlobAsAttachment(doc, blob, name, type) {
   return doc
 }
 
-function addSong(file) {
-  return new Promise(function(resolve, reject) {
-    songExists(file).then(function(exists) {
+function addSong (file) {
+  return new Promise(function (resolve, reject) {
+    songExists(file).then(function (exists) {
       if (exists) {
         resolve()
       } else {
@@ -44,17 +44,17 @@ function addSong(file) {
         const blob = readFile(file).then(arrayBuffer => blobUtil.arrayBufferToBlob(arrayBuffer, type))
 
         Promise.join(doc, blob, name, type, addBlobAsAttachment)
-        .then(function(doc) {
-          console.debug("Executing db.post", Date(Date.now()))
+        .then(function (doc) {
+          console.debug('Executing db.post', Date(Date.now()))
           return db.post(doc)
         })
-        .then(function(doc) {
-          console.debug("Executed db.post", Date(Date.now()))
-          console.debug("Executing db.get", Date(Date.now()))
+        .then(function (doc) {
+          console.debug('Executed db.post', Date(Date.now()))
+          console.debug('Executing db.get', Date(Date.now()))
           return db.get(doc.id)
         })
-        .then(function(song) {
-          console.debug("Executed db.get", Date(Date.now()))
+        .then(function (song) {
+          console.debug('Executed db.get', Date(Date.now()))
           self.postMessage(song)
           return resolve(file.size)
         })
@@ -64,104 +64,103 @@ function addSong(file) {
   })
 }
 
-function generateDoc(file) {
-  return readTags(file).then(function(tags) {
+function generateDoc (file) {
+  return readTags(file).then(function (tags) {
     const {album, title, year} = tags
     const {genre, track} = tags.v1
     let {artist} = tags
 
-    artist = Array.from(artist || "Unknown Artist").filter(function(c){return c !== "\x00"}).join("")
+    artist = Array.from(artist || 'Unknown Artist').filter(function (c) {return c !== '\x00'}).join('')
 
     return {
-      "_id": [artist, album, title].join('-||-||-'),
-      "artist": artist,
-      "title": title || file.size + ' ' + file.name,
-      "album": album || "Unknown Album",
-      "track": track || 0,
-      "genre": genre || "Unknown Genre",
-      "year": year || 0,
-      "favourite": false,
-      "duration": 0 // Need to find a way to grab duration from file
+      _id: [artist, album, title].join('-||-||-'),
+      artist: artist,
+      title: title || file.size + ' ' + file.name,
+      album: album || 'Unknown Album',
+      track: track || 0,
+      genre: genre || 'Unknown Genre',
+      year: year || 0,
+      favourite: false,
+      duration: 0 // Need to find a way to grab duration from file
     }
   })
 }
 
-function songExists(file) {
+function songExists (file) {
   return generateDoc(file)
   .then(doc => db.get(doc._id))
   .then(data => true)
-  .catch(function(err) {
-    if (err["status"] === 404) {
+  .catch(function (err) {
+    if (err['status'] === 404) {
       return false
     } else {
-      throw(err)
+      throw (err)
     }
   })
 }
 
-function read() {
+function read () {
   return db.allDocs({include_docs: true})
   .then(docs => self.postMessage(docs))
 }
 
-function getTracksByArtist(artist) {
+function getTracksByArtist (artist) {
   return db.allDocs()
-    .then(function(response) {
-      return response.rows.filter(function(doc) {
-        return doc.id.split("-||-||-")[0] === artist
+    .then(function (response) {
+      return response.rows.filter(function (doc) {
+        return doc.id.split('-||-||-')[0] === artist
       })
     })
     .then(tracks => self.postMessage(tracks))
 }
 
-function getArtists() {
+function getArtists () {
   return db.allDocs()
-  .then(function(response) {
-    console.log(response.rows.reduce(function(artists, doc) {
-      let artist = doc.id.split("-||-||-")[0]
+  .then(function (response) {
+    console.log(response.rows.reduce(function (artists, doc) {
+      let artist = doc.id.split('-||-||-')[0]
       artists.add(artist)
       return artists
     }, new Set()))
-  });
+  })
 }
 
-function getAlbums() {
+function getAlbums () {
   return db.allDocs()
-  .then(function(response) {
-    console.log(response.rows.reduce(function(artists, doc) {
-      let artist = doc.id.split("-||-||-")[1]
+  .then(function (response) {
+    console.log(response.rows.reduce(function (artists, doc) {
+      let artist = doc.id.split('-||-||-')[1]
       artists.add(artist)
       return artists
     }, new Set()))
-  });
+  })
 }
 
-function getTracks() {
+function getTracks () {
   return db.allDocs()
-  .then(function(response) {
-    console.log(response.rows.reduce(function(artists, doc) {
-      let artist = doc.id.split("-||-||-")[2]
+  .then(function (response) {
+    console.log(response.rows.reduce(function (artists, doc) {
+      let artist = doc.id.split('-||-||-')[2]
       artists.add(artist)
       return artists
     }, new Set()))
-  });
+  })
 }
 
-function getAttachment(id, attachment) {
+function getAttachment (id, attachment) {
   return db.getAttachment(id, attachment)
   .then(attachment => self.postMessage(attachment))
 }
 
-const importFiles = Promise.coroutine(function* chunkFiles(files) {
-  let overallSize = 0;
+const importFiles = Promise.coroutine(function * chunkFiles (files) {
+  let overallSize = 0
   for (let file of files) {
     overallSize += yield addSong(file)
   }
-  console.debug("Imported size in bytes:", overallSize, "In MB:", overallSize / 1024 / 1024)
+  console.debug('Imported size in bytes:', overallSize, 'In MB:', overallSize / 1024 / 1024)
 })
 
-self.addEventListener('message',function (event){
-
+self.addEventListener('message', function (event) {
   const data = event.data
   switch (data.cmd) {
     case 'addSongs':
