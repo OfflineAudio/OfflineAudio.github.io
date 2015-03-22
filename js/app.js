@@ -37,9 +37,11 @@ const AllArtists = React.createClass({
 
 const Artists = React.createClass({
   displayName: 'Artists',
-  mixins: [Router.State],
+  contextTypes: {
+    router: React.PropTypes.func.isRequired
+  },
   render () {
-    const tracks = LibraryStore.getTracksByArtist(this.getParams().artist)
+    const tracks = LibraryStore.getTracksByArtist(this.context.router.getCurrentParams().artist)
 
     let elem
     if (tracks.length > 0) {

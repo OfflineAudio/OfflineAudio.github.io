@@ -5,21 +5,22 @@ require('string.prototype.startswith') // TODO: Figure out why this is needed as
 
 const FileUploader = React.createClass({
 	mixins: [DragDropMixin],
-
-	configureDragDrop(registerType) {
-  	registerType(NativeDragItemTypes.FILE, {
-  		dropTarget: {
-    		acceptDrop(item) {
-          const audioFiles = item.files.filter((file) => file.type.startsWith("audio/"))
-          if (audioFiles.length) {
-    			  FileUploadActions.uploadFiles(audioFiles)
+  statics: {
+    configureDragDrop(register) {
+      register(NativeDragItemTypes.FILE, {
+        dropTarget: {
+          acceptDrop(component, item) {
+            const audioFiles = item.files.filter((file) => file.type.startsWith("audio/"))
+            if (audioFiles.length) {
+              FileUploadActions.uploadFiles(audioFiles)
+            }
+            // MusicStore.saveSong(item.files)
+            // console.log(item.files)
           }
-    			// MusicStore.saveSong(item.files)
-    			// console.log(item.files)
-    		}
-  		}
-  	})
-	},
+        }
+      })
+    }
+  },
 
 	render() {
   	var fileDropState = this.getDropState(NativeDragItemTypes.FILE)
