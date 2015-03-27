@@ -68,7 +68,10 @@ function getAttachment (id, attachment) {
 }
 
 module.exports = {
-  addSongs: addSongs,
-  read: read,
-  getAttachment: getAttachment
+  addSongs,
+  read,
+  getAttachment,
+  getArtists,
+  getTracks,
+  getAlbums
 }
