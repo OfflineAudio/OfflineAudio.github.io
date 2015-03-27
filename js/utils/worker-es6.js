@@ -1,17 +1,18 @@
-importScripts('../../pouchdb.min.js')
-importScripts('../../bluebird.min.js')
-importScripts('../../id3js.min.js')
-importScripts('../../blob-util.min.js')
-importScripts('../../runtime.min.js')
-importScripts('../../array-from.js')
+/* global self */
+self.importScripts('../../pouchdb.min.js')
+self.importScripts('../../bluebird.min.js')
+self.importScripts('../../id3js.min.js')
+self.importScripts('../../blob-util.min.js')
+self.importScripts('../../runtime.min.js')
+self.importScripts('../../array-from.js')
 // PouchDB.debug.enable('*')
 
-const db = new PouchDB('offlineAudio-V4')
-const readTags = Promise.promisify(id3js)
+const db = new self.PouchDB('offlineAudio-V4')
+const readTags = Promise.promisify(self.id3js)
 
 function readFile (file) {
   return new Promise(function (resolve, reject) {
-    let reader = new FileReader()
+    let reader = new self.FileReader()
     reader.onload = (function (file) {
       return function (e) {
         console.debug('File read into memory', Date(Date.now()))
@@ -41,7 +42,7 @@ function addSong (file) {
         const name = file.name
         const type = file.type
         const doc = generateDoc(file)
-        const blob = readFile(file).then(arrayBuffer => blobUtil.arrayBufferToBlob(arrayBuffer, type))
+        const blob = readFile(file).then(arrayBuffer => self.blobUtil.arrayBufferToBlob(arrayBuffer, type))
 
         Promise.join(doc, blob, name, type, addBlobAsAttachment)
         .then(function (doc) {
