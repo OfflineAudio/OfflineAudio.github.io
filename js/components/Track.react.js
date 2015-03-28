@@ -27,8 +27,7 @@ const Track = React.createClass({
   },
   render () {
     const {trackNumber, duration, title, playing, favourite} = this.props
-
-    let iconStyles = (playing) ? 'track-info track-info--current-track icon--dot track-info--current-track--active' : 'track-info track-info--current-track'
+    let iconStyles = (/*playing*/ false) ? 'track-info track-info--current-track icon--dot track-info--current-track--active' : 'track-info track-info--current-track'
 
     return (
       <li className="tracklist__item" onClick={this.handleClick}>
@@ -51,6 +50,7 @@ const Track = React.createClass({
                 <button type="button" className="btn track-option__item__button icon--trash"></button>
               </li>
               <li className="track-option__item">
+              // using this for add to now playing queue
                 <button type="button" className="btn track-option__item__button icon--pencil"></button>
               </li>
             </ul>

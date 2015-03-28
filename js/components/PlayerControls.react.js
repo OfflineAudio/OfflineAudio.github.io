@@ -33,10 +33,10 @@ const PlayerControls = React.createClass({
     let currentTimeDisplay = secondsToMinutesAndSeconds(currentTime)
     let totalTimeDisplay = secondsToMinutesAndSeconds(totalTime)
     let playButton
-    if (!playing) {
-      playButton = <button className='btn player-button icon--play alpha btn--light' onClick={handlePlay}></button>
-    } else {
+    if (playing) {
       playButton = <button className='btn player-button icon--pause alpha btn--light' onClick={handlePause}></button>
+    } else {
+      playButton = <button className='btn player-button icon--play alpha btn--light' onClick={handlePlay}></button>
     }
 
     return (
