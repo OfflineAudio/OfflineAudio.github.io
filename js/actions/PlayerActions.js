@@ -46,9 +46,9 @@ const PlayerActions = {
       })
 
       AppDispatcher.handleAction({
-          actionType: PlayerConstants.PLAYING,
-          data: true
-        })
+        actionType: PlayerConstants.PLAYING,
+        data: true
+      })
     })
   },
   playCurrentSong: function () {
