@@ -2,20 +2,21 @@
 
 var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
 
-importScripts("../../pouchdb.min.js");
-importScripts("../../bluebird.min.js");
-importScripts("../../id3js.min.js");
-importScripts("../../blob-util.min.js");
-importScripts("../../runtime.min.js");
-importScripts("../../array-from.js");
+/* global self */
+self.importScripts("../../pouchdb.min.js");
+self.importScripts("../../bluebird.min.js");
+self.importScripts("../../id3js.min.js");
+self.importScripts("../../blob-util.min.js");
+self.importScripts("../../runtime.min.js");
+self.importScripts("../../array-from.js");
 // PouchDB.debug.enable('*')
 
-var db = new PouchDB("offlineAudio-V4");
-var readTags = Promise.promisify(id3js);
+var db = new self.PouchDB("offlineAudio-V4");
+var readTags = Promise.promisify(self.id3js);
 
 function readFile(file) {
   return new Promise(function (resolve, reject) {
-    var reader = new FileReader();
+    var reader = new self.FileReader();
     reader.onload = (function (file) {
       return function (e) {
         console.debug("File read into memory", Date(Date.now()));
@@ -45,7 +46,7 @@ function addSong(file) {
           var type = file.type;
           var doc = generateDoc(file);
           var blob = readFile(file).then(function (arrayBuffer) {
-            return blobUtil.arrayBufferToBlob(arrayBuffer, type);
+            return self.blobUtil.arrayBufferToBlob(arrayBuffer, type);
           });
 
           Promise.join(doc, blob, name, type, addBlobAsAttachment).then(function (doc) {

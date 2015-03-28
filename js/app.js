@@ -1,11 +1,10 @@
+/* global React, Route, DefaultRoute */
 const React = require('react')
-window.react = React
 const Router = require('react-router')
 const DefaultRoute = Router.DefaultRoute
 const Link = Router.Link
 const Route = Router.Route
 const MusicPlayer = require('./components/MusicPlayer.react')
-const Library = require('./components/Library.react')
 const TrackList = require('./components/TrackList.react')
 const LibraryStore = require('./stores/LibraryStore')
 

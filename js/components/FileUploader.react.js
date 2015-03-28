@@ -4,13 +4,14 @@ const FileUploadActions = require('../actions/FileUploadActions')
 require('string.prototype.startswith') // TODO: Figure out why this is needed as we use 6to5 for everything else...
 
 const FileUploader = React.createClass({
-	mixins: [DragDropMixin],
+  displayName: 'FileUploader',
+  mixins: [DragDropMixin],
   statics: {
-    configureDragDrop(register) {
+    configureDragDrop (register) {
       register(NativeDragItemTypes.FILE, {
         dropTarget: {
-          acceptDrop(component, item) {
-            const audioFiles = item.files.filter((file) => file.type.startsWith("audio/"))
+          acceptDrop (component, item) {
+            const audioFiles = item.files.filter((file) => file.type.startsWith('audio/'))
             if (audioFiles.length) {
               FileUploadActions.uploadFiles(audioFiles)
             }
@@ -22,15 +23,13 @@ const FileUploader = React.createClass({
     }
   },
 
-	render() {
-  	var fileDropState = this.getDropState(NativeDragItemTypes.FILE)
-
-  	return (
-  		<div className="upload-field icon--upload"
+  render () {
+    return (
+      <div className='upload-field icon--upload'
       {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
-  		</div>
-  	)
-	}
+      </div>
+    )
+  }
 })
 
 module.exports = FileUploader

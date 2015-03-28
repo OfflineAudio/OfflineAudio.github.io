@@ -2,25 +2,37 @@ const AppDispatcher = require('../dispatcher/AppDispatcher')
 const PlayerConstants = require('../constants/PlayerConstants')
 const Library = require('../utils/Library')
 const Player = require('../utils/Player')
+const once = require('../utils/once')
 
 const PlayerActions = {
   // Receive initial product data
   playSong: function (id, attachment) {
     Library.getAttachment(id, attachment)
     .then(function (blob) {
-      Player.playFile(blob, function (event) {
-        const duration = event.currentTarget.duration
-        AppDispatcher.handleAction({
-          actionType: PlayerConstants.DURATION,
-          data: duration
+      Player.playFile(blob, () => {
+        const updateVolumeOnce = once((volume) => {
+          AppDispatcher.handleAction({
+            actionType: PlayerConstants.VOLUME,
+            data: volume
+          })
         })
 
-        const currentTime = event.currentTarget.currentTime
-        AppDispatcher.handleAction({
-          actionType: PlayerConstants.CURRENT_TIME,
-          data: currentTime
-        })
-      })
+        return function (event) {
+          const duration = event.currentTarget.duration
+          AppDispatcher.handleAction({
+            actionType: PlayerConstants.DURATION,
+            data: duration
+          })
+
+          const currentTime = event.currentTarget.currentTime
+          AppDispatcher.handleAction({
+            actionType: PlayerConstants.CURRENT_TIME,
+            data: currentTime
+          })
+
+          updateVolumeOnce(event.currentTarget.volume * 100)
+        }
+    }())
 
       const [artist, album, title] = id.split('-||-||-')
       const data = {
@@ -80,7 +92,7 @@ const PlayerActions = {
   updateVolume: function (value) {
     Player.updateVolume(value)
     AppDispatcher.handleAction({
-      actionType: PlayerConstants.PLAYING,
+      actionType: PlayerConstants.VOLUME,
       data: value
     })
   }

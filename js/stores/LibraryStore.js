@@ -25,11 +25,11 @@ function update (library) {
 
 // Add songs to library
 function addSong (file) {
-  const {_id, _rev, album, artist, getTracksOfAlbums, title, track, year, _attachments} = file
+  const {_id, _rev, album, artist, genre, title, track, year, _attachments} = file
   if (artistExists(artist)) {
     if (albumExistsByArtist(artist, album)) {
       if (trackExistsInAlbum(artist, album, title)) {
-        console.warn("What do?")
+        console.warn('What do?')
         // _library[artist][album][title] = {
         //   id: _id,
         //   rev: _rev
@@ -63,7 +63,7 @@ function addSong (file) {
     }
   } else {
     _library[artist] = {}
-    _library[artist][album]= {}
+    _library[artist][album] = {}
     _library[artist][album][title] = {
       id: _id,
       rev: _rev,
@@ -84,7 +84,7 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
     return Object.keys(_library)
   },
 
-  getTracks (){
+  getTracks () {
     let tracks = []
     for (let artist of _library) {
       for (let album of artist) {
@@ -96,7 +96,7 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getTracksOfAlbums (album) {
-    return _.map(album, function(doc,trackName){
+    return _.map(album, function (doc, trackName) {
       return {[trackName]: doc}
     })
   },
@@ -126,7 +126,7 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
     if (albumExistsByArtist(artist, album)) {
       return _library[artist][album]
     } else {
-      console.warn("What do?!")
+      console.warn('What do?!')
     }
   },
 
@@ -154,9 +154,8 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
 // Register callback with AppDispatcher
 AppDispatcher.register(function (payload) {
   var action = payload.action
-  var text
 
-  switch(action.actionType) {
+  switch (action.actionType) {
 
     // Respond to FILE_ADD_SUCCESS action
     case FileUploaderConstants.FILE_ADD_SUCCESS:

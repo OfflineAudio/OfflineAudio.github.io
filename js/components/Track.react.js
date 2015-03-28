@@ -1,27 +1,41 @@
-const React = require('react');
+const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
 
 const Track = React.createClass({
-  handleFavourite(event) {
-    debugger
+  displayName: 'Track',
+  propTypes: {
+    // An optional string prop named "description".
+    album: React.PropTypes.string.isRequired,
+    artist: React.PropTypes.string.isRequired,
+    title: React.PropTypes.string.isRequired,
+    file: React.PropTypes.string.isRequired,
+    trackNumber: React.PropTypes.string.isRequired,
+    duration: React.PropTypes.string.isRequired,
+    playing: React.PropTypes.string.isRequired,
+    favourite: React.PropTypes.string.isRequired
+  },
+  handleFavourite (event) {
+    // debugger
     // update track in db with new favourite value
   },
-  handleClick(event) {
-    if (event.target.nodeName !== "LABEL") {
+  handleClick (event) {
+    if (event.target.nodeName !== 'LABEL') {
       const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
       const file = this.props.file
       PlayerActions.playSong(id, file)
     }
   },
-	render() {
-		const {trackNumber, duration, title, playing, favourite, file} = this.props
+  render () {
+    const {trackNumber, duration, title, playing, favourite} = this.props
 
-  	return (
+    let iconStyles = (playing) ? 'track-info track-info--current-track icon--dot track-info--current-track--active' : 'track-info track-info--current-track'
+
+    return (
       <li className="tracklist__item" onClick={this.handleClick}>
         <div className="track-info track-info--number">
             {trackNumber}
         </div>
-        <div className="track-info track-info--current-track">
+        <div className={iconStyles}>
         </div>
         <div className="track-info track-info--title">
             {title}
@@ -47,8 +61,8 @@ const Track = React.createClass({
           </li>
         </ul>
       </li>
-  	);
-	}
-});
+    )
+  }
+})
 
-module.exports = Track;
+module.exports = Track

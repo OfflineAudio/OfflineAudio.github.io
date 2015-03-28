@@ -2,10 +2,16 @@ const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
 
 const PlayerMenu = React.createClass({
-  onChange(event) {
+  displayName: 'PlayerMenu',
+  propTypes: {
+    // An optional string prop named "description".
+    volume: React.PropTypes.string.isRequired,
+    title: React.PropTypes.string.isRequired
+  },
+  onChange (event) {
     PlayerActions.updateVolume(event.target.value)
   },
-  render() {
+  render () {
     const {title, volume} = this.props
 
     return (
@@ -17,7 +23,7 @@ const PlayerMenu = React.createClass({
           <div className="player-menu__controls">
             <button className="btn menu-button icon--sound gamma btn--dark"></button>
             <div className="volume-slider-wrapper">
-              <input className="volume-slider" type="range" tabIndex="1" onChange={this.onChange} />
+              <input className="volume-slider" type="range" tabIndex="1" onChange={this.onChange} value={volume} />
             </div>
             <button className="btn menu-button icon--menu gamma btn--dark"></button>
             <button className="btn menu-button icon--layout gamma btn--dark"></button>
@@ -25,8 +31,8 @@ const PlayerMenu = React.createClass({
           </div>
         </div>
       </header>
-    );
+    )
   }
-});
+})
 
-module.exports = PlayerMenu;
+module.exports = PlayerMenu
