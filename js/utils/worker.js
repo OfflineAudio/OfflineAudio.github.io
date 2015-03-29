@@ -242,25 +242,39 @@ self.addEventListener("message", function (event) {
   var data = event.data;
   switch (data.cmd) {
     case "addSongs":
-      importFiles(data.data);
+      importFiles(data.data).then(function () {
+        return self.close();
+      });
       break;
     case "read":
-      read();
+      read().then(function () {
+        return self.close();
+      });
       break;
     case "getArtists":
-      getArtists();
+      getArtists().then(function () {
+        return self.close();
+      });
       break;
     case "getAlbums":
-      getAlbums();
+      getAlbums().then(function () {
+        return self.close();
+      });
       break;
     case "getTracks":
-      getTracks();
+      getTracks().then(function () {
+        return self.close();
+      });
       break;
     case "getTracksByArtist":
-      getTracksByArtist(data.data);
+      getTracksByArtist(data.data).then(function () {
+        return self.close();
+      });
       break;
     case "getAttachment":
-      getAttachment(data.data.id, data.data.attachment);
+      getAttachment(data.data.id, data.data.attachment).then(function () {
+        return self.close();
+      });
       break;
   }
 });

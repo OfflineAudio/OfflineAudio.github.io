@@ -2,7 +2,7 @@
 const audio = new Audio()
 
 function addEndedEvent (event) {
-  audio.addEventListener('ended', event);
+  audio.addEventListener('ended', event)
 }
 
 function playFile (blob, cb) {

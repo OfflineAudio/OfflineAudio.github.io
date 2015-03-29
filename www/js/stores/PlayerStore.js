@@ -93,7 +93,7 @@ AppDispatcher.register(function(payload) {
   var action = payload.action
 
   switch(action.actionType) {
-    case PlayerConstants.PLAY_FILE:
+    case PlayerConstants.PLAY_SONG:
       switchFile(action.data)
       break
     case PlayerConstants.CURRENT_TIME:

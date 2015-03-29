@@ -3,7 +3,6 @@ const PlayerActions = require('../actions/PlayerActions')
 
 const Track = React.createClass({
   addToQueue (event) {
-    debugger
     const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
     const file = this.props.file
     PlayerActions.addToQueue(id, file)

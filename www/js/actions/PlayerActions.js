@@ -30,7 +30,7 @@ const PlayerActions = {
         title: title
       }
       AppDispatcher.handleAction({
-        actionType: PlayerConstants.PLAY_FILE,
+        actionType: PlayerConstants.PLAY_SONG,
         data: data
       })
 
