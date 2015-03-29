@@ -166,24 +166,31 @@ self.addEventListener('message', function (event) {
   switch (data.cmd) {
     case 'addSongs':
       importFiles(data.data)
+      .then(() => self.close())
       break
     case 'read':
       read()
+      .then(() => self.close())
       break
     case 'getArtists':
       getArtists()
+      .then(() => self.close())
       break
     case 'getAlbums':
       getAlbums()
+      .then(() => self.close())
       break
     case 'getTracks':
       getTracks()
+      .then(() => self.close())
       break
     case 'getTracksByArtist':
       getTracksByArtist(data.data)
+      .then(() => self.close())
       break
     case 'getAttachment':
       getAttachment(data.data.id, data.data.attachment)
+      .then(() => self.close())
       break
   }
 })
