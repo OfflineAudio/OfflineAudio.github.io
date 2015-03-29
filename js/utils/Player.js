@@ -1,6 +1,10 @@
 /*eslint-env browser, es6 */
 const audio = new Audio()
 
+function addEndedEvent (event) {
+  audio.addEventListener('ended', event);
+}
+
 function playFile (blob, cb) {
   var url = URL.createObjectURL(blob)
   audio.src = url
@@ -24,8 +28,9 @@ function updateVolume (value) {
 }
 
 module.exports = {
-  playFile: playFile,
-  playCurrentFile: playCurrentFile,
-  pauseCurrentFile: pauseCurrentFile,
-  updateVolume: updateVolume
+  playFile,
+  playCurrentFile,
+  pauseCurrentFile,
+  updateVolume,
+  addEndedEvent
 }

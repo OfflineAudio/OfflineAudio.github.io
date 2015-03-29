@@ -2,6 +2,13 @@ const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
 
 const Track = React.createClass({
+  addToQueue (event) {
+    debugger
+    const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
+    const file = this.props.file
+    PlayerActions.addToQueue(id, file)
+    event.stopPropagation()
+  },
   displayName: 'Track',
   propTypes: {
     // An optional string prop named "description".
@@ -22,7 +29,8 @@ const Track = React.createClass({
     if (event.target.nodeName !== 'LABEL') {
       const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
       const file = this.props.file
-      PlayerActions.playSong(id, file)
+      PlayerActions.playNewSong(id, file)
+      event.stopPropagation()
     }
   },
   render () {
@@ -50,8 +58,7 @@ const Track = React.createClass({
                 <button type="button" className="btn track-option__item__button icon--trash"></button>
               </li>
               <li className="track-option__item">
-              // using this for add to now playing queue
-                <button type="button" className="btn track-option__item__button icon--pencil"></button>
+                <button type="button" className="btn track-option__item__button icon--pencil" onClick={this.addToQueue}></button>
               </li>
             </ul>
           </li>

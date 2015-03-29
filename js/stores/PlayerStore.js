@@ -12,11 +12,17 @@ let _duration
 let _progress
 let _playing
 let _volume
+let _queue = []
+let _index
 
-function switchFile (data) {
-  _album = data.album
-  _artist = data.artist
-  _title = data.title
+function switchSong (data) {
+  [_artist, _album, _title] = data.id.split('-||-||-')
+}
+
+function resetQueue (data) {
+  _index = 0
+  _queue.length = 0
+  addToQueue(data)
 }
 
 function updateCurrentTime (currentTime) {
@@ -37,6 +43,15 @@ function updatePlaying (playing) {
 
 function updateVolume (volume) {
   _volume = volume
+}
+
+function switchQueue (queue) {
+  _queue = queue
+}
+
+function addToQueue(track) {
+  debugger;
+  _queue.push(track)
 }
 
 var PlayerStore = _.extend({}, EventEmitter.prototype, {
@@ -68,8 +83,21 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     return _playing
   },
 
+  getQueue: function() {
+    return _queue
+  },
+
   getVolume: function () {
     return _volume
+  },
+
+  hasNext: function () {
+    return _queue.length && _queue.length > _index + 1
+  },
+
+  next: function () {
+    if (this.hasNext())
+      return _queue[++_index]
   },
 
   // Emit Change event
@@ -93,8 +121,15 @@ AppDispatcher.register(function (payload) {
   var action = payload.action
 
   switch (action.actionType) {
-    case PlayerConstants.PLAY_FILE:
-      switchFile(action.data)
+    case PlayerConstants.ADD_TO_QUEUE:
+      addToQueue(action.data)
+    break
+    case PlayerConstants.PLAY_SONG:
+      switchSong(action.data)
+    break
+    case PlayerConstants.PLAY_NEW_SONG:
+      resetQueue(action.data)
+      switchSong(action.data)
     break
     case PlayerConstants.CURRENT_TIME:
       updateCurrentTime(action.data)
@@ -105,6 +140,12 @@ AppDispatcher.register(function (payload) {
     break
     case PlayerConstants.PLAYING:
       updatePlaying(action.data)
+    break
+    case PlayerConstants.STOP:
+      resetQueue()
+      updatePlaying(false)
+      updateCurrentTime(0)
+      updateProgress()
     break
     case PlayerConstants.VOLUME:
       updateVolume(action.data)
