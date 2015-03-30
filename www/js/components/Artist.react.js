@@ -1,27 +1,27 @@
 const React = require('react')
-const FileUploadActions = require('../actions/FileUploadActions')
-const Album = require('./Album.react')
+const Router = require('react-router')
+
+const Link = Router.Link
 
 const Artist = React.createClass({
-	render() {
-		const name = this.props.name
-    const showOnlyArtists = this.props.showOnlyArtists
-    const albums = this.props.albums
-    const albumNames = Object.keys(albums)
-    let Albums
+  displayName: 'Artist',
+  propTypes: {
+    // An optional string prop named "description".
+    artist: React.PropTypes.string.isRequired
+  },
+  handleClick (event) {
+  },
+  render () {
+    const {artist} = this.props
 
-    if (!showOnlyArtists) {
-      Albums = albumNames.map(function(album) {
-        return <Album name={album} tracks={albums[album]} />
-      })
-    }
-
-  	return (
-  		<div>
-  			{Albums}
-  		</div>
-  	)
-	}
+    return (
+      <li className="filter__item">
+      <Link className="btn filter__item__button filter__item--button" to="artist" params={{artist: artist}}>
+        {artist}
+      </Link>
+      </li>
+    )
+  }
 })
 
 module.exports = Artist
