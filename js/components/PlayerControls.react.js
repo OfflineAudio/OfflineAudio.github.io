@@ -1,6 +1,7 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
+const PropCheckMixin = require('../mixins/PropCheckMixin')
 
 function secondsToMinutesAndSeconds (_seconds) {
   const minutes = parseInt(_seconds / 60, 10)
@@ -25,16 +26,17 @@ function handlePrev () {
 function handldNext () {
   PlayerActions.playNextSong()
 }
+
 const PlayerControls = React.createClass({
-  mixins: [PureRenderMixin],
+  mixins: [PureRenderMixin, PropCheckMixin],
   displayName: 'PlayerControls',
   propTypes: {
     // An optional string prop named "description".
     artist: React.PropTypes.string.isRequired,
-    currentTime: React.PropTypes.string.isRequired,
+    currentTime: React.PropTypes.number.isRequired,
     title: React.PropTypes.string.isRequired,
-    totalTime: React.PropTypes.string.isRequired,
-    progresss: React.PropTypes.string.isRequired,
+    totalTime: React.PropTypes.number.isRequired,
+    progresss: React.PropTypes.number.isRequired,
     playing: React.PropTypes.bool.isRequired
   },
   render () {

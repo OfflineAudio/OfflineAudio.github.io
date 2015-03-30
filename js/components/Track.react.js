@@ -1,9 +1,10 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
+const PropCheckMixin = require('../mixins/PropCheckMixin')
 
 const Track = React.createClass({
-  mixins: [PureRenderMixin],
+  mixins: [PureRenderMixin, PropCheckMixin],
   addToQueue (event) {
     const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
     const file = this.props.file
@@ -17,10 +18,10 @@ const Track = React.createClass({
     artist: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
     file: React.PropTypes.string.isRequired,
-    trackNumber: React.PropTypes.string.isRequired,
+    trackNumber: React.PropTypes.number.isRequired,
     duration: React.PropTypes.string.isRequired,
-    playing: React.PropTypes.string.isRequired,
-    favourite: React.PropTypes.string.isRequired
+    playing: React.PropTypes.bool.isRequired,
+    favourite: React.PropTypes.bool.isRequired
   },
   handleFavourite (event) {
     // debugger

@@ -13,8 +13,8 @@ const ArtistList = React.createClass({
   render () {
     const {artists} = this.props
 
-    const artistList = artists.map(function (artist) {
-      return <Artist artist={artist}/>
+    const artistList = artists.map(function (artist, index) {
+      return <Artist artist={artist} key={index}/>
     })
 
     return (

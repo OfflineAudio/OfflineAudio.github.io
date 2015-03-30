@@ -44,9 +44,9 @@ const MusicPlayer = React.createClass({
     const artist = PlayerStore.getArtist() || ''
     // const album = PlayerStore.getAlbum() || ''
     const title = PlayerStore.getTitle() || ''
-    const currentTime = PlayerStore.getCurrentTime() || ''
-    const duration = PlayerStore.getDuration() || ''
-    const progress = PlayerStore.getProgress() || ''
+    const currentTime = PlayerStore.getCurrentTime() || 0
+    const duration = PlayerStore.getDuration() || 0
+    const progress = PlayerStore.getProgress() || 0
     const playing = PlayerStore.getPlaying() || false
     const volume = PlayerStore.getVolume() || 0
 
