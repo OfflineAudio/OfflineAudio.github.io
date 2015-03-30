@@ -1,19 +1,23 @@
-const React = require('react');
+const React = require('react')
 const FileUploader = require('./FileUploader.react')
 const ArtistList = require('./ArtistList.react')
 
 const PlayerSideMenu = React.createClass({
-  render() {
+  displayName: 'PlayerSideMenu',
+  propTypes: {
+    artists: React.PropTypes.array.isRequired
+  },
+  render () {
     const {artists} = this.props
 
     return (
       <section className="side-menu">
-			  <FileUploader/>
-			  <input type="search" className="search-field" placeholder="Search" />
-			  <ArtistList artists={artists}/>
-			</section>
-    );
+        <FileUploader/>
+        <input type="search" className="search-field" placeholder="Search" />
+        <ArtistList artists={artists}/>
+      </section>
+    )
   }
-});
+})
 
-module.exports = PlayerSideMenu;
+module.exports = PlayerSideMenu

@@ -1,41 +1,31 @@
-const React = require('react');
-var Router = require('react-router');
+const React = require('react')
+const Router = require('react-router')
+const Artist = require('./Artist.react')
 
-var Link = Router.Link;
-
-const Artist = React.createClass({
-	handleClick(event) {
-	},
-	render() {
-		const {artist} = this.props
-
-		return (
-			<li className="filter__item">
-		  	<Link className="btn filter__item__button filter__item--button" to="artist" params={{artist: artist}}>
-		    	{artist}
-		  	</Link>
-			</li>
-		)
-	}
-})
+const Link = Router.Link
 
 const ArtistList = React.createClass({
-	render() {
-		const {artists} = this.props
+  displayName: 'ArtistList',
+  propTypes: {
+    // An optional string prop named "description".
+    artists: React.PropTypes.array.isRequired
+  },
+  render () {
+    const {artists} = this.props
 
-		const artistList = artists.map(function(artist) {
-			return <Artist artist={artist}/>
-		})
+    const artistList = artists.map(function (artist) {
+      return <Artist artist={artist}/>
+    })
 
-  	return (
+    return (
       <ul className="list-block filter">
-				<li className="filter__item filter__item--heading gamma">
-			  	<Link to="artists">Artists</Link>
-				</li>
-				{artistList}
-			</ul>
-  	);
-	}
-});
+        <li className="filter__item filter__item--heading gamma">
+          <Link to="artists">Artists</Link>
+        </li>
+        {artistList}
+      </ul>
+    )
+  }
+})
 
-module.exports = ArtistList;
+module.exports = ArtistList

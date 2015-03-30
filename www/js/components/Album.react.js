@@ -1,9 +1,13 @@
 const React = require('react')
-const FileUploadActions = require('../actions/FileUploadActions')
 const TrackList = require('./TrackList.react')
 
 const Album = React.createClass({
-  render() {
+  displayName: 'Album',
+  propTypes: {
+    // An optional string prop named "description".
+    tracks: React.PropTypes.array.isRequired
+  },
+  render () {
     return (
       <TrackList tracks={this.props.tracks} />
     )

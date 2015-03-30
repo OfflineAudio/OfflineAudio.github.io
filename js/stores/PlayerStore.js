@@ -12,103 +12,158 @@ let _duration
 let _progress
 let _playing
 let _volume
+let _queue = []
+let _index
 
-function switchFile(data) {
-  _album = data.album
-  _artist = data.artist
-  _title = data.title
+function switchSong (data) {
+  [_artist, _album, _title] = data.id.split('-||-||-')
 }
 
-function updateCurrentTime(currentTime) {
+function resetQueue (data) {
+  _index = 0
+  _queue.length = 0
+}
+
+function updateCurrentTime (currentTime) {
   _currentTime = currentTime
 }
 
-function updateDuration(duration) {
+function updateDuration (duration) {
   _duration = duration
 }
 
-function updateProgress() {
+function updateProgress () {
   _progress = (100 / _duration) * _currentTime
 }
 
-function updatePlaying(playing) {
+function updatePlaying (playing) {
   _playing = playing
 }
 
-function updateVolume(volume) {
+function updateVolume (volume) {
   _volume = volume
 }
 
+function switchQueue (queue) {
+  _queue = queue
+}
+
+function addToQueue(track) {
+  debugger;
+  _queue.push(track)
+}
+
 var PlayerStore = _.extend({}, EventEmitter.prototype, {
-  getAlbum: function() {
+  getAlbum: function () {
     return _album
   },
 
-  getArtist: function() {
+  getArtist: function () {
     return _artist
   },
 
-  getCurrentTime: function() {
+  getCurrentTime: function () {
     return _currentTime
   },
 
-  getDuration: function() {
+  getDuration: function () {
     return _duration
   },
 
-  getTitle: function() {
+  getTitle: function () {
     return _title
   },
 
-  getProgress: function() {
+  getProgress: function () {
     return _progress
   },
 
-  getPlaying: function() {
+  getPlaying: function () {
     return _playing
   },
 
-  getVolume: function() {
+  getQueue: function() {
+    return _queue
+  },
+
+  getVolume: function () {
     return _volume
   },
 
+  hasNext: function () {
+    return _queue.length && _queue.length > _index + 1
+  },
+
+  hasPrev: function() {
+    return _index > 0
+  },
+
+  prev: function () {
+    if (this.hasPrev()) {
+      return _queue[--_index]
+    }
+  },
+
+  next: function () {
+    if (this.hasNext())
+      return _queue[++_index]
+  },
+
   // Emit Change event
-  emitChange: function() {
+  emitChange: function () {
     this.emit('change')
   },
 
   // Add change listener
-  addChangeListener: function(callback) {
+  addChangeListener: function (callback) {
     this.on('change', callback)
   },
 
   // Remove change listener
-  removeChangeListener: function(callback) {
+  removeChangeListener: function (callback) {
     this.removeListener('change', callback)
   }
 })
 
 // Register callback with AppDispatcher
-AppDispatcher.register(function(payload) {
+AppDispatcher.register(function (payload) {
   var action = payload.action
 
-  switch(action.actionType) {
-    case PlayerConstants.PLAY_FILE:
-      switchFile(action.data)
-      break
+  switch (action.actionType) {
+    case PlayerConstants.ADD_TO_QUEUE:
+      addToQueue(action.data)
+    break
+    case PlayerConstants.EMPTY_QUEUE:
+      resetQueue()
+      updateCurrentTime(0)
+      updateProgress()
+    break
+    case PlayerConstants.PLAY_SONG:
+      switchSong(action.data)
+    break
+    case PlayerConstants.PLAY_NEW_SONG:
+      resetQueue(action.data)
+      addToQueue(action.data)
+      switchSong(action.data)
+    break
     case PlayerConstants.CURRENT_TIME:
       updateCurrentTime(action.data)
       updateProgress()
-      break
+    break
     case PlayerConstants.DURATION:
       updateDuration(action.data)
-      break
+    break
     case PlayerConstants.PLAYING:
       updatePlaying(action.data)
-      break
+    break
+    case PlayerConstants.STOP:
+      updatePlaying(false)
+      updateCurrentTime(0)
+      updateProgress()
+    break
     case PlayerConstants.VOLUME:
       updateVolume(action.data)
-      break
+    break
     default:
       return true
   }
