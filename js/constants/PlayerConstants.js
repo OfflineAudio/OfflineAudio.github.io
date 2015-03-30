@@ -9,6 +9,7 @@ module.exports = keyMirror({
   PLAY_SONG: null,
   PLAY_NEW_SONG: null,
   PLAYING: null,
+  SHUFFLE: null,
   STOP: null,
   VOLUME: null
 })

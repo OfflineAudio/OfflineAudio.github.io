@@ -1,11 +1,14 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
+const PureRenderMixin = require('react/addons').addons.PureRenderMixin
+const PropCheckMixin = require('../mixins/PropCheckMixin')
 
 const PlayerMenu = React.createClass({
+  mixins: [PureRenderMixin, PropCheckMixin],
   displayName: 'PlayerMenu',
   propTypes: {
     // An optional string prop named "description".
-    volume: React.PropTypes.string.isRequired,
+    volume: React.PropTypes.number.isRequired,
     title: React.PropTypes.string.isRequired
   },
   onChange (event) {

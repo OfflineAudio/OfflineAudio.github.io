@@ -1,5 +1,7 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
+const PureRenderMixin = require('react/addons').addons.PureRenderMixin
+const PropCheckMixin = require('../mixins/PropCheckMixin')
 
 function secondsToMinutesAndSeconds (_seconds) {
   const minutes = parseInt(_seconds / 60, 10)
@@ -24,15 +26,25 @@ function handlePrev () {
 function handldNext () {
   PlayerActions.playNextSong()
 }
+
+function handleShuffle () {
+  PlayerActions.shuffle()
+}
+
+function handleRepeat () {
+
+}
+
 const PlayerControls = React.createClass({
+  mixins: [PureRenderMixin, PropCheckMixin],
   displayName: 'PlayerControls',
   propTypes: {
     // An optional string prop named "description".
     artist: React.PropTypes.string.isRequired,
-    currentTime: React.PropTypes.string.isRequired,
+    currentTime: React.PropTypes.number.isRequired,
     title: React.PropTypes.string.isRequired,
-    totalTime: React.PropTypes.string.isRequired,
-    progresss: React.PropTypes.string.isRequired,
+    totalTime: React.PropTypes.number.isRequired,
+    progresss: React.PropTypes.number.isRequired,
     playing: React.PropTypes.bool.isRequired
   },
   render () {
@@ -58,8 +70,8 @@ const PlayerControls = React.createClass({
           <progress className='progress' max='100' value={progresss}></progress>
         </div>
         <div className='play-controls__secondary'>
-          <button className='btn player-button icon--shuffle gamma btn--dark'></button>
-          <button className='btn player-button icon--loop gamma btn--dark'></button>
+          <button className='btn player-button icon--shuffle gamma btn--dark' onClick={handleShuffle}></button>
+          <button className='btn player-button icon--loop gamma btn--dark' onClick={handleRepeat}></button>
         </div>
       </section>
     )

@@ -24,6 +24,11 @@ const PlayerActions = {
       data: {id, file}
     })
   },
+  shuffle: function() {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.SHUFFLE
+    })
+  },
   playPrevSong: function () {
     debugger;
     const track = PlayerStore.prev()

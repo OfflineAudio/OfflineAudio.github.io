@@ -27,6 +27,14 @@ function handldNext () {
   PlayerActions.playNextSong()
 }
 
+function handleShuffle () {
+  PlayerActions.shuffle()
+}
+
+function handleRepeat () {
+
+}
+
 const PlayerControls = React.createClass({
   mixins: [PureRenderMixin, PropCheckMixin],
   displayName: 'PlayerControls',
@@ -62,8 +70,8 @@ const PlayerControls = React.createClass({
           <progress className='progress' max='100' value={progresss}></progress>
         </div>
         <div className='play-controls__secondary'>
-          <button className='btn player-button icon--shuffle gamma btn--dark'></button>
-          <button className='btn player-button icon--loop gamma btn--dark'></button>
+          <button className='btn player-button icon--shuffle gamma btn--dark' onClick={handleShuffle}></button>
+          <button className='btn player-button icon--loop gamma btn--dark' onClick={handleRepeat}></button>
         </div>
       </section>
     )
