@@ -1,7 +1,9 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
+const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 
 const PlayerMenu = React.createClass({
+  mixins: [PureRenderMixin],
   displayName: 'PlayerMenu',
   propTypes: {
     // An optional string prop named "description".

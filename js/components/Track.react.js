@@ -1,7 +1,9 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
+const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 
 const Track = React.createClass({
+  mixins: [PureRenderMixin],
   addToQueue (event) {
     const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
     const file = this.props.file

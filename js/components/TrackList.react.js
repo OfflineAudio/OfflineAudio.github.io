@@ -1,8 +1,10 @@
 const React = require('react')
 const _ = require('lodash')
 const Track = require('./Track.react')
+const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 
 const TrackList = React.createClass({
+  mixins: [PureRenderMixin],
   displayName: 'TrackList',
   propTypes: {
     // An optional string prop named "description".

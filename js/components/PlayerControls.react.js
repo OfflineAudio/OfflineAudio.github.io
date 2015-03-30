@@ -1,5 +1,6 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
+const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 
 function secondsToMinutesAndSeconds (_seconds) {
   const minutes = parseInt(_seconds / 60, 10)
@@ -25,6 +26,7 @@ function handldNext () {
   PlayerActions.playNextSong()
 }
 const PlayerControls = React.createClass({
+  mixins: [PureRenderMixin],
   displayName: 'PlayerControls',
   propTypes: {
     // An optional string prop named "description".
