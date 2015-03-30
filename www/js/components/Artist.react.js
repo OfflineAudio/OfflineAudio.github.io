@@ -1,9 +1,11 @@
 const React = require('react')
 const Router = require('react-router')
+const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 
 const Link = Router.Link
 
 const Artist = React.createClass({
+  mixins: [PureRenderMixin],
   displayName: 'Artist',
   propTypes: {
     // An optional string prop named "description".

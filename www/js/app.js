@@ -7,6 +7,8 @@ const Route = Router.Route
 const MusicPlayer = require('./components/MusicPlayer.react')
 const TrackList = require('./components/TrackList.react')
 const LibraryStore = require('./stores/LibraryStore')
+// const a11y = require('react-a11y')
+// a11y()
 
 const StartSplash = React.createClass({
   displayName: 'StartSplash',

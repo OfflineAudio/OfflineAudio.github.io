@@ -44,7 +44,6 @@
     "gulp": "^3.8.11",
     "gulp-babel": "^4.0.0",
     "gulp-rename": "^1.2.0",
-    "lodash": "^3.5.0",
     "pushstate-server": "^1.5.0",
     "rimraf": "^2.3.2",
     "standard": "^3.2.0",

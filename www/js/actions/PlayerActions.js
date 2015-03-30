@@ -4,7 +4,7 @@ const Library = require('../utils/Library')
 const Player = require('../utils/Player')
 const PlayerStore = require('../stores/PlayerStore')
 const once = require('../utils/once')
-
+const _ = require('lodash')
 
 const PlayerActions = {
   stop: function() {
@@ -22,6 +22,11 @@ const PlayerActions = {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.ADD_TO_QUEUE,
       data: {id, file}
+    })
+  },
+  shuffle: function() {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.SHUFFLE
     })
   },
   playPrevSong: function () {
@@ -169,6 +174,6 @@ const PlayerActions = {
   }
 }
 
-Player.addEndedEvent(PlayerActions.playNextSong)
+Player.addEndedEvent(_.debounce(PlayerActions.playNextSong, 500))
 
 module.exports = PlayerActions

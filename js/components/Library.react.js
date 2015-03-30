@@ -1,8 +1,10 @@
 const React = require('react')
 const Artist = require('./Artist.react')
 const Router = require('react-router')
+const PropCheckMixin = require('../mixins/PropCheckMixin')
 
 const Library = React.createClass({
+  mixins: [PropCheckMixin],
   displayName: 'Library',
   propTypes: {
     // An optional string prop named "description".
