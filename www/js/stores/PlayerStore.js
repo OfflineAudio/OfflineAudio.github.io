@@ -17,9 +17,9 @@ let _index
 
 function shuffle () {
   if (_queue.length && _index > -1) {
-    const currentlyPlayingSong = _queue.splice(_index, 1)
+    const currentlyPlayingSong = _queue.splice(_index, 1)[0]
     _queue = _.shuffle(_queue)
-    _queue.unshift(currentlyPlayingSong[0])
+    _queue.unshift(currentlyPlayingSong)
     _index = 0
   }
 }
