@@ -49,6 +49,7 @@ const MusicPlayer = React.createClass({
     const progress = PlayerStore.getProgress() || 0
     const playing = PlayerStore.getPlaying() || false
     const volume = PlayerStore.getVolume() || 0
+    const repeat = PlayerStore.getRepeat() || false
 
     return (
       <div>
@@ -62,7 +63,7 @@ const MusicPlayer = React.createClass({
         </section>
       </div>
 
-      <PlayerControls artist={artist} currentTime={currentTime} title={title} totalTime={duration} progresss={progress} playing={playing}/>
+      <PlayerControls artist={artist} currentTime={currentTime} title={title} totalTime={duration} progresss={progress} playing={playing} repeat={repeat}/>
       </div>
     )
   },

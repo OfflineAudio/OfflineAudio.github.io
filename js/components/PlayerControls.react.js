@@ -10,12 +10,10 @@ function secondsToMinutesAndSeconds (_seconds) {
 }
 
 function handlePause () {
-  // debugger
   PlayerActions.pauseCurrentSong()
 }
 
 function handlePlay () {
-  // debugger
   PlayerActions.playCurrentSong()
 }
 
@@ -32,7 +30,7 @@ function handleShuffle () {
 }
 
 function handleRepeat () {
-
+  PlayerActions.repeat()
 }
 
 const PlayerControls = React.createClass({
@@ -45,10 +43,11 @@ const PlayerControls = React.createClass({
     title: React.PropTypes.string.isRequired,
     totalTime: React.PropTypes.number.isRequired,
     progresss: React.PropTypes.number.isRequired,
-    playing: React.PropTypes.bool.isRequired
+    playing: React.PropTypes.bool.isRequired,
+    repeat: React.PropTypes.bool.isRequired
   },
   render () {
-    const {artist, currentTime, title, totalTime, progresss, playing} = this.props
+    const {artist, currentTime, title, totalTime, progresss, playing, repeat} = this.props
     let currentTimeDisplay = secondsToMinutesAndSeconds(currentTime)
     let totalTimeDisplay = secondsToMinutesAndSeconds(totalTime)
     let playButton
@@ -56,6 +55,13 @@ const PlayerControls = React.createClass({
       playButton = <button className='btn player-button icon--pause alpha btn--light' onClick={handlePause}></button>
     } else {
       playButton = <button className='btn player-button icon--play alpha btn--light' onClick={handlePlay}></button>
+    }
+
+    let repeatButton
+    if (repeat) {
+      repeatButton = <button className='btn player-button icon--loop gamma btn--dark repeating' onClick={handleRepeat}></button>
+    } else {
+      repeatButton = <button className='btn player-button icon--loop gamma btn--dark' onClick={handleRepeat}></button>
     }
 
     return (
@@ -71,7 +77,7 @@ const PlayerControls = React.createClass({
         </div>
         <div className='play-controls__secondary'>
           <button className='btn player-button icon--shuffle gamma btn--dark' onClick={handleShuffle}></button>
-          <button className='btn player-button icon--loop gamma btn--dark' onClick={handleRepeat}></button>
+          {repeatButton}
         </div>
       </section>
     )

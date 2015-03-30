@@ -14,6 +14,12 @@ let _playing
 let _volume
 let _queue = []
 let _index
+let _shuffle
+let _repeat
+
+function repeat () {
+  _repeat = !_repeat
+}
 
 function shuffle () {
   if (_queue.length && _index > -1) {
@@ -21,6 +27,8 @@ function shuffle () {
     _queue = _.shuffle(_queue)
     _queue.unshift(currentlyPlayingSong)
     _index = 0
+  } else {
+    _queue = _.shuffle(_queue)
   }
 }
 
@@ -58,7 +66,6 @@ function switchQueue (queue) {
 }
 
 function addToQueue(track) {
-  debugger;
   _queue.push(track)
 }
 
@@ -91,8 +98,16 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     return _playing
   },
 
-  getQueue: function() {
+  getQueue: function () {
     return _queue
+  },
+
+  getRepeat: function () {
+    return _repeat
+  },
+
+  getShuffle: function () {
+    return _shuffle
   },
 
   getVolume: function () {
@@ -164,6 +179,9 @@ AppDispatcher.register(function (payload) {
     break
     case PlayerConstants.PLAYING:
       updatePlaying(action.data)
+    break
+    case PlayerConstants.REPEAT:
+      repeat()
     break
     case PlayerConstants.SHUFFLE:
       shuffle()

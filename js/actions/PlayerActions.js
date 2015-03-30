@@ -29,6 +29,11 @@ const PlayerActions = {
       actionType: PlayerConstants.SHUFFLE
     })
   },
+  repeat: function () {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.REPEAT
+    })
+  },
   playPrevSong: function () {
     debugger;
     const track = PlayerStore.prev()
@@ -42,7 +47,7 @@ const PlayerActions = {
     if (PlayerStore.hasNext()) {
       const track = PlayerStore.next()
       PlayerActions.playSong(track.id, track.file)
-    // } else if (PlayerStore.get('repeat')) {
+    // } else if (PlayerStore.getRepeat()) {
       // PlayerStore.rewind()
       // @play()
     } else {
