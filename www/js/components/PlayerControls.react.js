@@ -17,6 +17,13 @@ function handlePlay () {
   PlayerActions.playCurrentSong()
 }
 
+function handlePrev () {
+  PlayerActions.playPrevSong()
+}
+
+function handldNext () {
+  PlayerActions.playNextSong()
+}
 const PlayerControls = React.createClass({
   displayName: 'PlayerControls',
   propTypes: {
@@ -41,9 +48,9 @@ const PlayerControls = React.createClass({
 
     return (
       <section className='play-controls'>
-        <button className='btn player-button icon--fast-backward gamma btn--dark'></button>
+        <button className='btn player-button icon--fast-backward gamma btn--dark' onClick={handlePrev}></button>
         {playButton}
-        <button className='btn player-button icon--fast-forward gamma btn--dark'></button>
+        <button className='btn player-button icon--fast-forward gamma btn--dark' onClick={handldNext}></button>
         <div className='play-controls__playback'>
           <span className='playback playback--title'>{artist} - {title}</span>
           <span className='playback playback--current-time'>{currentTimeDisplay}</span>

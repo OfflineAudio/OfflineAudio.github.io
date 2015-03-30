@@ -22,7 +22,6 @@ function switchSong (data) {
 function resetQueue (data) {
   _index = 0
   _queue.length = 0
-  addToQueue(data)
 }
 
 function updateCurrentTime (currentTime) {
@@ -95,6 +94,16 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     return _queue.length && _queue.length > _index + 1
   },
 
+  hasPrev: function() {
+    return _index > 0
+  },
+
+  prev: function () {
+    if (this.hasPrev()) {
+      return _queue[--_index]
+    }
+  },
+
   next: function () {
     if (this.hasNext())
       return _queue[++_index]
@@ -124,11 +133,17 @@ AppDispatcher.register(function (payload) {
     case PlayerConstants.ADD_TO_QUEUE:
       addToQueue(action.data)
     break
+    case PlayerConstants.EMPTY_QUEUE:
+      resetQueue()
+      updateCurrentTime(0)
+      updateProgress()
+    break
     case PlayerConstants.PLAY_SONG:
       switchSong(action.data)
     break
     case PlayerConstants.PLAY_NEW_SONG:
       resetQueue(action.data)
+      addToQueue(action.data)
       switchSong(action.data)
     break
     case PlayerConstants.CURRENT_TIME:
@@ -142,7 +157,6 @@ AppDispatcher.register(function (payload) {
       updatePlaying(action.data)
     break
     case PlayerConstants.STOP:
-      resetQueue()
       updatePlaying(false)
       updateCurrentTime(0)
       updateProgress()

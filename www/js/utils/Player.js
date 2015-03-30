@@ -23,6 +23,11 @@ function pauseCurrentFile (cb) {
   audio.addEventListener('timeupdate', cb, false)
 }
 
+function stop () {
+  audio.pause();
+  audio.currentTime = 0;
+}
+
 function updateVolume (value) {
   audio.volume = value / 100
 }
@@ -32,5 +37,6 @@ module.exports = {
   playCurrentFile,
   pauseCurrentFile,
   updateVolume,
-  addEndedEvent
+  addEndedEvent,
+  stop
 }

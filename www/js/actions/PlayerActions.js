@@ -8,8 +8,14 @@ const once = require('../utils/once')
 
 const PlayerActions = {
   stop: function() {
+    Player.stop()
     AppDispatcher.handleAction({
       actionType: PlayerConstants.STOP
+    })
+  },
+  emptyQueue: function () {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.EMPTY_QUEUE
     })
   },
   addToQueue: function (id, file) {
@@ -18,17 +24,24 @@ const PlayerActions = {
       data: {id, file}
     })
   },
+  playPrevSong: function () {
+    debugger;
+    const track = PlayerStore.prev()
+    if (track) {
+      PlayerActions.playSong(track.id, track.attachment)
+    } else {
+      PlayerActions.stop()
+    }
+  },
   playNextSong: function () {
-    debugger
     if (PlayerStore.hasNext()) {
-      let nextSong = PlayerStore.next()
-      PlayerActions.playSong(nextSong.id, nextSong.file)
+      const track = PlayerStore.next()
+      PlayerActions.playSong(track.id, track.file)
     // } else if (PlayerStore.get('repeat')) {
       // PlayerStore.rewind()
       // @play()
     } else {
       PlayerActions.stop()
-      // PlayerStore.rewind()
     }
   },
   playNewSong: function(id, attachment) {
