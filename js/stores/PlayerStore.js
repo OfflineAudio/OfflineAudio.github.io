@@ -17,11 +17,22 @@ let _index
 let _shuffle
 let _repeat
 
+function decrementIndex() {
+  --_index
+}
+
+function incrementIndex() {
+  ++_index
+}
+
 function repeat () {
   _repeat = !_repeat
 }
 
 function shuffle () {
+  if (_shuffle) {
+    // reoder list somehow ?!
+  }
   if (_queue.length && _index > -1) {
     const currentlyPlayingSong = _queue.splice(_index, 1)[0]
     _queue = _.shuffle(_queue)
@@ -30,6 +41,7 @@ function shuffle () {
   } else {
     _queue = _.shuffle(_queue)
   }
+  _shuffle = !_shuffle
 }
 
 function switchSong (data) {
@@ -114,6 +126,14 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     return _volume
   },
 
+  getPrevSong: function () {
+    return _queue[_index - 1]
+  },
+
+  getNextSong: function () {
+    return _queue[_index + 1]
+  },
+
   hasNext: function () {
     return _queue.length && _queue.length > _index + 1
   },
@@ -179,6 +199,12 @@ AppDispatcher.register(function (payload) {
     break
     case PlayerConstants.PLAYING:
       updatePlaying(action.data)
+    break
+    case PlayerConstants.PREVIOUS:
+      decrementIndex()
+    break
+    case PlayerConstants.NEXT:
+      incrementIndex()
     break
     case PlayerConstants.REPEAT:
       repeat()

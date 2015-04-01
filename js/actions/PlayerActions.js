@@ -34,25 +34,17 @@ const PlayerActions = {
       actionType: PlayerConstants.REPEAT
     })
   },
-  playPrevSong: function () {
-    debugger;
-    const track = PlayerStore.prev()
-    if (track) {
-      PlayerActions.playSong(track.id, track.attachment)
-    } else {
-      PlayerActions.stop()
-    }
+  playPrevSong: function (track) {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.PREVIOUS
+    })
+    PlayerActions.playSong(track.id, track.attachment || track.file)
   },
-  playNextSong: function () {
-    if (PlayerStore.hasNext()) {
-      const track = PlayerStore.next()
-      PlayerActions.playSong(track.id, track.file)
-    // } else if (PlayerStore.getRepeat()) {
-      // PlayerStore.rewind()
-      // @play()
-    } else {
-      PlayerActions.stop()
-    }
+  playNextSong: function (track) {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.NEXT
+    })
+    PlayerActions.playSong(track.id, track.attachment || track.file)
   },
   playNewSong: function(id, attachment) {
     Library.getAttachment(id, attachment)
