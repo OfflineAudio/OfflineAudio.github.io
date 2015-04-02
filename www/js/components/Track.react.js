@@ -7,8 +7,8 @@ const Track = React.createClass({
   mixins: [PureRenderMixin, PropCheckMixin],
   addToQueue (event) {
     const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
-    const file = this.props.file
-    PlayerActions.addToQueue(id, file)
+    const attachment = this.props.attachment
+    PlayerActions.addToQueue(id, attachment)
     event.stopPropagation()
   },
   displayName: 'Track',
@@ -17,7 +17,7 @@ const Track = React.createClass({
     album: React.PropTypes.string.isRequired,
     artist: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
-    file: React.PropTypes.string.isRequired,
+    attachment: React.PropTypes.string.isRequired,
     trackNumber: React.PropTypes.number.isRequired,
     duration: React.PropTypes.string.isRequired,
     playing: React.PropTypes.bool.isRequired,
@@ -30,8 +30,8 @@ const Track = React.createClass({
   handleClick (event) {
     if (event.target.nodeName !== 'LABEL') {
       const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
-      const file = this.props.file
-      PlayerActions.playNewSong(id, file)
+      const attachment = this.props.attachment
+      PlayerActions.playSong(id, attachment)
       event.stopPropagation()
     }
   },
