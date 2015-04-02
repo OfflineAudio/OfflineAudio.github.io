@@ -8,14 +8,25 @@ const PlayerMenu = React.createClass({
   displayName: 'PlayerMenu',
   propTypes: {
     // An optional string prop named "description".
+    muted: React.PropTypes.bool.isRequired,
     volume: React.PropTypes.number.isRequired,
     title: React.PropTypes.string.isRequired
   },
   onChange (event) {
     PlayerActions.updateVolume(event.target.value)
   },
+  handleMuteClick (event) {
+    PlayerActions.mute()
+  },
   render () {
-    const {title, volume} = this.props
+    const {muted, title, volume} = this.props
+
+    let muteButton
+    if (muted) {
+      muteButton = <button className="btn menu-button icon--sound gamma btn--dark btn--toggled" onClick={this.handleMuteClick}></button>
+    } else {
+      muteButton = <button className="btn menu-button icon--sound gamma btn--dark" onClick={this.handleMuteClick}></button>
+    }
 
     return (
       <header className="player-menu">
@@ -24,7 +35,7 @@ const PlayerMenu = React.createClass({
             {title}
           </span>
           <div className="player-menu__controls">
-            <button className="btn menu-button icon--sound gamma btn--dark"></button>
+            {muteButton}
             <div className="volume-slider-wrapper">
               <input className="volume-slider" type="range" tabIndex="1" onChange={this.onChange} value={volume} max="1" step="0.01"/>
             </div>

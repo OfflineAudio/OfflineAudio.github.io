@@ -5,6 +5,11 @@ const once = require('../utils/once')
 const _ = require('lodash')
 
 const PlayerActions = {
+  mute () {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.MUTE
+    })
+  },
   stop () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.STOP

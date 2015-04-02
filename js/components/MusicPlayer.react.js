@@ -55,10 +55,11 @@ const MusicPlayer = React.createClass({
     const hasPrev = PlayerStore.hasPrev() || false
     const previousSong = PlayerStore.getPrevSong()
     const nextSong = PlayerStore.getNextSong()
+    const isMuted = PlayerStore.isMuted()
 
     return (
       <div>
-      <PlayerMenu title='Offline Audio' volume={volume}/>
+      <PlayerMenu title='Offline Audio' volume={volume} muted={isMuted}/>
 
       <div className='main-container'>
         <PlayerSideMenu artists={artists}/>

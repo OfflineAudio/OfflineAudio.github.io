@@ -12,6 +12,7 @@ let _queue = []
 let _index
 let _shuffle
 let _repeat
+let _previousVolume
 const audio = new Audio()
 
 // const set = {} // all the setters
@@ -163,6 +164,10 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     }
   },
 
+  isMuted () {
+    return audio.volume == 0
+  },
+
   prev () {
     if (_repeat && _index === 0) {
       _index = _queue.length
@@ -215,6 +220,14 @@ AppDispatcher.register(function (payload) {
       resetQueue()
       updateCurrentTime(0)
       updateProgress()
+    break
+    case PlayerConstants.MUTE:
+      if (audio.volume == 0) {
+        audio.volume = _previousVolume || 0.1
+      } else {
+        _previousVolume = audio.volume
+        audio.volume = 0
+      }
     break
     case PlayerConstants.NEXT:
       if (!(_queue.length === 1)) {

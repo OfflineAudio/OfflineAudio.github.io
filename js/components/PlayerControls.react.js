@@ -72,7 +72,7 @@ const PlayerControls = React.createClass({
 
     let repeatButton
     if (repeat) {
-      repeatButton = <button className='btn player-button icon--loop gamma btn--dark repeating' onClick={handleRepeat}></button>
+      repeatButton = <button className='btn player-button icon--loop gamma btn--dark btn--toggled' onClick={handleRepeat}></button>
     } else {
       repeatButton = <button className='btn player-button icon--loop gamma btn--dark' onClick={handleRepeat}></button>
     }
