@@ -26,7 +26,7 @@ const PlayerMenu = React.createClass({
           <div className="player-menu__controls">
             <button className="btn menu-button icon--sound gamma btn--dark"></button>
             <div className="volume-slider-wrapper">
-              <input className="volume-slider" type="range" tabIndex="1" onChange={this.onChange} value={volume} />
+              <input className="volume-slider" type="range" tabIndex="1" onChange={this.onChange} value={volume} max="1" step="0.01"/>
             </div>
             <button className="btn menu-button icon--menu gamma btn--dark"></button>
             <button className="btn menu-button icon--layout gamma btn--dark"></button>

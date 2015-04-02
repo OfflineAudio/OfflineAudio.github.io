@@ -2,6 +2,7 @@ const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 const PropCheckMixin = require('../mixins/PropCheckMixin')
+const PlayerStore = require('../stores/PlayerStore')
 
 function secondsToMinutesAndSeconds (_seconds) {
   const minutes = parseInt(_seconds / 60, 10)
@@ -10,11 +11,11 @@ function secondsToMinutesAndSeconds (_seconds) {
 }
 
 function handlePause () {
-  PlayerActions.pauseCurrentSong()
+  PlayerActions.pause()
 }
 
 function handlePlay () {
-  PlayerActions.playCurrentSong()
+  PlayerActions.play()
 }
 
 function handleShuffle () {
@@ -43,11 +44,20 @@ const PlayerControls = React.createClass({
     previousSong: React.PropTypes.object.isRequired,
     nextSong: React.PropTypes.object.isRequired
   },
+  componentDidMount () {
+    PlayerStore.addAudioEventListener('ended', () => {
+      if (this.props.hasNext) {
+        PlayerActions.nextTrack(this.props.nextSong)
+      } else {
+        PlayerActions.stop()
+      }
+    }.bind(this))
+  },
   handleNext () {
-    PlayerActions.playNextSong(this.props.nextSong)
+    PlayerActions.nextTrack(this.props.nextSong)
   },
   handlePrev () {
-    PlayerActions.playPrevSong(this.props.previousSong)
+    PlayerActions.previousTrack(this.props.previousSong)
   },
   render () {
     const {artist, currentTime, title, totalTime, progresss, playing, repeat, shuffle, hasNext, hasPrev} = this.props

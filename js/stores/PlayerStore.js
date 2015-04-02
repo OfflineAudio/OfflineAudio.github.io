@@ -7,15 +7,14 @@ const _ = require('lodash')
 let _artist
 let _album
 let _title
-let _currentTime
-let _duration
-let _progress
 let _playing
-let _volume
 let _queue = []
 let _index
 let _shuffle
 let _repeat
+const audio = new Audio()
+
+// const set = {} // all the setters
 
 function decrementIndex() {
   --_index
@@ -44,37 +43,37 @@ function shuffle () {
   _shuffle = !_shuffle
 }
 
-function switchSong (data) {
-  [_artist, _album, _title] = data.id.split('-||-||-')
+function switchFile (blob) {
+  audio.src = URL.createObjectURL(blob)
+  audio.load()
 }
 
-function resetQueue (data) {
+function play () {
+  _playing = true
+  audio.play()
+}
+
+function pause () {
+  _playing = false
+  audio.pause()
+}
+
+function stop () {
+  pause()
+  audio.currentTime = 0;
+}
+
+function updateVolume (value) {
+  audio.volume = value
+}
+
+function switchSong (id) {
+  [_artist, _album, _title] = id.split('-||-||-')
+}
+
+function resetQueue () {
   _index = 0
   _queue.length = 0
-}
-
-function updateCurrentTime (currentTime) {
-  _currentTime = currentTime
-}
-
-function updateDuration (duration) {
-  _duration = duration
-}
-
-function updateProgress () {
-  _progress = (100 / _duration) * _currentTime
-}
-
-function updatePlaying (playing) {
-  _playing = playing
-}
-
-function updateVolume (volume) {
-  _volume = volume
-}
-
-function switchQueue (queue) {
-  _queue = queue
 }
 
 function addToQueue(track) {
@@ -82,6 +81,10 @@ function addToQueue(track) {
 }
 
 var PlayerStore = _.extend({}, EventEmitter.prototype, {
+  addAudioEventListener: function (eventType, cb) {
+    audio.addEventListener(eventType, cb)
+  },
+
   getAlbum: function () {
     return _album
   },
@@ -91,11 +94,11 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getCurrentTime: function () {
-    return _currentTime
+    return audio.currentTime
   },
 
   getDuration: function () {
-    return _duration
+    return audio.duration
   },
 
   getTitle: function () {
@@ -103,7 +106,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getProgress: function () {
-    return _progress
+    return (100 / audio.duration) * audio.currentTime
   },
 
   getPlaying: function () {
@@ -123,7 +126,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getVolume: function () {
-    return _volume
+    return audio.volume
   },
 
   getPrevSong: function () {
@@ -177,19 +180,6 @@ AppDispatcher.register(function (payload) {
     case PlayerConstants.ADD_TO_QUEUE:
       addToQueue(action.data)
     break
-    case PlayerConstants.EMPTY_QUEUE:
-      resetQueue()
-      updateCurrentTime(0)
-      updateProgress()
-    break
-    case PlayerConstants.PLAY_SONG:
-      switchSong(action.data)
-    break
-    case PlayerConstants.PLAY_NEW_SONG:
-      resetQueue(action.data)
-      addToQueue(action.data)
-      switchSong(action.data)
-    break
     case PlayerConstants.CURRENT_TIME:
       updateCurrentTime(action.data)
       updateProgress()
@@ -197,14 +187,52 @@ AppDispatcher.register(function (payload) {
     case PlayerConstants.DURATION:
       updateDuration(action.data)
     break
-    case PlayerConstants.PLAYING:
-      updatePlaying(action.data)
-    break
-    case PlayerConstants.PREVIOUS:
-      decrementIndex()
+    case PlayerConstants.EMPTY_QUEUE:
+      resetQueue()
+      updateCurrentTime(0)
+      updateProgress()
     break
     case PlayerConstants.NEXT:
       incrementIndex()
+      switchFile(action.data)
+      switchSong(_queue[_index].id)
+      if (_playing) {
+        play()
+      }
+    break
+    case PlayerConstants.PAUSE:
+      pause()
+    break
+    case PlayerConstants.PLAY:
+      play()
+    break
+    case PlayerConstants.PLAY_SONG:
+      switchSong(action.data.id)
+      // update duration
+      // reset progress
+      // update artist, title, etc
+      // reset current time
+      // set playing to true
+    break
+    case PlayerConstants.PLAY_NEW_SONG:
+      const trackData = {
+        id: action.data.id,
+        attachment: action.data.attachment
+      }
+
+      resetQueue()
+      addToQueue(trackData)
+      switchSong(action.data.id)
+      switchFile(action.data.blob)
+      play()
+    break
+    case PlayerConstants.PREVIOUS:
+      decrementIndex()
+      switchFile(action.data)
+      switchSong(_queue[_index].id)
+      if (_playing) {
+        play()
+      }
     break
     case PlayerConstants.REPEAT:
       repeat()
@@ -213,9 +241,7 @@ AppDispatcher.register(function (payload) {
       shuffle()
     break
     case PlayerConstants.STOP:
-      updatePlaying(false)
-      updateCurrentTime(0)
-      updateProgress()
+      stop()
     break
     case PlayerConstants.VOLUME:
       updateVolume(action.data)
@@ -228,5 +254,7 @@ AppDispatcher.register(function (payload) {
 
   return true
 })
+
+audio.addEventListener('timeupdate', PlayerStore.emitChange.bind(PlayerStore))
 
 module.exports = PlayerStore
