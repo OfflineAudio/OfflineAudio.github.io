@@ -34,18 +34,20 @@ const PlayerActions = {
   previousTrack: function (track) {
     Library.getAttachment(track.id, track.attachment)
     .then(blob => {
+      const {id, attachment} = track
       AppDispatcher.handleAction({
         actionType: PlayerConstants.PREVIOUS,
-        data: blob
+        data: {id, attachment, blob}
       })
     })
   },
   nextTrack: function (track) {
     Library.getAttachment(track.id, track.attachment)
     .then(blob => {
+      const {id, attachment} = track
       AppDispatcher.handleAction({
         actionType: PlayerConstants.NEXT,
-        data: blob
+        data: {id, attachment, blob}
       })
     })
   },
@@ -53,7 +55,7 @@ const PlayerActions = {
     Library.getAttachment(id, attachment)
     .then(blob => {
       AppDispatcher.handleAction({
-        actionType: PlayerConstants.PLAY_NEW_SONG,
+        actionType: PlayerConstants.PLAY_SONG,
         data: {id, attachment, blob}
       })
     })

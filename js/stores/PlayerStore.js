@@ -130,29 +130,53 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getPrevSong: function () {
+    if (_queue.length === 1) {
+      return _queue[0]
+    } else if (_repeat && _index === 0) {
+      return _queue[_queue.length - 1]
+    }
     return _queue[_index - 1]
   },
 
   getNextSong: function () {
+    if (_queue.length === 1) {
+      return _queue[0]
+    } else if (_repeat && _index === _queue.length - 1) {
+      return _queue[0]
+    }
     return _queue[_index + 1]
   },
 
   hasNext: function () {
-    return _queue.length && _queue.length > _index + 1
+    if (_repeat && _index === _queue.length - 1) {
+      return true
+    } else {
+      return _queue.length && _queue.length > _index + 1
+    }
   },
 
   hasPrev: function() {
-    return _index > 0
+    if (_repeat && _index === 0) {
+      return true
+    } else {
+      return _index > 0
+    }
   },
 
   prev: function () {
-    if (this.hasPrev()) {
+    if (_repeat && _index === 0) {
+      _index = _queue.length
+      return _queue[--_index]
+    } else if (this.hasPrev()) {
       return _queue[--_index]
     }
   },
 
   next: function () {
-    if (this.hasNext())
+    if (_repeat && _index === _queue.length) {
+      _index = 0
+      return _queue[++_index]
+    } else if (this.hasNext())
       return _queue[++_index]
   },
 
@@ -193,8 +217,12 @@ AppDispatcher.register(function (payload) {
       updateProgress()
     break
     case PlayerConstants.NEXT:
-      incrementIndex()
-      switchFile(action.data)
+      if (_repeat && _index === _queue.length - 1) {
+        decrementIndex()
+      } else {
+        incrementIndex()
+      }
+      switchFile(action.data.blob)
       switchSong(_queue[_index].id)
       if (_playing) {
         play()
@@ -207,19 +235,10 @@ AppDispatcher.register(function (payload) {
       play()
     break
     case PlayerConstants.PLAY_SONG:
-      switchSong(action.data.id)
-      // update duration
-      // reset progress
-      // update artist, title, etc
-      // reset current time
-      // set playing to true
-    break
-    case PlayerConstants.PLAY_NEW_SONG:
       const trackData = {
         id: action.data.id,
         attachment: action.data.attachment
       }
-
       resetQueue()
       addToQueue(trackData)
       switchSong(action.data.id)
@@ -227,8 +246,12 @@ AppDispatcher.register(function (payload) {
       play()
     break
     case PlayerConstants.PREVIOUS:
-      decrementIndex()
-      switchFile(action.data)
+      if (_repeat && _index === 0) {
+        incrementIndex()
+      } else {
+        decrementIndex()
+      }
+      switchFile(action.data.blob)
       switchSong(_queue[_index].id)
       if (_playing) {
         play()
