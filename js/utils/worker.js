@@ -163,6 +163,14 @@ function getAttachment(id, attachment) {
   });
 }
 
+function deleteTrack(id, rev) {
+  return db.remove(id, rev).then(function (result) {
+    return self.postMessage(result);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}
+
 var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(files) {
   var overallSize, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, file;
 
@@ -273,6 +281,11 @@ self.addEventListener("message", function (event) {
       break;
     case "getAttachment":
       getAttachment(data.data.id, data.data.attachment).then(function () {
+        return self.close();
+      });
+      break;
+    case "deleteTrack":
+      deleteTrack(data.data.id, data.data.rev).then(function () {
         return self.close();
       });
       break;
