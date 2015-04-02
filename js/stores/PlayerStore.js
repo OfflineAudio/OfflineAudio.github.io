@@ -85,51 +85,51 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     audio.addEventListener(eventType, cb)
   },
 
-  getAlbum: function () {
+  getAlbum () {
     return _album
   },
 
-  getArtist: function () {
+  getArtist () {
     return _artist
   },
 
-  getCurrentTime: function () {
+  getCurrentTime () {
     return audio.currentTime
   },
 
-  getDuration: function () {
+  getDuration () {
     return audio.duration
   },
 
-  getTitle: function () {
+  getTitle () {
     return _title
   },
 
-  getProgress: function () {
+  getProgress () {
     return (100 / audio.duration) * audio.currentTime
   },
 
-  getPlaying: function () {
+  getPlaying () {
     return _playing
   },
 
-  getQueue: function () {
+  getQueue () {
     return _queue
   },
 
-  getRepeat: function () {
+  getRepeat () {
     return _repeat
   },
 
-  getShuffle: function () {
+  getShuffle () {
     return _shuffle
   },
 
-  getVolume: function () {
+  getVolume () {
     return audio.volume
   },
 
-  getPrevSong: function () {
+  getPrevSong () {
     if (_queue.length === 1) {
       return _queue[0]
     } else if (_repeat && _index === 0) {
@@ -138,7 +138,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     return _queue[_index - 1]
   },
 
-  getNextSong: function () {
+  getNextSong () {
     if (_queue.length === 1) {
       return _queue[0]
     } else if (_repeat && _index === _queue.length - 1) {
@@ -147,7 +147,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     return _queue[_index + 1]
   },
 
-  hasNext: function () {
+  hasNext () {
     if (_repeat && _index === _queue.length - 1) {
       return true
     } else {
@@ -155,7 +155,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     }
   },
 
-  hasPrev: function() {
+  hasPrev() {
     if (_repeat && _index === 0) {
       return true
     } else {
@@ -163,7 +163,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     }
   },
 
-  prev: function () {
+  prev () {
     if (_repeat && _index === 0) {
       _index = _queue.length
       return _queue[--_index]
@@ -172,7 +172,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
     }
   },
 
-  next: function () {
+  next () {
     if (_repeat && _index === _queue.length) {
       _index = 0
       return _queue[++_index]
@@ -181,17 +181,17 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   // Emit Change event
-  emitChange: function () {
+  emitChange () {
     this.emit('change')
   },
 
   // Add change listener
-  addChangeListener: function (callback) {
+  addChangeListener (callback) {
     this.on('change', callback)
   },
 
   // Remove change listener
-  removeChangeListener: function (callback) {
+  removeChangeListener (callback) {
     this.removeListener('change', callback)
   }
 })
@@ -217,10 +217,12 @@ AppDispatcher.register(function (payload) {
       updateProgress()
     break
     case PlayerConstants.NEXT:
-      if (_repeat && _index === _queue.length - 1) {
-        decrementIndex()
-      } else {
-        incrementIndex()
+      if (!(_queue.length === 1)) {
+        if (_repeat && _index === _queue.length - 1) {
+          decrementIndex()
+        } else {
+          incrementIndex()
+        }
       }
       switchFile(action.data.blob)
       switchSong(_queue[_index].id)
@@ -246,10 +248,12 @@ AppDispatcher.register(function (payload) {
       play()
     break
     case PlayerConstants.PREVIOUS:
-      if (_repeat && _index === 0) {
-        incrementIndex()
-      } else {
-        decrementIndex()
+      if (!(_queue.length === 1)) {
+        if (_repeat && _index === 0) {
+          incrementIndex()
+        } else {
+          decrementIndex()
+        }
       }
       switchFile(action.data.blob)
       switchSong(_queue[_index].id)

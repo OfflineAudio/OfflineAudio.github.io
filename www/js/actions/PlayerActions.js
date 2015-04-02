@@ -5,33 +5,33 @@ const once = require('../utils/once')
 const _ = require('lodash')
 
 const PlayerActions = {
-  stop: function() {
+  stop () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.STOP
     })
   },
-  emptyQueue: function () {
+  emptyQueue () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.EMPTY_QUEUE
     })
   },
-  addToQueue: function (id, attachment) {
+  addToQueue (id, attachment) {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.ADD_TO_QUEUE,
       data: {id, attachment}
     })
   },
-  shuffle: function() {
+  shuffle () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.SHUFFLE
     })
   },
-  repeat: function () {
+  repeat () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.REPEAT
     })
   },
-  previousTrack: function (track) {
+  previousTrack (track) {
     Library.getAttachment(track.id, track.attachment)
     .then(blob => {
       const {id, attachment} = track
@@ -41,7 +41,7 @@ const PlayerActions = {
       })
     })
   },
-  nextTrack: function (track) {
+  nextTrack (track) {
     Library.getAttachment(track.id, track.attachment)
     .then(blob => {
       const {id, attachment} = track
@@ -51,7 +51,7 @@ const PlayerActions = {
       })
     })
   },
-  playSong: function(id, attachment) {
+  playSong(id, attachment) {
     Library.getAttachment(id, attachment)
     .then(blob => {
       AppDispatcher.handleAction({
@@ -60,17 +60,17 @@ const PlayerActions = {
       })
     })
   },
-  play: function () {
+  play () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.PLAY
     })
   },
-  pause: function () {
+  pause () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.PAUSE
     })
   },
-  updateVolume: function (value) {
+  updateVolume (value) {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.VOLUME,
       data: value
