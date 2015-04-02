@@ -153,6 +153,12 @@ function getAttachment (id, attachment) {
   .then(attachment => self.postMessage(attachment))
 }
 
+function deleteTrack (id, rev) {
+  return db.remove(id, rev)
+  .then(result => self.postMessage(result))
+  .catch(err => console.log(err))
+}
+
 const importFiles = Promise.coroutine(function * chunkFiles (files) {
   let overallSize = 0
   for (let file of files) {
@@ -190,6 +196,10 @@ self.addEventListener('message', function (event) {
       break
     case 'getAttachment':
       getAttachment(data.data.id, data.data.attachment)
+      .then(() => self.close())
+      break
+    case 'deleteTrack':
+      deleteTrack(data.data.id, data.data.rev)
       .then(() => self.close())
       break
   }

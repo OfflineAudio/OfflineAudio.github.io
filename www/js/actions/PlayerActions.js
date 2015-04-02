@@ -1,10 +1,21 @@
 const AppDispatcher = require('../dispatcher/AppDispatcher')
 const PlayerConstants = require('../constants/PlayerConstants')
+const LibraryConstants = require('../constants/LibraryConstants')
 const Library = require('../utils/Library')
 const once = require('../utils/once')
 const _ = require('lodash')
 
 const PlayerActions = {
+  delete (id, rev, artist, album, title) {
+    Library.deleteTrack(id, rev)
+    .then(result => {
+      AppDispatcher.handleAction({
+        actionType: LibraryConstants.DELETE_TRACK,
+        data: {id, rev, artist, album, title}
+      })
+    })
+    // do something optimistic, also, handle error case
+  },
   mute () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.MUTE
