@@ -78,6 +78,23 @@ function addSong (file) {
   }
 }
 
+function deleteSong (song) {
+  if (_library[song.artist][song.album][song.title].id == song.id && _library[song.artist][song.album][song.title].rev == song.rev) {
+    delete _library[song.artist][song.album][song.title]
+    if (isEmpty(_library[song.artist][song.album])) {
+      delete _library[song.artist][song.album]
+      if (isEmpty(_library[song.artist])) {
+        delete _library[song.artist]
+      }
+    }
+  }
+  // _.each(_library, artist => _.each(artist, album => _.each(album, _.each(track, ))))
+}
+
+function isEmpty(obj){
+    return (Object.getOwnPropertyNames(obj).length === 0);
+}
+
 var LibraryStore = _.extend({}, EventEmitter.prototype, {
 
   getArtists () {
@@ -85,14 +102,7 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getTracks () {
-    let tracks = []
-    for (let artist of _library) {
-      for (let album of artist) {
-        for (let track of album) {
-          tracks.push(track)
-        }
-      }
-    }
+    return _.flattenDeep(_.map(this.getArtists(), artist => _.map(this.getAlbumsByArtist(artist, true), this.getTracksOfAlbums), this))
   },
 
   getTracksOfAlbums (album) {
@@ -156,7 +166,9 @@ AppDispatcher.register(function (payload) {
   var action = payload.action
 
   switch (action.actionType) {
-
+    case LibraryConstants.DELETE_TRACK:
+      deleteSong(action.data)
+    break
     // Respond to FILE_ADD_SUCCESS action
     case FileUploaderConstants.FILE_ADD_SUCCESS:
       addSong(action.data) // TODO

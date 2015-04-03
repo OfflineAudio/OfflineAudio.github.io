@@ -7,129 +7,196 @@ const _ = require('lodash')
 let _artist
 let _album
 let _title
-let _currentTime
-let _duration
-let _progress
 let _playing
-let _volume
 let _queue = []
 let _index
+let _shuffle
+let _repeat
+let _previousVolume
+const audio = new Audio()
+
+// const set = {} // all the setters
+
+function decrementIndex() {
+  --_index
+}
+
+function incrementIndex() {
+  ++_index
+}
+
+function repeat () {
+  _repeat = !_repeat
+}
 
 function shuffle () {
+  if (_shuffle) {
+    // reoder list somehow ?!
+  }
   if (_queue.length && _index > -1) {
     const currentlyPlayingSong = _queue.splice(_index, 1)[0]
     _queue = _.shuffle(_queue)
     _queue.unshift(currentlyPlayingSong)
     _index = 0
+  } else {
+    _queue = _.shuffle(_queue)
   }
+  _shuffle = !_shuffle
 }
 
-function switchSong (data) {
-  [_artist, _album, _title] = data.id.split('-||-||-')
+function switchFile (blob) {
+  audio.src = URL.createObjectURL(blob)
+  audio.load()
 }
 
-function resetQueue (data) {
+function play () {
+  _playing = true
+  audio.play()
+}
+
+function pause () {
+  _playing = false
+  audio.pause()
+}
+
+function stop () {
+  pause()
+  audio.currentTime = 0;
+}
+
+function updateVolume (value) {
+  audio.volume = value
+}
+
+function switchSong (id) {
+  [_artist, _album, _title] = id.split('-||-||-')
+}
+
+function resetQueue () {
   _index = 0
   _queue.length = 0
 }
 
-function updateCurrentTime (currentTime) {
-  _currentTime = currentTime
-}
-
-function updateDuration (duration) {
-  _duration = duration
-}
-
-function updateProgress () {
-  _progress = (100 / _duration) * _currentTime
-}
-
-function updatePlaying (playing) {
-  _playing = playing
-}
-
-function updateVolume (volume) {
-  _volume = volume
-}
-
-function switchQueue (queue) {
-  _queue = queue
-}
-
 function addToQueue(track) {
-  debugger;
   _queue.push(track)
 }
 
 var PlayerStore = _.extend({}, EventEmitter.prototype, {
-  getAlbum: function () {
+  addAudioEventListener: function (eventType, cb) {
+    audio.addEventListener(eventType, cb)
+  },
+
+  getAlbum () {
     return _album
   },
 
-  getArtist: function () {
+  getArtist () {
     return _artist
   },
 
-  getCurrentTime: function () {
-    return _currentTime
+  getCurrentTime () {
+    return audio.currentTime
   },
 
-  getDuration: function () {
-    return _duration
+  getDuration () {
+    return audio.duration
   },
 
-  getTitle: function () {
+  getTitle () {
     return _title
   },
 
-  getProgress: function () {
-    return _progress
+  getProgress () {
+    return (100 / audio.duration) * audio.currentTime
   },
 
-  getPlaying: function () {
+  getPlaying () {
     return _playing
   },
 
-  getQueue: function() {
+  getQueue () {
     return _queue
   },
 
-  getVolume: function () {
-    return _volume
+  getRepeat () {
+    return _repeat
   },
 
-  hasNext: function () {
-    return _queue.length && _queue.length > _index + 1
+  getShuffle () {
+    return _shuffle
   },
 
-  hasPrev: function() {
-    return _index > 0
+  getVolume () {
+    return audio.volume
   },
 
-  prev: function () {
-    if (this.hasPrev()) {
+  getPrevSong () {
+    if (_queue.length === 1) {
+      return _queue[0]
+    } else if (_repeat && _index === 0) {
+      return _queue[_queue.length - 1]
+    }
+    return _queue[_index - 1]
+  },
+
+  getNextSong () {
+    if (_queue.length === 1) {
+      return _queue[0]
+    } else if (_repeat && _index === _queue.length - 1) {
+      return _queue[0]
+    }
+    return _queue[_index + 1]
+  },
+
+  hasNext () {
+    if (_repeat && _index === _queue.length - 1) {
+      return true
+    } else {
+      return _queue.length && _queue.length > _index + 1
+    }
+  },
+
+  hasPrev() {
+    if (_repeat && _index === 0) {
+      return true
+    } else {
+      return _index > 0
+    }
+  },
+
+  isMuted () {
+    return audio.volume == 0
+  },
+
+  prev () {
+    if (_repeat && _index === 0) {
+      _index = _queue.length
+      return _queue[--_index]
+    } else if (this.hasPrev()) {
       return _queue[--_index]
     }
   },
 
-  next: function () {
-    if (this.hasNext())
+  next () {
+    if (_repeat && _index === _queue.length) {
+      _index = 0
+      return _queue[++_index]
+    } else if (this.hasNext())
       return _queue[++_index]
   },
 
   // Emit Change event
-  emitChange: function () {
+  emitChange () {
     this.emit('change')
   },
 
   // Add change listener
-  addChangeListener: function (callback) {
+  addChangeListener (callback) {
     this.on('change', callback)
   },
 
   // Remove change listener
-  removeChangeListener: function (callback) {
+  removeChangeListener (callback) {
     this.removeListener('change', callback)
   }
 })
@@ -142,19 +209,6 @@ AppDispatcher.register(function (payload) {
     case PlayerConstants.ADD_TO_QUEUE:
       addToQueue(action.data)
     break
-    case PlayerConstants.EMPTY_QUEUE:
-      resetQueue()
-      updateCurrentTime(0)
-      updateProgress()
-    break
-    case PlayerConstants.PLAY_SONG:
-      switchSong(action.data)
-    break
-    case PlayerConstants.PLAY_NEW_SONG:
-      resetQueue(action.data)
-      addToQueue(action.data)
-      switchSong(action.data)
-    break
     case PlayerConstants.CURRENT_TIME:
       updateCurrentTime(action.data)
       updateProgress()
@@ -162,16 +216,72 @@ AppDispatcher.register(function (payload) {
     case PlayerConstants.DURATION:
       updateDuration(action.data)
     break
-    case PlayerConstants.PLAYING:
-      updatePlaying(action.data)
+    case PlayerConstants.EMPTY_QUEUE:
+      resetQueue()
+      updateCurrentTime(0)
+      updateProgress()
+    break
+    case PlayerConstants.MUTE:
+      if (audio.volume == 0) {
+        audio.volume = _previousVolume || 0.1
+      } else {
+        _previousVolume = audio.volume
+        audio.volume = 0
+      }
+    break
+    case PlayerConstants.NEXT:
+      if (!(_queue.length === 1)) {
+        if (_repeat && _index === _queue.length - 1) {
+          decrementIndex()
+        } else {
+          incrementIndex()
+        }
+      }
+      switchFile(action.data.blob)
+      switchSong(_queue[_index].id)
+      if (_playing) {
+        play()
+      }
+    break
+    case PlayerConstants.PAUSE:
+      pause()
+    break
+    case PlayerConstants.PLAY:
+      play()
+    break
+    case PlayerConstants.PLAY_SONG:
+      const trackData = {
+        id: action.data.id,
+        attachment: action.data.attachment
+      }
+      resetQueue()
+      addToQueue(trackData)
+      switchSong(action.data.id)
+      switchFile(action.data.blob)
+      play()
+    break
+    case PlayerConstants.PREVIOUS:
+      if (!(_queue.length === 1)) {
+        if (_repeat && _index === 0) {
+          incrementIndex()
+        } else {
+          decrementIndex()
+        }
+      }
+      switchFile(action.data.blob)
+      switchSong(_queue[_index].id)
+      if (_playing) {
+        play()
+      }
+    break
+    case PlayerConstants.REPEAT:
+      repeat()
     break
     case PlayerConstants.SHUFFLE:
       shuffle()
     break
     case PlayerConstants.STOP:
-      updatePlaying(false)
-      updateCurrentTime(0)
-      updateProgress()
+      stop()
     break
     case PlayerConstants.VOLUME:
       updateVolume(action.data)
@@ -184,5 +294,7 @@ AppDispatcher.register(function (payload) {
 
   return true
 })
+
+audio.addEventListener('timeupdate', PlayerStore.emitChange.bind(PlayerStore))
 
 module.exports = PlayerStore

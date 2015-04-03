@@ -1,179 +1,97 @@
 const AppDispatcher = require('../dispatcher/AppDispatcher')
 const PlayerConstants = require('../constants/PlayerConstants')
+const LibraryConstants = require('../constants/LibraryConstants')
 const Library = require('../utils/Library')
-const Player = require('../utils/Player')
-const PlayerStore = require('../stores/PlayerStore')
 const once = require('../utils/once')
 const _ = require('lodash')
 
 const PlayerActions = {
-  stop: function() {
-    Player.stop()
+  delete (id, rev, artist, album, title) {
+    Library.deleteTrack(id, rev)
+    .then(result => {
+      AppDispatcher.handleAction({
+        actionType: LibraryConstants.DELETE_TRACK,
+        data: {id, rev, artist, album, title}
+      })
+    })
+    // do something optimistic, also, handle error case
+  },
+  mute () {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.MUTE
+    })
+  },
+  stop () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.STOP
     })
   },
-  emptyQueue: function () {
+  emptyQueue () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.EMPTY_QUEUE
     })
   },
-  addToQueue: function (id, file) {
+  addToQueue (id, attachment) {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.ADD_TO_QUEUE,
-      data: {id, file}
+      data: {id, attachment}
     })
   },
-  shuffle: function() {
+  shuffle () {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.SHUFFLE
     })
   },
-  playPrevSong: function () {
-    debugger;
-    const track = PlayerStore.prev()
-    if (track) {
-      PlayerActions.playSong(track.id, track.attachment)
-    } else {
-      PlayerActions.stop()
-    }
+  repeat () {
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.REPEAT
+    })
   },
-  playNextSong: function () {
-    if (PlayerStore.hasNext()) {
-      const track = PlayerStore.next()
-      PlayerActions.playSong(track.id, track.file)
-    // } else if (PlayerStore.get('repeat')) {
-      // PlayerStore.rewind()
-      // @play()
-    } else {
-      PlayerActions.stop()
-    }
-  },
-  playNewSong: function(id, attachment) {
-    Library.getAttachment(id, attachment)
-    .then(function (blob) {
-      Player.playFile(blob, () => {
-        const updateVolumeOnce = once((volume) => {
-          AppDispatcher.handleAction({
-            actionType: PlayerConstants.VOLUME,
-            data: volume
-          })
-        })
-
-        return function (event) {
-          const duration = event.currentTarget.duration
-          AppDispatcher.handleAction({
-            actionType: PlayerConstants.DURATION,
-            data: duration
-          })
-
-          const currentTime = event.currentTarget.currentTime
-          AppDispatcher.handleAction({
-            actionType: PlayerConstants.CURRENT_TIME,
-            data: currentTime
-          })
-
-          updateVolumeOnce(event.currentTarget.volume * 100)
-        }
-      }())
-
+  previousTrack (track) {
+    Library.getAttachment(track.id, track.attachment)
+    .then(blob => {
+      const {id, attachment} = track
       AppDispatcher.handleAction({
-        actionType: PlayerConstants.PLAY_NEW_SONG,
-        data: {id, attachment}
-      })
-
-      AppDispatcher.handleAction({
-        actionType: PlayerConstants.PLAYING,
-        data: true
+        actionType: PlayerConstants.PREVIOUS,
+        data: {id, attachment, blob}
       })
     })
   },
-  playSong: function (id, attachment) {
+  nextTrack (track) {
+    Library.getAttachment(track.id, track.attachment)
+    .then(blob => {
+      const {id, attachment} = track
+      AppDispatcher.handleAction({
+        actionType: PlayerConstants.NEXT,
+        data: {id, attachment, blob}
+      })
+    })
+  },
+  playSong(id, attachment) {
     Library.getAttachment(id, attachment)
-    .then(function (blob) {
-      Player.playFile(blob, () => {
-        const updateVolumeOnce = once((volume) => {
-          AppDispatcher.handleAction({
-            actionType: PlayerConstants.VOLUME,
-            data: volume
-          })
-        })
-
-        return function (event) {
-          const duration = event.currentTarget.duration
-          AppDispatcher.handleAction({
-            actionType: PlayerConstants.DURATION,
-            data: duration
-          })
-
-          const currentTime = event.currentTarget.currentTime
-          AppDispatcher.handleAction({
-            actionType: PlayerConstants.CURRENT_TIME,
-            data: currentTime
-          })
-
-          updateVolumeOnce(event.currentTarget.volume * 100)
-        }
-      }())
-
+    .then(blob => {
       AppDispatcher.handleAction({
         actionType: PlayerConstants.PLAY_SONG,
-        data: {id, attachment}
-      })
-
-      AppDispatcher.handleAction({
-        actionType: PlayerConstants.PLAYING,
-        data: true
+        data: {id, attachment, blob}
       })
     })
   },
-  playCurrentSong: function () {
-    Player.playCurrentFile(function (event) {
-        const duration = event.currentTarget.duration
-        AppDispatcher.handleAction({
-          actionType: PlayerConstants.DURATION,
-          data: duration
-        })
-
-        const currentTime = event.currentTarget.currentTime
-        AppDispatcher.handleAction({
-          actionType: PlayerConstants.CURRENT_TIME,
-          data: currentTime
-        })
-      })
+  play () {
     AppDispatcher.handleAction({
-      actionType: PlayerConstants.PLAYING,
-      data: true
+      actionType: PlayerConstants.PLAY
     })
   },
-  pauseCurrentSong: function () {
-    Player.pauseCurrentFile(function (event) {
-        const duration = event.currentTarget.duration
-        AppDispatcher.handleAction({
-          actionType: PlayerConstants.DURATION,
-          data: duration
-        })
-
-        const currentTime = event.currentTarget.currentTime
-        AppDispatcher.handleAction({
-          actionType: PlayerConstants.CURRENT_TIME,
-          data: currentTime
-        })
-      })
+  pause () {
     AppDispatcher.handleAction({
-      actionType: PlayerConstants.PLAYING,
-      data: false
+      actionType: PlayerConstants.PAUSE
     })
   },
-  updateVolume: function (value) {
-    Player.updateVolume(value)
+  updateVolume (value) {
     AppDispatcher.handleAction({
       actionType: PlayerConstants.VOLUME,
       data: value
     })
   }
 }
-
-Player.addEndedEvent(_.debounce(PlayerActions.playNextSong, 500))
 
 module.exports = PlayerActions

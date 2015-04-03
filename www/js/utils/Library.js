@@ -59,12 +59,22 @@ function getTracks () {
 
 function getAttachment (id, attachment) {
   return new Promise(function (resolve, reject) {
-      const w = new Worker('/js/utils/worker.js')
-      w.addEventListener('message', function (ev) {
-        resolve(ev.data)
-      })
-      w.postMessage({cmd: 'getAttachment', data: {id: id, attachment: attachment}})
+    const w = new Worker('/js/utils/worker.js')
+    w.addEventListener('message', function (ev) {
+      resolve(ev.data)
     })
+    w.postMessage({cmd: 'getAttachment', data: {id: id, attachment: attachment}})
+  })
+}
+
+function deleteTrack (id, rev) {
+  return new Promise(function (resolve, reject) {
+    const w = new Worker('/js/utils/worker.js')
+    w.addEventListener('message', function (ev) {
+      resolve(ev.data)
+    })
+    w.postMessage({cmd: 'deleteTrack', data: {id: id, rev: rev}})
+  })
 }
 
 module.exports = {
@@ -73,5 +83,6 @@ module.exports = {
   getAttachment,
   getArtists,
   getTracks,
-  getAlbums
+  getAlbums,
+  deleteTrack
 }

@@ -7,6 +7,7 @@ const Route = Router.Route
 const MusicPlayer = require('./components/MusicPlayer.react')
 const TrackList = require('./components/TrackList.react')
 const LibraryStore = require('./stores/LibraryStore')
+const _ = require('lodash')
 // const a11y = require('react-a11y')
 // a11y()
 
@@ -56,8 +57,36 @@ const Artists = React.createClass({
   }
 })
 
+const Results = React.createClass({
+  displayName: 'Results',
+  contextTypes: {
+    router: React.PropTypes.func.isRequired
+  },
+  render () {
+    const tracks = LibraryStore.getTracks()
+    const searchTerm = this.context.router.getCurrentParams().search
+    debugger
+    const tracksWithSearchTerm =  _.filter(tracks, function(track) {
+      return track[Object.keys(track)[0]].title.toLowerCase().includes(searchTerm.toLowerCase())
+        || track[Object.keys(track)[0]].artist.toLowerCase().includes(searchTerm.toLowerCase())
+        || track[Object.keys(track)[0]].album.toLowerCase().includes(searchTerm.toLowerCase())
+    })
+
+    let elem
+    if (tracksWithSearchTerm.length > 0) {
+      // show tracks
+      elem = <TrackList tracks={tracksWithSearchTerm} />
+    } else {
+      // show error screen
+      elem = <div> Search returned no results </div>
+    }
+    return elem
+  }
+})
+
 const routes = (
   <Route name="app" path="/" handler={MusicPlayer}>
+    <Route name="search" path="search/:search" handler={Results}/>
     <Route name="artist" path="artist/:artist" handler={Artists}/>
     <Route name="artists" handler={AllArtists}/>
     <DefaultRoute handler={StartSplash}/>

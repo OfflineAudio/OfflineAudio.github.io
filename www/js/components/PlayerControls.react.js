@@ -2,6 +2,7 @@ const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 const PropCheckMixin = require('../mixins/PropCheckMixin')
+const PlayerStore = require('../stores/PlayerStore')
 
 function secondsToMinutesAndSeconds (_seconds) {
   const minutes = parseInt(_seconds / 60, 10)
@@ -10,21 +11,11 @@ function secondsToMinutesAndSeconds (_seconds) {
 }
 
 function handlePause () {
-  // debugger
-  PlayerActions.pauseCurrentSong()
+  PlayerActions.pause()
 }
 
 function handlePlay () {
-  // debugger
-  PlayerActions.playCurrentSong()
-}
-
-function handlePrev () {
-  PlayerActions.playPrevSong()
-}
-
-function handldNext () {
-  PlayerActions.playNextSong()
+  PlayerActions.play()
 }
 
 function handleShuffle () {
@@ -32,7 +23,7 @@ function handleShuffle () {
 }
 
 function handleRepeat () {
-
+  PlayerActions.repeat()
 }
 
 const PlayerControls = React.createClass({
@@ -45,10 +36,31 @@ const PlayerControls = React.createClass({
     title: React.PropTypes.string.isRequired,
     totalTime: React.PropTypes.number.isRequired,
     progresss: React.PropTypes.number.isRequired,
-    playing: React.PropTypes.bool.isRequired
+    playing: React.PropTypes.bool.isRequired,
+    repeat: React.PropTypes.bool.isRequired,
+    hasNext: React.PropTypes.bool.isRequired,
+    hasPrev: React.PropTypes.bool.isRequired,
+    shuffle: React.PropTypes.bool.isRequired,
+    previousSong: React.PropTypes.object.isRequired,
+    nextSong: React.PropTypes.object.isRequired
+  },
+  componentDidMount () {
+    PlayerStore.addAudioEventListener('ended', () => {
+      if (this.props.hasNext) {
+        PlayerActions.nextTrack(this.props.nextSong)
+      } else {
+        PlayerActions.stop()
+      }
+    }.bind(this))
+  },
+  handleNext () {
+    PlayerActions.nextTrack(this.props.nextSong)
+  },
+  handlePrev () {
+    PlayerActions.previousTrack(this.props.previousSong)
   },
   render () {
-    const {artist, currentTime, title, totalTime, progresss, playing} = this.props
+    const {artist, currentTime, title, totalTime, progresss, playing, repeat, shuffle, hasNext, hasPrev} = this.props
     let currentTimeDisplay = secondsToMinutesAndSeconds(currentTime)
     let totalTimeDisplay = secondsToMinutesAndSeconds(totalTime)
     let playButton
@@ -58,11 +70,32 @@ const PlayerControls = React.createClass({
       playButton = <button className='btn player-button icon--play alpha btn--light' onClick={handlePlay}></button>
     }
 
+    let repeatButton
+    if (repeat) {
+      repeatButton = <button className='btn player-button icon--loop gamma btn--dark btn--toggled' onClick={handleRepeat}></button>
+    } else {
+      repeatButton = <button className='btn player-button icon--loop gamma btn--dark' onClick={handleRepeat}></button>
+    }
+
+    let prevButton
+    if (hasPrev) {
+      prevButton = <button className='btn player-button icon--fast-backward gamma btn--dark' onClick={this.handlePrev}></button>
+    } else {
+      prevButton = <button className='btn player-button icon--fast-backward gamma btn--dark' onClick={this.handlePrev} disabled ></button>
+    }
+
+    let nextButton
+    if (hasNext) {
+      nextButton = <button className='btn player-button icon--fast-forward gamma btn--dark' onClick={this.handleNext}></button>
+    } else {
+      nextButton = <button className='btn player-button icon--fast-forward gamma btn--dark' onClick={this.handleNext} disabled ></button>
+    }
+
     return (
       <section className='play-controls'>
-        <button className='btn player-button icon--fast-backward gamma btn--dark' onClick={handlePrev}></button>
+        {prevButton}
         {playButton}
-        <button className='btn player-button icon--fast-forward gamma btn--dark' onClick={handldNext}></button>
+        {nextButton}
         <div className='play-controls__playback'>
           <span className='playback playback--title'>{artist} - {title}</span>
           <span className='playback playback--current-time'>{currentTimeDisplay}</span>
@@ -71,7 +104,7 @@ const PlayerControls = React.createClass({
         </div>
         <div className='play-controls__secondary'>
           <button className='btn player-button icon--shuffle gamma btn--dark' onClick={handleShuffle}></button>
-          <button className='btn player-button icon--loop gamma btn--dark' onClick={handleRepeat}></button>
+          {repeatButton}
         </div>
       </section>
     )

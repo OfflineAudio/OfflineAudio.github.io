@@ -49,10 +49,17 @@ const MusicPlayer = React.createClass({
     const progress = PlayerStore.getProgress() || 0
     const playing = PlayerStore.getPlaying() || false
     const volume = PlayerStore.getVolume() || 0
+    const repeat = PlayerStore.getRepeat() || false
+    const shuffle = PlayerStore.getShuffle() || false
+    const hasNext = PlayerStore.hasNext() || false
+    const hasPrev = PlayerStore.hasPrev() || false
+    const previousSong = PlayerStore.getPrevSong()
+    const nextSong = PlayerStore.getNextSong()
+    const isMuted = PlayerStore.isMuted()
 
     return (
       <div>
-      <PlayerMenu title='Offline Audio' volume={volume}/>
+      <PlayerMenu title='Offline Audio' volume={volume} muted={isMuted}/>
 
       <div className='main-container'>
         <PlayerSideMenu artists={artists}/>
@@ -62,7 +69,7 @@ const MusicPlayer = React.createClass({
         </section>
       </div>
 
-      <PlayerControls artist={artist} currentTime={currentTime} title={title} totalTime={duration} progresss={progress} playing={playing}/>
+      <PlayerControls artist={artist} currentTime={currentTime} title={title} totalTime={duration} progresss={progress} playing={playing} repeat={repeat} shuffle={shuffle} hasNext={hasNext} hasPrev={hasPrev} previousSong={previousSong} nextSong={nextSong}/>
       </div>
     )
   },
