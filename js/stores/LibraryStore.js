@@ -79,7 +79,6 @@ function addSong (file) {
 }
 
 function deleteSong (song) {
-  debugger
   if (_library[song.artist][song.album][song.title].id == song.id && _library[song.artist][song.album][song.title].rev == song.rev) {
     delete _library[song.artist][song.album][song.title]
     if (isEmpty(_library[song.artist][song.album])) {
@@ -103,14 +102,7 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getTracks () {
-    let tracks = []
-    for (let artist of _library) {
-      for (let album of artist) {
-        for (let track of album) {
-          tracks.push(track)
-        }
-      }
-    }
+    return _.flattenDeep(_.map(this.getArtists(), artist => _.map(this.getAlbumsByArtist(artist, true), this.getTracksOfAlbums), this))
   },
 
   getTracksOfAlbums (album) {
