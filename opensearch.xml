@@ -1,0 +1,8 @@
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Offline Audio Search</ShortName>
+  <Description>Search Your Music Library</Description>
+  <Url type="text/html" method="get" template="http://offline.audio/search/{searchTerms}"/>
+  <Image width="16" height="16">http://offline.audio/favicon.ico</Image>
+  <InputEncoding>UTF-8</InputEncoding>
+  <SearchForm>http://offline.audio/</SearchForm>
+</OpenSearchDescription>
