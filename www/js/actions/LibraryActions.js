@@ -16,6 +16,7 @@ function createLibrary (docs) {
     track['number'] = b.track
     track['year'] = b.year
     track['_attachments'] = b._attachments
+    track['favourite'] = b.favourite
     return library
   }, Object.create(null))
 }
@@ -47,7 +48,16 @@ const LibraryActions = {
       actionType: LibraryConstants.LIBRARY_UPDATE,
       data: null
     })
-  }
+  },
+  favourite (id, rev, artist, album, title) {
+    Library.favourite(id, rev)
+    .then(result => {
+      AppDispatcher.handleAction({
+        actionType: LibraryConstants.FAVOURITE,
+        data: {id, old_rev: rev, new_rev: result.rev, artist, album, title}
+      })
+    })
+  },
 }
 
 module.exports = LibraryActions

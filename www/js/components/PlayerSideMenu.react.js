@@ -3,6 +3,8 @@ const FileUploader = require('./FileUploader.react')
 const ArtistList = require('./ArtistList.react')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 const PropCheckMixin = require('../mixins/PropCheckMixin')
+const Router = require('react-router')
+const Link = Router.Link
 
 const PlayerSideMenu = React.createClass({
   contextTypes: {
@@ -27,6 +29,11 @@ const PlayerSideMenu = React.createClass({
       <section className="side-menu">
         <FileUploader/>
         <input type="search" className="search-field" placeholder="Search" onChange={this.search}/>
+        <ul className="list-block filter">
+          <li className="filter__item filter__item--heading gamma">
+            <Link to="favourites">Favourites</Link>
+          </li>
+        </ul>
         <ArtistList artists={artists}/>
       </section>
     )

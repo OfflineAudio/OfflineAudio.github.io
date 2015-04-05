@@ -84,10 +84,28 @@ const Results = React.createClass({
   }
 })
 
+const Favourites = React.createClass({
+  displayName: 'Favourites',
+  render () {
+    const favouritedTracks = LibraryStore.getFavouriteTracks()
+
+    let elem
+    if (favouritedTracks.length > 0) {
+      // show tracks
+      elem = <TrackList tracks={favouritedTracks} />
+    } else {
+      // show error screen
+      elem = <div> Search returned no results </div>
+    }
+    return elem
+  }
+})
+
 const routes = (
   <Route name="app" path="/" handler={MusicPlayer}>
     <Route name="search" path="search/:search" handler={Results}/>
     <Route name="artist" path="artist/:artist" handler={Artists}/>
+    <Route name="favourites" path="favourites" handler={Favourites}/>
     <Route name="artists" handler={AllArtists}/>
     <DefaultRoute handler={StartSplash}/>
   </Route>
