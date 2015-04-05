@@ -149,12 +149,26 @@ function getTracks () {
 }
 
 function getAttachment (id, attachment) {
-  return db.getAttachment(id, attachment)
-  .then(attachment => self.postMessage(attachment))
+  return new Promise(function(resolve, reject) {
+    db.getAttachment(id, attachment)
+    .then(attachment => self.postMessage(attachment))
+    .then(attachment => self.blobUtil.arrayBufferToBlob(attachment))
+    .then(arbuf => resolve(arbuf))
+  })
 }
 
 function deleteTrack (id, rev) {
   return db.remove(id, rev)
+  .then(result => self.postMessage(result))
+  .catch(err => console.log(err))
+}
+
+function toggleFavouriteTrack (id, rev) {
+  return db.get(id, {rev})
+  .then(function (doc) {
+    doc.favourite = !doc.favourite
+    return db.put(doc);
+  })
   .then(result => self.postMessage(result))
   .catch(err => console.log(err))
 }
@@ -200,6 +214,10 @@ self.addEventListener('message', function (event) {
       break
     case 'deleteTrack':
       deleteTrack(data.data.id, data.data.rev)
+      .then(() => self.close())
+      break
+    case 'toggleFavouriteTrack':
+      toggleFavouriteTrack(data.data.id, data.data.rev)
       .then(() => self.close())
       break
   }

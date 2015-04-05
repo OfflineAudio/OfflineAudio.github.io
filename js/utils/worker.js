@@ -158,13 +158,30 @@ function getTracks() {
 }
 
 function getAttachment(id, attachment) {
-  return db.getAttachment(id, attachment).then(function (attachment) {
-    return self.postMessage(attachment);
+  return new Promise(function (resolve, reject) {
+    db.getAttachment(id, attachment).then(function (attachment) {
+      return self.postMessage(attachment);
+    }).then(function (attachment) {
+      return self.blobUtil.arrayBufferToBlob(attachment);
+    }).then(function (arbuf) {
+      return resolve(arbuf);
+    });
   });
 }
 
 function deleteTrack(id, rev) {
   return db.remove(id, rev).then(function (result) {
+    return self.postMessage(result);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}
+
+function toggleFavouriteTrack(id, rev) {
+  return db.get(id, { rev: rev }).then(function (doc) {
+    doc.favourite = !doc.favourite;
+    return db.put(doc);
+  }).then(function (result) {
     return self.postMessage(result);
   })["catch"](function (err) {
     return console.log(err);
@@ -286,6 +303,11 @@ self.addEventListener("message", function (event) {
       break;
     case "deleteTrack":
       deleteTrack(data.data.id, data.data.rev).then(function () {
+        return self.close();
+      });
+      break;
+    case "toggleFavouriteTrack":
+      toggleFavouriteTrack(data.data.id, data.data.rev).then(function () {
         return self.close();
       });
       break;

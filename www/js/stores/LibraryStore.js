@@ -25,7 +25,8 @@ function update (library) {
 
 // Add songs to library
 function addSong (file) {
-  const {_id, _rev, album, artist, genre, title, track, year, _attachments} = file
+  debugger
+  const {_id, _rev, album, artist, genre, title, track, year, _attachments, favourite} = file
   if (artistExists(artist)) {
     if (albumExistsByArtist(artist, album)) {
       if (trackExistsInAlbum(artist, album, title)) {
@@ -44,7 +45,8 @@ function addSong (file) {
           title: title,
           number: track,
           year: year,
-          _attachments: _attachments
+          _attachments: _attachments,
+          favourite: favourite
         }
       }
     } else {
@@ -58,7 +60,8 @@ function addSong (file) {
         title: title,
         number: track,
         year: year,
-        _attachments: _attachments
+        _attachments: _attachments,
+        favourite: favourite
       }
     }
   } else {
@@ -73,7 +76,8 @@ function addSong (file) {
       title: title,
       number: track,
       year: year,
-      _attachments: _attachments
+      _attachments: _attachments,
+      favourite: favourite
     }
   }
 }
@@ -88,7 +92,13 @@ function deleteSong (song) {
       }
     }
   }
-  // _.each(_library, artist => _.each(artist, album => _.each(album, _.each(track, ))))
+}
+
+function toggleFavourite(song) {
+  if (_library[song.artist][song.album][song.title].id == song.id && _library[song.artist][song.album][song.title].rev == song.old_rev) {
+    _library[song.artist][song.album][song.title].rev = song.new_rev
+    _library[song.artist][song.album][song.title].favourite = !_library[song.artist][song.album][song.title].favourite
+  }
 }
 
 function isEmpty(obj){
@@ -140,6 +150,10 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
     }
   },
 
+  getFavouriteTracks () {
+    return _.filter(this.getTracks(), track => track[Object.keys(track)[0]].favourite)
+  },
+
   getLibrary () {
     return _library
   },
@@ -175,6 +189,9 @@ AppDispatcher.register(function (payload) {
       break
     case LibraryConstants.LIBRARY_UPDATE_SUCCESS:
       update(action.data)
+      break
+    case LibraryConstants.FAVOURITE:
+      toggleFavourite(action.data)
       break
     default:
       return true

@@ -1,5 +1,6 @@
 const React = require('react')
 const PlayerActions = require('../actions/PlayerActions')
+const LibraryActions = require('../actions/LibraryActions')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 const PropCheckMixin = require('../mixins/PropCheckMixin')
 
@@ -12,7 +13,6 @@ const Track = React.createClass({
     event.stopPropagation()
   },
   delete (event) {
-    debugger
     const id = this.props.id
     const rev = this.props.rev
     const artist = this.props.artist
@@ -26,7 +26,6 @@ const Track = React.createClass({
   },
   displayName: 'Track',
   propTypes: {
-    // An optional string prop named "description".
     album: React.PropTypes.string.isRequired,
     artist: React.PropTypes.string.isRequired,
     title: React.PropTypes.string.isRequired,
@@ -39,11 +38,16 @@ const Track = React.createClass({
     rev: React.PropTypes.string.isRequired
   },
   handleFavourite (event) {
-    // debugger
-    // update track in db with new favourite value
+    const id = this.props.id
+    const rev = this.props.rev
+    const artist = this.props.artist
+    const album = this.props.album
+    const title = this.props.title
+    LibraryActions.favourite(id, rev, artist, album, title)
+    event.stopPropagation()
   },
   handleClick (event) {
-    if (event.target.nodeName !== 'LABEL') {
+    if (event.target.nodeName !== "LABEL" && event.target.nodeName !== "INPUT" && event.target.nodeName !== "BUTTON") {
       const id = [this.props.artist, this.props.album, this.props.title].join('-||-||-')
       const attachment = this.props.attachment
       PlayerActions.playSong(id, attachment)
@@ -51,11 +55,11 @@ const Track = React.createClass({
     }
   },
   render () {
-    const {trackNumber, duration, title, playing, favourite} = this.props
+    const {trackNumber, duration, title, playing, favourite, rev} = this.props
     let iconStyles = (/*playing*/ false) ? 'track-info track-info--current-track icon--dot track-info--current-track--active' : 'track-info track-info--current-track'
 
     return (
-      <li className="tracklist__item" onClick={this.handleClick}>
+      <li className="tracklist__item" onDoubleClick={this.handleClick}>
         <div className="track-info track-info--number">
             {trackNumber}
         </div>
@@ -83,8 +87,8 @@ const Track = React.createClass({
             </ul>
           </li>
           <li className="track-option__item">
-            <input className="favourite-button__checkbox" type="checkbox" id="my-track-2" checked={favourite} onChange={this.handleFavourite}/>
-            <label className="btn track-option__item__button favourite-button__icon icon" htmlFor="my-track-2" ></label>
+            <input className="favourite-button__checkbox" type="checkbox" id={rev} checked={favourite} onChange={this.handleFavourite}/>
+            <label className="btn track-option__item__button favourite-button__icon icon" htmlFor={rev} ></label>
           </li>
         </ul>
       </li>

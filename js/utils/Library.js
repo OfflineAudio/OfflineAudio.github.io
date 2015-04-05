@@ -58,6 +58,7 @@ function getTracks () {
 }
 
 function getAttachment (id, attachment) {
+  debugger;
   return new Promise(function (resolve, reject) {
     const w = new Worker('/js/utils/worker.js')
     w.addEventListener('message', function (ev) {
@@ -77,6 +78,16 @@ function deleteTrack (id, rev) {
   })
 }
 
+function favourite (id, rev) {
+  return new Promise(function (resolve, reject) {
+    const w = new Worker('/js/utils/worker.js')
+    w.addEventListener('message', function (ev) {
+      resolve(ev.data)
+    })
+    w.postMessage({cmd: 'toggleFavouriteTrack', data: {id: id, rev: rev}})
+  })
+}
+
 module.exports = {
   addSongs,
   read,
@@ -84,5 +95,6 @@ module.exports = {
   getArtists,
   getTracks,
   getAlbums,
-  deleteTrack
+  deleteTrack,
+  favourite
 }
