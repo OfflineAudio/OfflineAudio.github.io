@@ -1,6 +1,6 @@
 importScripts('serviceworker-cache-polyfill.js');
 
-var CACHE_VERSION = 22003949;
+var CACHE_VERSION = 1000;
 var CURRENT_CACHES = {
   'read-through': 'read-through-cache-v' + CACHE_VERSION,
   'prefetch': 'prefetch-cache-v' + CACHE_VERSION
@@ -8,6 +8,7 @@ var CURRENT_CACHES = {
 
 self.addEventListener('install', function(event) {
   var urlsToPrefetch = [
+    './',
     './index.html',
     './style.css',
     './browser-polyfill.js',
@@ -80,7 +81,7 @@ self.addEventListener('fetch', function(event) {
         if (event.request.url.match(/https:\/\/offline.audio\//)) {
           return fetch('https://offline.audio/')
         } else if (event.request.url.match(/http:\/\/localhost:3000\/.+/)) {
-          return fetch('http://localhost:3000/index.html')
+          return caches.match('/index.html')
         } else {
           console.log(' No response for %s found in cache. About to fetch from network...', event.request.url);
           return fetch(event.request.clone()).then(function(response) {
