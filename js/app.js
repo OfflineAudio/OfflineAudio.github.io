@@ -65,7 +65,6 @@ const Results = React.createClass({
   render () {
     const tracks = LibraryStore.getTracks()
     const searchTerm = this.context.router.getCurrentParams().search
-    debugger
     const tracksWithSearchTerm =  _.filter(tracks, function(track) {
       return track[Object.keys(track)[0]].title.toLowerCase().includes(searchTerm.toLowerCase())
         || track[Object.keys(track)[0]].artist.toLowerCase().includes(searchTerm.toLowerCase())
