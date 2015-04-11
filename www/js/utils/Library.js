@@ -58,7 +58,6 @@ function getTracks () {
 }
 
 function getAttachment (id, attachment) {
-  debugger;
   return new Promise(function (resolve, reject) {
     const w = new Worker('/js/utils/worker.js')
     w.addEventListener('message', function (ev) {

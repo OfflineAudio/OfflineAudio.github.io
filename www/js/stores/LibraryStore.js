@@ -25,7 +25,6 @@ function update (library) {
 
 // Add songs to library
 function addSong (file) {
-  debugger
   const {_id, _rev, album, artist, genre, title, track, year, _attachments, favourite} = file
   if (artistExists(artist)) {
     if (albumExistsByArtist(artist, album)) {

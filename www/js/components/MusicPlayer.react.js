@@ -11,6 +11,24 @@ const RouteHandler = Router.RouteHandler
 // Method to retrieve state from Stores
 function getState () {
   return {
+    // const library = LibraryStore.getLibrary()
+    artists: LibraryStore.getArtists(),
+    // const albums = LibraryStore.getAlbums()
+    artist: PlayerStore.getArtist() || '',
+    // const album = PlayerStore.getAlbum() || ''
+    title: PlayerStore.getTitle() || '',
+    currentTime: PlayerStore.getCurrentTime() || 0,
+    duration: PlayerStore.getDuration() || 0,
+    progress: PlayerStore.getProgress() || 0,
+    playing: PlayerStore.getPlaying() || false,
+    volume: PlayerStore.getVolume() || 0,
+    repeat: PlayerStore.getRepeat() || false,
+    shuffle: PlayerStore.getShuffle() || false,
+    hasNext: PlayerStore.hasNext() || false,
+    hasPrev: PlayerStore.hasPrev() || false,
+    previousSong: PlayerStore.getPrevSong(),
+    nextSong: PlayerStore.getNextSong(),
+    isMuted: PlayerStore.isMuted()
   }
 }
 
@@ -38,38 +56,19 @@ const MusicPlayer = React.createClass({
 
   // Render our child components, passing state via props
   render () {
-    // const library = LibraryStore.getLibrary()
-    const artists = LibraryStore.getArtists()
-    // const albums = LibraryStore.getAlbums()
-    const artist = PlayerStore.getArtist() || ''
-    // const album = PlayerStore.getAlbum() || ''
-    const title = PlayerStore.getTitle() || ''
-    const currentTime = PlayerStore.getCurrentTime() || 0
-    const duration = PlayerStore.getDuration() || 0
-    const progress = PlayerStore.getProgress() || 0
-    const playing = PlayerStore.getPlaying() || false
-    const volume = PlayerStore.getVolume() || 0
-    const repeat = PlayerStore.getRepeat() || false
-    const shuffle = PlayerStore.getShuffle() || false
-    const hasNext = PlayerStore.hasNext() || false
-    const hasPrev = PlayerStore.hasPrev() || false
-    const previousSong = PlayerStore.getPrevSong()
-    const nextSong = PlayerStore.getNextSong()
-    const isMuted = PlayerStore.isMuted()
-
     return (
       <div>
-      <PlayerMenu title='Offline Audio' volume={volume} muted={isMuted}/>
+        <PlayerMenu title='Offline Audio' volume={this.state.volume} muted={this.state.isMuted}/>
 
-      <div className='main-container'>
-        <PlayerSideMenu artists={artists}/>
+        <div className='main-container'>
+          <PlayerSideMenu artists={this.state.artists}/>
 
-        <section className='player-contents'>
-          <RouteHandler/>
-        </section>
-      </div>
+          <section className='player-contents'>
+            <RouteHandler/>
+          </section>
+        </div>
 
-      <PlayerControls artist={artist} currentTime={currentTime} title={title} totalTime={duration} progresss={progress} playing={playing} repeat={repeat} shuffle={shuffle} hasNext={hasNext} hasPrev={hasPrev} previousSong={previousSong} nextSong={nextSong}/>
+        <PlayerControls artist={this.state.artist} currentTime={this.state.currentTime} title={this.state.title} totalTime={this.state.duration} progresss={this.state.progress} playing={this.state.playing} repeat={this.state.repeat} shuffle={this.state.shuffle} hasNext={this.state.hasNext} hasPrev={this.state.hasPrev} previousSong={this.state.previousSong} nextSong={this.state.nextSong}/>
       </div>
     )
   },
