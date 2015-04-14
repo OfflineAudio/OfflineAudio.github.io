@@ -158,14 +158,10 @@ function getTracks() {
 }
 
 function getAttachment(id, attachment) {
-  return new Promise(function (resolve, reject) {
-    db.getAttachment(id, attachment).then(function (attachment) {
-      return self.postMessage(attachment);
-    }).then(function (attachment) {
-      return self.blobUtil.arrayBufferToBlob(attachment);
-    }).then(function (arbuf) {
-      return resolve(arbuf);
-    });
+  return db.getAttachment(id, attachment).then(function (attachment) {
+    return self.blobUtil.blobToArrayBuffer(attachment);
+  }).then(function (attachment) {
+    return self.postMessage(attachment);
   });
 }
 

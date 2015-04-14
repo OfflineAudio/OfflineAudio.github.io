@@ -8,6 +8,7 @@ const MusicPlayer = require('./components/MusicPlayer.react')
 const TrackList = require('./components/TrackList.react')
 const LibraryStore = require('./stores/LibraryStore')
 const _ = require('lodash')
+const Visualiser = require('./components/Visualiser.react')
 // const a11y = require('react-a11y')
 // a11y()
 
@@ -105,6 +106,7 @@ const routes = (
     <Route name="search" path="search/:search" handler={Results}/>
     <Route name="artist" path="artist/:artist" handler={Artists}/>
     <Route name="favourites" path="favourites" handler={Favourites}/>
+    <Route name="visualiser" path="visualiser" handler={Visualiser}/>
     <Route name="artists" handler={AllArtists}/>
     <DefaultRoute handler={StartSplash}/>
   </Route>
@@ -113,3 +115,4 @@ const routes = (
 Router.run(routes, Router.HistoryLocation, function (Handler) {
   React.render(<Handler/>, document.body)
 })
+if (true) {};

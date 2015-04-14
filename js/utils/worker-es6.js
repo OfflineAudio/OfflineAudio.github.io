@@ -149,12 +149,9 @@ function getTracks () {
 }
 
 function getAttachment (id, attachment) {
-  return new Promise(function(resolve, reject) {
-    db.getAttachment(id, attachment)
+  return db.getAttachment(id, attachment)
+    .then(attachment => self.blobUtil.blobToArrayBuffer(attachment))
     .then(attachment => self.postMessage(attachment))
-    .then(attachment => self.blobUtil.arrayBufferToBlob(attachment))
-    .then(arbuf => resolve(arbuf))
-  })
 }
 
 function deleteTrack (id, rev) {

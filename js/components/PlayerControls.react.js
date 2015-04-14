@@ -45,7 +45,7 @@ const PlayerControls = React.createClass({
     nextSong: React.PropTypes.object.isRequired
   },
   componentDidMount () {
-    PlayerStore.addAudioEventListener('ended', () => {
+    PlayerStore.endedEvent(() => {
       if (this.props.hasNext) {
         PlayerActions.nextTrack(this.props.nextSong)
       } else {
