@@ -17,7 +17,7 @@ const TrackList = React.createClass({
 
     const Tracks = _.map(tracks, function (track) {
       const file = Object.keys(track._attachments)[0]
-      return <Track key={track.rev} rev={track.rev} id={track.id} artist={track.artist} album={track.album} title={track.title} trackNumber={track.number} duration={track.genre} playing={playing} favourite={track.favourite} attachment={file}/>
+      return <Track key={track.rev} rev={track.rev} id={track.id} artist={track.artist} album={track.album} title={track.title} trackNumber={track.number} duration={track.genre} playing={playing} favourite={track.favourite} attachment={file} genre={track.genre}/>
     })
     return (
       <ul className="list-block tracklist">

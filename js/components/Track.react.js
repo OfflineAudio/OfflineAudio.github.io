@@ -37,7 +37,8 @@ const Track = React.createClass({
     playing: React.PropTypes.bool.isRequired,
     favourite: React.PropTypes.bool.isRequired,
     id: React.PropTypes.string.isRequired,
-    rev: React.PropTypes.string.isRequired
+    rev: React.PropTypes.string.isRequired,
+    genre: React.PropTypes.string.isRequired
   },
   handleFavourite (event) {
     const id = this.props.id
