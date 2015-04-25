@@ -97,6 +97,25 @@ function updateTrack (id, rev, artist, album, title, genre, number, year) {
   })
 }
 
+function exportDb() {
+  return new Promise(function (resolve, reject) {
+    const w = new Worker('/js/utils/worker.js')
+    w.addEventListener('message', function (ev) {
+      // debugger;
+      download('test.txt', ev.data)
+      resolve(ev.data)
+    })
+    w.postMessage({cmd: 'exportDb'})
+  })
+}
+
+function download(filename, text) {
+  var pom = self.document.createElement('a');
+  pom.href = window.URL.createObjectURL(new Blob([text], {type: 'text/csv'}));
+  pom.download = filename
+  pom.click();
+}
+
 module.exports = {
   addSongs,
   read,
@@ -106,5 +125,6 @@ module.exports = {
   getAlbums,
   deleteTrack,
   favourite,
-  updateTrack
+  updateTrack,
+  exportDb
 }

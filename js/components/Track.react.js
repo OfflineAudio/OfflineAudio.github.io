@@ -84,7 +84,7 @@ const Track = React.createClass({
                 <button type="button" className="btn track-option__item__button icon--list-add" onClick={this.addToQueue}></button>
               </li>
               <li className="track-option__item">
-                <Link className="btn track-option__item__button icon--pencil" to="edits" params={{id}}></Link>
+                <button className="btn track-option__item__button icon--pencil" to="edits" params={{id}}></button>
               </li>
             </ul>
           </li>

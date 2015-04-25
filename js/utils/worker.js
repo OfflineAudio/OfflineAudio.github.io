@@ -9,7 +9,11 @@ self.importScripts("../../id3js.min.js");
 self.importScripts("../../blob-util.min.js");
 self.importScripts("../../runtime.min.js");
 self.importScripts("../../array-from.js");
+self.importScripts("../../pouchdb-replication-stream.js");
+self.importScripts("../../concat-stream.js");
 // PouchDB.debug.enable('*')
+self.PouchDB.plugin(self.pouchdbReplicationStream.plugin);
+self.PouchDB.adapter("writableStream", self.pouchdbReplicationStream.adapters.writableStream);
 
 var db = new self.PouchDB("offlineAudio-V4");
 var readTags = Promise.promisify(self.id3js);
@@ -217,6 +221,21 @@ function createId(artist, album, title) {
   return [artist, album, title].join("-||-||-");
 }
 
+function exportDb() {
+  return new Promise(function (resolve, reject) {
+    var ws = new self.concatStream(function (data) {
+      resolve(data);
+    });
+    db.dump(ws).then(function (res) {
+      console.log(res);
+    });
+  }).then(function (result) {
+    return self.postMessage(result);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}
+
 var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(files) {
   var overallSize, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, file;
 
@@ -345,5 +364,9 @@ self.addEventListener("message", function (event) {
         return self.close();
       });
       break;
+    case "exportDb":
+      exportDb().then(function () {
+        return self.close();
+      });
   }
 });

@@ -1,8 +1,10 @@
 const React = require('react')
+const Router = require('react-router')
 const PlayerActions = require('../actions/PlayerActions')
 const LibraryActions = require('../actions/LibraryActions')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 const PropCheckMixin = require('../mixins/PropCheckMixin')
+const Link = Router.Link
 
 const Track = React.createClass({
   mixins: [PureRenderMixin, PropCheckMixin],
@@ -55,7 +57,7 @@ const Track = React.createClass({
     }
   },
   render () {
-    const {trackNumber, duration, title, playing, favourite, rev} = this.props
+    const {trackNumber, duration, title, playing, favourite, rev, genre, id} = this.props
     let iconStyles = (/*playing*/ false) ? 'track-info track-info--current-track icon--dot track-info--current-track--active' : 'track-info track-info--current-track'
 
     return (
@@ -69,7 +71,7 @@ const Track = React.createClass({
             {title}
         </div>
         <div className="track-info track-info--total-time">
-            HiHiHi
+            {genre}
         </div>
         <ul className="list-inline track-option track-option--horizontal">
           <li className="track-option__item">
@@ -82,7 +84,7 @@ const Track = React.createClass({
                 <button type="button" className="btn track-option__item__button icon--list-add" onClick={this.addToQueue}></button>
               </li>
               <li className="track-option__item">
-                <button type="button" className="btn track-option__item__button icon--pencil" onClick={this.editTrack}></button>
+                <button className="btn track-option__item__button icon--pencil" to="edits" params={{id}}></button>
               </li>
             </ul>
           </li>

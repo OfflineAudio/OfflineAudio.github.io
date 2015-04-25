@@ -1,6 +1,6 @@
 importScripts('serviceworker-cache-polyfill.js');
 
-var CACHE_VERSION = 1200;
+var CACHE_VERSION = 13330;
 var CURRENT_CACHES = {
   'read-through': 'read-through-cache-v' + CACHE_VERSION,
   'prefetch': 'prefetch-cache-v' + CACHE_VERSION
@@ -24,7 +24,9 @@ self.addEventListener('install', function(event) {
     './runtime.min.js',
     './js/utils/worker.js',
     './js/utils/worker.min.js',
-    './dist/app.js'
+    './dist/app.js',
+    './pouchdb-replication-stream.js',
+    './concat-stream.js'
   ];
 
   // All of these logging statements should be visible via the "Inspect" interface

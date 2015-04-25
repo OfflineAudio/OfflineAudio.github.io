@@ -12,7 +12,7 @@
     "minify": "uglifyjs --screw-ie8 ./dist/app.js > ./dist/app.min.js && uglifyjs --screw-ie8 ./js/utils/worker.js > ./js/utils/worker.min.js",
     "deploy": "npm run wipe_www && npm run copy_to_www && surge www",
     "wipe_www": "rm -r www",
-    "copy_to_www": "mkdir www && cp -R array-from.js blob-util.js blob-util.min.js bluebird.js bluebird.min.js browser-polyfill.js CNAME dist fonts id3js.js id3js.min.js images index.html 200.html js opensearch.xml pouchdb.js pouchdb.min.js runtime.js runtime.min.js style.css www"
+    "copy_to_www": "mkdir www && cp -R array-from.js blob-util.js blob-util.min.js bluebird.js bluebird.min.js browser-polyfill.js CNAME dist fonts id3js.js id3js.min.js images index.html 200.html js opensearch.xml pouchdb.js pouchdb.min.js runtime.js runtime.min.js style.css pouchdb-replication-stream.js concat-stream.js www "
   },
   "author": "",
   "license": "MIT",

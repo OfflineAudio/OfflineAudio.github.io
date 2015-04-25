@@ -9,7 +9,11 @@ self.importScripts("../../id3js.min.js");
 self.importScripts("../../blob-util.min.js");
 self.importScripts("../../runtime.min.js");
 self.importScripts("../../array-from.js");
+self.importScripts("../../pouchdb-replication-stream.js");
+self.importScripts("../../concat-stream.js");
 // PouchDB.debug.enable('*')
+self.PouchDB.plugin(self.pouchdbReplicationStream.plugin);
+self.PouchDB.adapter("writableStream", self.pouchdbReplicationStream.adapters.writableStream);
 
 var db = new self.PouchDB("offlineAudio-V4");
 var readTags = Promise.promisify(self.id3js);
@@ -158,14 +162,10 @@ function getTracks() {
 }
 
 function getAttachment(id, attachment) {
-  return new Promise(function (resolve, reject) {
-    db.getAttachment(id, attachment).then(function (attachment) {
-      return self.postMessage(attachment);
-    }).then(function (attachment) {
-      return self.blobUtil.arrayBufferToBlob(attachment);
-    }).then(function (arbuf) {
-      return resolve(arbuf);
-    });
+  return db.getAttachment(id, attachment).then(function (attachment) {
+    return self.blobUtil.blobToArrayBuffer(attachment);
+  }).then(function (attachment) {
+    return self.postMessage(attachment);
   });
 }
 
@@ -181,6 +181,54 @@ function toggleFavouriteTrack(id, rev) {
   return db.get(id, { rev: rev }).then(function (doc) {
     doc.favourite = !doc.favourite;
     return db.put(doc);
+  }).then(function (result) {
+    return self.postMessage(result);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}
+
+function updateTrack(id, rev, artist, album, title, genre, number, year) {
+  var oldTrack = Promise.resolve(db.get(id, { rev: rev }));
+  var newTrack = oldTrack.then(function (doc) {
+    doc.id = createId(artist, album, title);
+    doc.artist = artist;
+    doc.album = album;
+    doc.title = title;
+    doc.genre = genre;
+    doc.number = number;
+    doc.year = year;
+    return db.put(doc);
+  });
+
+  return newTrack.then(function (result) {
+    if (result.ok) {
+      if (oldTrack.value().id !== createId(artist, album, title)) {
+        return db.remove(oldTrack.value());
+      }
+    }
+    return result;
+  }).then(function (result) {
+    return newTrack.value();
+  }).then(function (result) {
+    return self.postMessage(result);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}
+
+function createId(artist, album, title) {
+  return [artist, album, title].join("-||-||-");
+}
+
+function exportDb() {
+  return new Promise(function (resolve, reject) {
+    var ws = new self.concatStream(function (data) {
+      resolve(data);
+    });
+    db.dump(ws).then(function (res) {
+      console.log(res);
+    });
   }).then(function (result) {
     return self.postMessage(result);
   })["catch"](function (err) {
@@ -311,5 +359,14 @@ self.addEventListener("message", function (event) {
         return self.close();
       });
       break;
+    case "updateTrack":
+      updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year).then(function () {
+        return self.close();
+      });
+      break;
+    case "exportDb":
+      exportDb().then(function () {
+        return self.close();
+      });
   }
 });

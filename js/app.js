@@ -7,6 +7,7 @@ const Route = Router.Route
 const MusicPlayer = require('./components/MusicPlayer.react')
 const TrackList = require('./components/TrackList.react')
 const EditTrack = require('./components/EditTrack.react')
+const Settings = require('./components/Settings.react')
 const LibraryStore = require('./stores/LibraryStore')
 const _ = require('lodash')
 const Visualiser = require('./components/Visualiser.react')
@@ -132,6 +133,7 @@ const routes = (
     <Route name="favourites" path="favourites" handler={Favourites}/>
     <Route name="visualiser" path="visualiser" handler={Visualiser}/>
     <Route name="artists" handler={AllArtists}/>
+    <Route name="settings" path="/settings/export" handler={Settings}/>
     <DefaultRoute handler={StartSplash}/>
   </Route>
 )

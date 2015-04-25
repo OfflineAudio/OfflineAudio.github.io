@@ -4,6 +4,7 @@ const LibraryConstants = require('../constants/LibraryConstants')
 const Library = require('../utils/Library')
 const once = require('../utils/once')
 const _ = require('lodash')
+const audio = new AudioContext()
 
 const PlayerActions = {
   delete (id, rev, artist, album, title) {
@@ -49,6 +50,11 @@ const PlayerActions = {
   },
   previousTrack (track) {
     Library.getAttachment(track.id, track.attachment)
+    .then(buffer => {
+      return new Promise(function(resolve, reject) {
+        audio.decodeAudioData(buffer, buffer => resolve(buffer))
+      })
+    })
     .then(blob => {
       const {id, attachment} = track
       AppDispatcher.handleAction({
@@ -59,6 +65,11 @@ const PlayerActions = {
   },
   nextTrack (track) {
     Library.getAttachment(track.id, track.attachment)
+    .then(buffer => {
+      return new Promise(function(resolve, reject) {
+        audio.decodeAudioData(buffer, buffer => resolve(buffer))
+      })
+    })
     .then(blob => {
       const {id, attachment} = track
       AppDispatcher.handleAction({
@@ -69,6 +80,11 @@ const PlayerActions = {
   },
   playSong(id, attachment) {
     Library.getAttachment(id, attachment)
+    .then(buffer => {
+      return new Promise(function(resolve, reject) {
+        audio.decodeAudioData(buffer, buffer => resolve(buffer))
+      })
+    })
     .then(blob => {
       AppDispatcher.handleAction({
         actionType: PlayerConstants.PLAY_SONG,

@@ -37,7 +37,13 @@ function dispatchErrorUpdate (err) {
 }
 
 const LibraryActions = {
-  update: function () {
+  exportDb () {
+    Library.exportDb()
+    .then(function(a) {
+      // debugger
+    })
+  },
+  update () {
     Library.read()
       .then(pluckDocs)
       .then(createLibrary)

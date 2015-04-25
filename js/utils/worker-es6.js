@@ -5,7 +5,11 @@ self.importScripts('../../id3js.min.js')
 self.importScripts('../../blob-util.min.js')
 self.importScripts('../../runtime.min.js')
 self.importScripts('../../array-from.js')
+self.importScripts('../../pouchdb-replication-stream.js')
+self.importScripts('../../concat-stream.js')
 // PouchDB.debug.enable('*')
+self.PouchDB.plugin(self.pouchdbReplicationStream.plugin)
+self.PouchDB.adapter('writableStream', self.pouchdbReplicationStream.adapters.writableStream);
 
 const db = new self.PouchDB('offlineAudio-V4')
 const readTags = Promise.promisify(self.id3js)
@@ -200,6 +204,19 @@ function createId (artist, album, title) {
   return [artist, album, title].join('-||-||-')
 }
 
+function exportDb () {
+  return new Promise(function(resolve, reject) {
+    var ws = new self.concatStream(function(data) {
+      resolve(data)
+    });
+    db.dump(ws).then(function (res) {
+      console.log(res)
+    });
+  })
+  .then(result => self.postMessage(result))
+  .catch(err => console.log(err))
+}
+
 const importFiles = Promise.coroutine(function * chunkFiles (files) {
   let overallSize = 0
   for (let file of files) {
@@ -251,5 +268,8 @@ self.addEventListener('message', function (event) {
       updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year)
       .then(() => self.close())
       break
+    case 'exportDb':
+      exportDb()
+      .then(() => self.close())
   }
 })

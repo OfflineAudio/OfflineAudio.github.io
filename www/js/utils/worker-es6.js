@@ -5,7 +5,11 @@ self.importScripts('../../id3js.min.js')
 self.importScripts('../../blob-util.min.js')
 self.importScripts('../../runtime.min.js')
 self.importScripts('../../array-from.js')
+self.importScripts('../../pouchdb-replication-stream.js')
+self.importScripts('../../concat-stream.js')
 // PouchDB.debug.enable('*')
+self.PouchDB.plugin(self.pouchdbReplicationStream.plugin)
+self.PouchDB.adapter('writableStream', self.pouchdbReplicationStream.adapters.writableStream);
 
 const db = new self.PouchDB('offlineAudio-V4')
 const readTags = Promise.promisify(self.id3js)
@@ -149,12 +153,9 @@ function getTracks () {
 }
 
 function getAttachment (id, attachment) {
-  return new Promise(function(resolve, reject) {
-    db.getAttachment(id, attachment)
+  return db.getAttachment(id, attachment)
+    .then(attachment => self.blobUtil.blobToArrayBuffer(attachment))
     .then(attachment => self.postMessage(attachment))
-    .then(attachment => self.blobUtil.arrayBufferToBlob(attachment))
-    .then(arbuf => resolve(arbuf))
-  })
 }
 
 function deleteTrack (id, rev) {
@@ -168,6 +169,49 @@ function toggleFavouriteTrack (id, rev) {
   .then(function (doc) {
     doc.favourite = !doc.favourite
     return db.put(doc);
+  })
+  .then(result => self.postMessage(result))
+  .catch(err => console.log(err))
+}
+
+function updateTrack (id, rev, artist, album, title, genre, number, year) {
+  const oldTrack = Promise.resolve(db.get(id, {rev}))
+  const newTrack = oldTrack.then(function (doc) {
+    doc.id = createId(artist, album, title)
+    doc.artist = artist
+    doc.album = album
+    doc.title = title
+    doc.genre = genre
+    doc.number = number
+    doc.year = year
+    return db.put(doc);
+  })
+
+  return newTrack.then(result => {
+    if (result.ok) {
+      if (oldTrack.value().id !== createId(artist, album, title)) {
+        return db.remove(oldTrack.value())
+      }
+    }
+    return result
+  })
+  .then(result => newTrack.value())
+  .then(result => self.postMessage(result))
+  .catch(err => console.log(err))
+}
+
+function createId (artist, album, title) {
+  return [artist, album, title].join('-||-||-')
+}
+
+function exportDb () {
+  return new Promise(function(resolve, reject) {
+    var ws = new self.concatStream(function(data) {
+      resolve(data)
+    });
+    db.dump(ws).then(function (res) {
+      console.log(res)
+    });
   })
   .then(result => self.postMessage(result))
   .catch(err => console.log(err))
@@ -220,5 +264,12 @@ self.addEventListener('message', function (event) {
       toggleFavouriteTrack(data.data.id, data.data.rev)
       .then(() => self.close())
       break
+    case 'updateTrack':
+      updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year)
+      .then(() => self.close())
+      break
+    case 'exportDb':
+      exportDb()
+      .then(() => self.close())
   }
 })
