@@ -26,6 +26,15 @@ function handleRepeat () {
   PlayerActions.repeat()
 }
 
+function notify (track) {
+  const [artist, album, title] = track.id.split('-||-||-')
+  var notification=new Notification('Now Playing',{
+    body: [artist, album, title].join(" - ")
+  });
+
+  setTimeout(() => notification.close(), 4000);
+}
+
 const PlayerControls = React.createClass({
   mixins: [PureRenderMixin, PropCheckMixin],
   displayName: 'PlayerControls',
@@ -47,7 +56,7 @@ const PlayerControls = React.createClass({
   componentDidMount () {
     PlayerStore.endedEvent(() => {
       if (this.props.hasNext) {
-        PlayerActions.nextTrack(this.props.nextSong)
+        this.handleNext()
       } else {
         PlayerActions.stop()
       }
@@ -55,9 +64,11 @@ const PlayerControls = React.createClass({
   },
   handleNext () {
     PlayerActions.nextTrack(this.props.nextSong)
+    .then(track => notify(track))
   },
   handlePrev () {
     PlayerActions.previousTrack(this.props.previousSong)
+    .then(track => notify(track))
   },
   render () {
     const {artist, currentTime, title, totalTime, progresss, playing, repeat, shuffle, hasNext, hasPrev} = this.props

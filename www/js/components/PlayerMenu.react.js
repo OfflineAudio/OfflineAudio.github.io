@@ -1,4 +1,5 @@
 const React = require('react')
+const Link = require('react-router').Link
 const PlayerActions = require('../actions/PlayerActions')
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 const PropCheckMixin = require('../mixins/PropCheckMixin')
@@ -41,7 +42,7 @@ const PlayerMenu = React.createClass({
             </div>
             <button className="btn menu-button icon--menu gamma btn--dark"></button>
             <button className="btn menu-button icon--layout gamma btn--dark"></button>
-            <button className="btn menu-button icon--cog gamma btn--dark"></button>
+            <Link className="btn menu-button icon--cog gamma btn--dark" to="settings"></Link>
           </div>
         </div>
       </header>

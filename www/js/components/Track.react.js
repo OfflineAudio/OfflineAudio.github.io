@@ -37,7 +37,8 @@ const Track = React.createClass({
     playing: React.PropTypes.bool.isRequired,
     favourite: React.PropTypes.bool.isRequired,
     id: React.PropTypes.string.isRequired,
-    rev: React.PropTypes.string.isRequired
+    rev: React.PropTypes.string.isRequired,
+    genre: React.PropTypes.string.isRequired
   },
   handleFavourite (event) {
     const id = this.props.id
@@ -84,7 +85,7 @@ const Track = React.createClass({
                 <button type="button" className="btn track-option__item__button icon--list-add" onClick={this.addToQueue}></button>
               </li>
               <li className="track-option__item">
-                <button className="btn track-option__item__button icon--pencil" to="edits" params={{id}}></button>
+                <Link className="btn track-option__item__button icon--pencil" to="edits" params={{id}}></Link>
               </li>
             </ul>
           </li>
