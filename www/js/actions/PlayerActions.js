@@ -49,7 +49,7 @@ const PlayerActions = {
     })
   },
   previousTrack (track) {
-    Library.getAttachment(track.id, track.attachment)
+    return Library.getAttachment(track.id, track.attachment)
     .then(buffer => {
       return new Promise(function(resolve, reject) {
         audio.decodeAudioData(buffer, buffer => resolve(buffer))
@@ -61,10 +61,11 @@ const PlayerActions = {
         actionType: PlayerConstants.PREVIOUS,
         data: {id, attachment, blob}
       })
+      return track
     })
   },
   nextTrack (track) {
-    Library.getAttachment(track.id, track.attachment)
+    return Library.getAttachment(track.id, track.attachment)
     .then(buffer => {
       return new Promise(function(resolve, reject) {
         audio.decodeAudioData(buffer, buffer => resolve(buffer))
@@ -76,6 +77,7 @@ const PlayerActions = {
         actionType: PlayerConstants.NEXT,
         data: {id, attachment, blob}
       })
+      return track
     })
   },
   playSong(id, attachment) {

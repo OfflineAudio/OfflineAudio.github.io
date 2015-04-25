@@ -14,6 +14,8 @@ const Visualiser = require('./components/Visualiser.react')
 // const a11y = require('react-a11y')
 // a11y()
 
+Notification.requestPermission(function(permission){});
+
 const StartSplash = React.createClass({
   displayName: 'StartSplash',
   render () {
