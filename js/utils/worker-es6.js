@@ -170,6 +170,36 @@ function toggleFavouriteTrack (id, rev) {
   .catch(err => console.log(err))
 }
 
+function updateTrack (id, rev, artist, album, title, genre, number, year) {
+  const oldTrack = Promise.resolve(db.get(id, {rev}))
+  const newTrack = oldTrack.then(function (doc) {
+    doc.id = createId(artist, album, title)
+    doc.artist = artist
+    doc.album = album
+    doc.title = title
+    doc.genre = genre
+    doc.number = number
+    doc.year = year
+    return db.put(doc);
+  })
+
+  return newTrack.then(result => {
+    if (result.ok) {
+      if (oldTrack.value().id !== createId(artist, album, title)) {
+        return db.remove(oldTrack.value())
+      }
+    }
+    return result
+  })
+  .then(result => newTrack.value())
+  .then(result => self.postMessage(result))
+  .catch(err => console.log(err))
+}
+
+function createId (artist, album, title) {
+  return [artist, album, title].join('-||-||-')
+}
+
 const importFiles = Promise.coroutine(function * chunkFiles (files) {
   let overallSize = 0
   for (let file of files) {
@@ -215,6 +245,10 @@ self.addEventListener('message', function (event) {
       break
     case 'toggleFavouriteTrack':
       toggleFavouriteTrack(data.data.id, data.data.rev)
+      .then(() => self.close())
+      break
+    case 'updateTrack':
+      updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year)
       .then(() => self.close())
       break
   }

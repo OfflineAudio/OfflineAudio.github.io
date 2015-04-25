@@ -184,6 +184,39 @@ function toggleFavouriteTrack(id, rev) {
   });
 }
 
+function updateTrack(id, rev, artist, album, title, genre, number, year) {
+  var oldTrack = Promise.resolve(db.get(id, { rev: rev }));
+  var newTrack = oldTrack.then(function (doc) {
+    doc.id = createId(artist, album, title);
+    doc.artist = artist;
+    doc.album = album;
+    doc.title = title;
+    doc.genre = genre;
+    doc.number = number;
+    doc.year = year;
+    return db.put(doc);
+  });
+
+  return newTrack.then(function (result) {
+    if (result.ok) {
+      if (oldTrack.value().id !== createId(artist, album, title)) {
+        return db.remove(oldTrack.value());
+      }
+    }
+    return result;
+  }).then(function (result) {
+    return newTrack.value();
+  }).then(function (result) {
+    return self.postMessage(result);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}
+
+function createId(artist, album, title) {
+  return [artist, album, title].join("-||-||-");
+}
+
 var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(files) {
   var overallSize, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, file;
 
@@ -304,6 +337,11 @@ self.addEventListener("message", function (event) {
       break;
     case "toggleFavouriteTrack":
       toggleFavouriteTrack(data.data.id, data.data.rev).then(function () {
+        return self.close();
+      });
+      break;
+    case "updateTrack":
+      updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year).then(function () {
         return self.close();
       });
       break;
