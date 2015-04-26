@@ -100,6 +100,13 @@ function toggleFavourite(song) {
   }
 }
 
+function updateTrack (data) {
+  const [artist, album, title] = data.oldTrackId.split('-||-||-')
+  debugger
+  deleteSong({artist, album, title, rev: data.oldTrackRev, id:data.oldTrackId})
+  addSong(data.track)
+}
+
 function isEmpty(obj){
     return (Object.getOwnPropertyNames(obj).length === 0);
 }
@@ -108,6 +115,18 @@ var LibraryStore = _.extend({}, EventEmitter.prototype, {
 
   getArtists () {
     return Object.keys(_library)
+  },
+
+  getTrackById (id) {
+    for (let artist in _library) {
+      for (let album in _library[artist]) {
+        for (let track in _library[artist][album]) {
+          if (_library[artist][album][track].id === id) {
+            return _library[artist][album][track]
+          }
+        }
+      }
+    }
   },
 
   getTracks () {
@@ -191,6 +210,10 @@ AppDispatcher.register(function (payload) {
       break
     case LibraryConstants.FAVOURITE:
       toggleFavourite(action.data)
+      break
+    case LibraryConstants.UPDATE_TRACK:
+      debugger
+      updateTrack(action.data)
       break
     default:
       return true

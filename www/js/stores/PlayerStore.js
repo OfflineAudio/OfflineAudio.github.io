@@ -13,7 +13,13 @@ let _index
 let _shuffle
 let _repeat
 let _previousVolume
-const audio = new Audio()
+let _stopped
+let startTime
+const audio = new AudioContext()
+let source = audio.createBufferSource()
+let gainNode = audio.createGain()
+source.connect(gainNode)
+gainNode.connect(audio.destination);
 
 // const set = {} // all the setters
 
@@ -44,28 +50,59 @@ function shuffle () {
   _shuffle = !_shuffle
 }
 
-function switchFile (blob) {
-  audio.src = URL.createObjectURL(blob)
-  audio.load()
+function switchFile (buffer) {
+  let a = source.onended
+  source.onended = null
+  try {
+    source.stop()
+  } catch (e) {
+
+  }
+  source = audio.createBufferSource()
+  source.onended = a
+  source.connect(gainNode)
+  source.buffer = buffer;
 }
 
 function play () {
   _playing = true
-  audio.play()
+  if (_stopped) {
+    _stopped = false
+    let a = source.onended
+    let buffer = source.buffer
+    source = audio.createBufferSource()
+    source.onended = a
+    source.connect(gainNode)
+    source.buffer = buffer
+    startTime = audio.currentTime
+    audio.resume()
+    source.start()
+  } else {
+    switch (audio.state) {
+      case "suspended":
+        audio.resume()
+        break
+      default:
+        startTime = audio.currentTime
+        source.start()
+        break
+    }
+  }
 }
 
 function pause () {
   _playing = false
-  audio.pause()
+  audio.suspend()
 }
 
 function stop () {
   pause()
-  audio.currentTime = 0;
+  _stopped = true
 }
 
 function updateVolume (value) {
-  audio.volume = value
+  _previousVolume = gainNode.gain.value
+  gainNode.gain.value = value
 }
 
 function switchSong (id) {
@@ -82,8 +119,8 @@ function addToQueue(track) {
 }
 
 var PlayerStore = _.extend({}, EventEmitter.prototype, {
-  addAudioEventListener: function (eventType, cb) {
-    audio.addEventListener(eventType, cb)
+  endedEvent: function (cb) {
+    source.onended = cb
   },
 
   getAlbum () {
@@ -95,11 +132,19 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getCurrentTime () {
-    return audio.currentTime
+    if (this.getPlaying) {
+      return audio.currentTime - startTime
+    } else {
+      return 0
+    }
   },
 
   getDuration () {
-    return audio.duration
+    try {
+      return source.buffer.duration
+    } catch (e) {
+      return 0
+    }
   },
 
   getTitle () {
@@ -107,7 +152,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getProgress () {
-    return (100 / audio.duration) * audio.currentTime
+    return (100 / this.getDuration()) * this.getCurrentTime()
   },
 
   getPlaying () {
@@ -127,7 +172,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   getVolume () {
-    return audio.volume
+    return gainNode.gain.value
   },
 
   getPrevSong () {
@@ -165,7 +210,7 @@ var PlayerStore = _.extend({}, EventEmitter.prototype, {
   },
 
   isMuted () {
-    return audio.volume == 0
+    return gainNode.gain.value == 0
   },
 
   prev () {
@@ -222,17 +267,17 @@ AppDispatcher.register(function (payload) {
       updateProgress()
     break
     case PlayerConstants.MUTE:
-      if (audio.volume == 0) {
-        audio.volume = _previousVolume || 0.1
+      if (PlayerStore.isMuted()) {
+        updateVolume(_previousVolume || 0.1)
       } else {
         _previousVolume = audio.volume
-        audio.volume = 0
+        updateVolume(0)
       }
     break
     case PlayerConstants.NEXT:
       if (!(_queue.length === 1)) {
         if (_repeat && _index === _queue.length - 1) {
-          decrementIndex()
+          _index = 0
         } else {
           incrementIndex()
         }
@@ -263,7 +308,7 @@ AppDispatcher.register(function (payload) {
     case PlayerConstants.PREVIOUS:
       if (!(_queue.length === 1)) {
         if (_repeat && _index === 0) {
-          incrementIndex()
+          _index = _queue.length - 1
         } else {
           decrementIndex()
         }
@@ -295,6 +340,6 @@ AppDispatcher.register(function (payload) {
   return true
 })
 
-audio.addEventListener('timeupdate', PlayerStore.emitChange.bind(PlayerStore))
+setInterval(PlayerStore.emitChange.bind(PlayerStore), 500)
 
 module.exports = PlayerStore

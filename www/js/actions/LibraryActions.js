@@ -37,7 +37,13 @@ function dispatchErrorUpdate (err) {
 }
 
 const LibraryActions = {
-  update: function () {
+  exportDb () {
+    Library.exportDb()
+    .then(function(a) {
+      // debugger
+    })
+  },
+  update () {
     Library.read()
       .then(pluckDocs)
       .then(createLibrary)
@@ -58,6 +64,21 @@ const LibraryActions = {
       })
     })
   },
+  updateTrack (track) {
+    Library.updateTrack(track.id, track.rev, track.artist, track.album, track.title, track.genre, track.number, track.year)
+    .then(result => {
+      if (result.ok) {
+        const oldTrackId = track.id
+        const oldTrackRev = track.rev
+        track.id = result.id
+        track.rev = result.rev
+        AppDispatcher.handleAction({
+          actionType: LibraryConstants.UPDATE_TRACK,
+          data: {oldTrackId, oldTrackRev, track}
+        })
+      }
+    })
+  }
 }
 
 module.exports = LibraryActions

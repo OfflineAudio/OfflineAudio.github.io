@@ -6,10 +6,15 @@ const Link = Router.Link
 const Route = Router.Route
 const MusicPlayer = require('./components/MusicPlayer.react')
 const TrackList = require('./components/TrackList.react')
+const EditTrack = require('./components/EditTrack.react')
+const Settings = require('./components/Settings.react')
 const LibraryStore = require('./stores/LibraryStore')
 const _ = require('lodash')
+const Visualiser = require('./components/Visualiser.react')
 // const a11y = require('react-a11y')
 // a11y()
+
+Notification.requestPermission(function(permission){});
 
 const StartSplash = React.createClass({
   displayName: 'StartSplash',
@@ -83,6 +88,27 @@ const Results = React.createClass({
   }
 })
 
+const Edit = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func.isRequired
+  },
+  getInitialState () {
+    const id = this.context.router.getCurrentParams().id
+    const track = LibraryStore.getTrackById(id)
+    return { id, track }
+  },
+  render () {
+    const track = LibraryStore.getTrackById(this.state.id)
+    let elem
+    if (track) {
+      elem = <EditTrack track={track} />
+    } else {
+      elem = <div>Error Page</div>
+    }
+    return elem
+  }
+})
+
 const Favourites = React.createClass({
   displayName: 'Favourites',
   render () {
@@ -103,9 +129,13 @@ const Favourites = React.createClass({
 const routes = (
   <Route name="app" path="/" handler={MusicPlayer}>
     <Route name="search" path="search/:search" handler={Results}/>
+    <Route name="edits" path="edit/:id" handler={Edit}/>
+    <Route name="edit" path="edit/:artist-||-||-:album-||-||-:title" handler={Edit}/>
     <Route name="artist" path="artist/:artist" handler={Artists}/>
     <Route name="favourites" path="favourites" handler={Favourites}/>
+    <Route name="visualiser" path="visualiser" handler={Visualiser}/>
     <Route name="artists" handler={AllArtists}/>
+    <Route name="settings" path="/settings/export" handler={Settings}/>
     <DefaultRoute handler={StartSplash}/>
   </Route>
 )
