@@ -1,6 +1,6 @@
 importScripts('serviceworker-cache-polyfill.js');
 
-var CACHE_VERSION = 13330;
+var CACHE_VERSION = 1356730;
 var CURRENT_CACHES = {
   'read-through': 'read-through-cache-v' + CACHE_VERSION,
   'prefetch': 'prefetch-cache-v' + CACHE_VERSION
