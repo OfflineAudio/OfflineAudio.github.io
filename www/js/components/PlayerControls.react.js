@@ -28,7 +28,7 @@ function handleRepeat () {
 
 function notify (track) {
   const [artist, album, title] = track.id.split('-||-||-')
-  var notification=new Notification('Now Playing',{
+  const notification = new Notification('Now Playing',{
     body: [artist, album, title].join(" - ")
   });
 
@@ -72,8 +72,8 @@ const PlayerControls = React.createClass({
   },
   render () {
     const {artist, currentTime, title, totalTime, progresss, playing, repeat, shuffle, hasNext, hasPrev} = this.props
-    let currentTimeDisplay = secondsToMinutesAndSeconds(currentTime)
-    let totalTimeDisplay = secondsToMinutesAndSeconds(totalTime)
+    const currentTimeDisplay = secondsToMinutesAndSeconds(currentTime)
+    const totalTimeDisplay = secondsToMinutesAndSeconds(totalTime)
     let playButton
     if (playing) {
       playButton = <button className='btn player-button icon--pause alpha btn--light' onClick={handlePause}></button>
