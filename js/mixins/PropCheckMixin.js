@@ -1,4 +1,3 @@
-// yell at any developers using `this.props.whatever` if PropTypes.whatever is not set
 const PropCheckMixin = {
   componentWillMount() {
     this.validateProps(this.props)
