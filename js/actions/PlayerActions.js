@@ -2,7 +2,6 @@ const AppDispatcher = require('../dispatcher/AppDispatcher')
 const PlayerConstants = require('../constants/PlayerConstants')
 const LibraryConstants = require('../constants/LibraryConstants')
 const Library = require('../utils/Library')
-const once = require('../utils/once')
 const _ = require('lodash')
 const audio = new AudioContext()
 

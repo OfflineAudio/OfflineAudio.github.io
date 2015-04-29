@@ -7,7 +7,6 @@ const Link = Router.Link
 const ArtistList = React.createClass({
   displayName: 'ArtistList',
   propTypes: {
-    // An optional string prop named "description".
     artists: React.PropTypes.array.isRequired
   },
   render () {
