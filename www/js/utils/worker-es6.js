@@ -1,17 +1,10 @@
 /* global self */
-self.importScripts('../../pouchdb.min.js')
-self.importScripts('../../bluebird.min.js')
-self.importScripts('../../id3js.min.js')
-self.importScripts('../../blob-util.min.js')
-self.importScripts('../../runtime.min.js')
-self.importScripts('../../array-from.js')
-self.importScripts('../../pouchdb-replication-stream.js')
-self.importScripts('../../concat-stream.js')
+self.importScripts('../../dist/worker-addons.min.js')
 // PouchDB.debug.enable('*')
 self.PouchDB.plugin(self.pouchdbReplicationStream.plugin)
 self.PouchDB.adapter('writableStream', self.pouchdbReplicationStream.adapters.writableStream);
 
-const db = new self.PouchDB('offlineAudio-V4')
+const db = new self.PouchDB('offlineAudio-V5')
 const readTags = Promise.promisify(self.id3js)
 
 function readFile (file) {

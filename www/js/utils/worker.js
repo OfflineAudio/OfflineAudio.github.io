@@ -3,19 +3,12 @@
 var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
 
 /* global self */
-self.importScripts("../../pouchdb.min.js");
-self.importScripts("../../bluebird.min.js");
-self.importScripts("../../id3js.min.js");
-self.importScripts("../../blob-util.min.js");
-self.importScripts("../../runtime.min.js");
-self.importScripts("../../array-from.js");
-self.importScripts("../../pouchdb-replication-stream.js");
-self.importScripts("../../concat-stream.js");
+self.importScripts("../../dist/worker-addons.min.js");
 // PouchDB.debug.enable('*')
 self.PouchDB.plugin(self.pouchdbReplicationStream.plugin);
 self.PouchDB.adapter("writableStream", self.pouchdbReplicationStream.adapters.writableStream);
 
-var db = new self.PouchDB("offlineAudio-V4");
+var db = new self.PouchDB("offlineAudio-V5");
 var readTags = Promise.promisify(self.id3js);
 
 function readFile(file) {
