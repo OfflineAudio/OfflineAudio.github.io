@@ -9,10 +9,10 @@
     "build": "gulp build && npm run build_worker",
     "serve": "pushstate-server ./ 3000",
     "build_worker": "babel ./js/utils/worker-es6.js --out-file ./js/utils/worker.js",
-    "minify": "uglifyjs --screw-ie8 ./dist/app.js > ./dist/app.min.js && uglifyjs --screw-ie8 ./js/utils/worker.js > ./js/utils/worker.min.js",
+    "minify": "uglifyjs --screw-ie8 browser-polyfill.js ./dist/app.js > ./dist/app.min.js && uglifyjs --screw-ie8 ./js/utils/worker.js > ./js/utils/worker.min.js && uglifyjs --screw-ie8 array-from.js blob-util.js bluebird.js concat-stream.js id3js.js pouchdb-replication-stream.js pouchdb.js runtime.js > ./dist/worker-addons.min.js && uglifyjs --screw-ie8 serviceworker-cache-polyfill.js > serviceworker-cache-polyfill.min.js && uglifyjs --screw-ie8 worker.js > worker.min.js",
     "deploy": "npm run wipe_www && npm run copy_to_www && surge www",
     "wipe_www": "rm -r www",
-    "copy_to_www": "mkdir www && cp -R array-from.js blob-util.js blob-util.min.js bluebird.js bluebird.min.js browser-polyfill.js CNAME dist fonts id3js.js id3js.min.js images index.html 200.html js opensearch.xml pouchdb.js pouchdb.min.js runtime.js runtime.min.js style.css pouchdb-replication-stream.js concat-stream.js worker.js serviceworker-cache-polyfill.js www "
+    "copy_to_www": "mkdir www && cp -R CNAME dist favicon.ico fonts images index.html 200.html js opensearch.xml style.css worker.js serviceworker-cache-polyfill.js www "
   },
   "author": "",
   "license": "MIT",
@@ -21,6 +21,7 @@
     "bluebird": "^2.9.6",
     "core-js": "^0.9.4",
     "flux": "^2.0.1",
+    "gulp": "^3.8.11",
     "id3js": "^1.1.3",
     "lodash": "^3.1.0",
     "newforms": "^0.12.1",
