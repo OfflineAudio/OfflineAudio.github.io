@@ -1,4 +1,4 @@
-importScripts('serviceworker-cache-polyfill.js');
+importScripts('serviceworker-cache-polyfill.min.js');
 
 var CACHE_VERSION = 1356730;
 var CURRENT_CACHES = {
@@ -11,22 +11,13 @@ self.addEventListener('install', function(event) {
     './',
     './index.html',
     './style.css',
-    './browser-polyfill.js',
-    './js/app.js',
-    './array-from.js',
-    './worker.js',
+    './serviceworker-cache-polyfill.min.js',
+    './worker.min.js',
     './fonts/fontello.woff',
     './favicon.ico',
-    './pouchdb.min.js',
-    './bluebird.min.js',
-    './id3js.min.js',
-    './blob-util.min.js',
-    './runtime.min.js',
-    './js/utils/worker.js',
     './js/utils/worker.min.js',
-    './dist/app.js',
-    './pouchdb-replication-stream.js',
-    './concat-stream.js'
+    './dist/app.min.js',
+    './dist/worker-addons.min.js'
   ];
 
   // All of these logging statements should be visible via the "Inspect" interface
