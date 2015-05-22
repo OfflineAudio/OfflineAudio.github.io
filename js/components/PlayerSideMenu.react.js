@@ -1,10 +1,9 @@
-const React = require('react')
-const FileUploader = require('./FileUploader.react')
-const ArtistList = require('./ArtistList.react')
+import React from 'react'
+import FileUploader from './FileUploader.react'
+import ArtistList from './ArtistList.react'
+import PropCheckMixin from '../mixins/PropCheckMixin'
+import {Link} from 'react-router'
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
-const PropCheckMixin = require('../mixins/PropCheckMixin')
-const Router = require('react-router')
-const Link = Router.Link
 
 const PlayerSideMenu = React.createClass({
   contextTypes: {
@@ -40,4 +39,4 @@ const PlayerSideMenu = React.createClass({
   }
 })
 
-module.exports = PlayerSideMenu
+export default PlayerSideMenu

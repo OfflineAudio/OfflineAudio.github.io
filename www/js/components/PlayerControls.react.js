@@ -1,8 +1,8 @@
-const React = require('react')
-const PlayerActions = require('../actions/PlayerActions')
+import React from 'react'
+import * as PlayerActions from '../actions/PlayerActions'
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
-const PropCheckMixin = require('../mixins/PropCheckMixin')
-const PlayerStore = require('../stores/PlayerStore')
+import PropCheckMixin from '../mixins/PropCheckMixin'
+import PlayerStore from '../stores/PlayerStore'
 
 function secondsToMinutesAndSeconds (_seconds) {
   const minutes = parseInt(_seconds / 60, 10)
@@ -122,4 +122,4 @@ const PlayerControls = React.createClass({
   }
 })
 
-module.exports = PlayerControls
+export default PlayerControls

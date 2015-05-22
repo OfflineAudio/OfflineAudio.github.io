@@ -1,7 +1,7 @@
-const keyMirror = require('react/lib/keyMirror')
+import keyMirror from 'react/lib/keyMirror'
 
 // Define action constants
-module.exports = keyMirror({
+const PlayerConstants = keyMirror({
   ADD_TO_QUEUE: null,
   CURRENT_TIME: null,
   DURATION: null,
@@ -18,3 +18,5 @@ module.exports = keyMirror({
   STOP: null,
   VOLUME: null
 })
+
+export default PlayerConstants

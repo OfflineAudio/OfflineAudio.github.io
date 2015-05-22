@@ -1,7 +1,8 @@
-const React = require('react')
-const { DragDropMixin, NativeDragItemTypes } = require('react-dnd')
-const FileUploadActions = require('../actions/FileUploadActions')
+import React from 'react'
+import { DragDropMixin, NativeDragItemTypes } from 'react-dnd'
+import * as FileUploadActions from '../actions/FileUploadActions'
 
+// Using a mixin for functionality so still using createClass
 const FileUploader = React.createClass({
   displayName: 'FileUploader',
   mixins: [DragDropMixin],
@@ -14,8 +15,6 @@ const FileUploader = React.createClass({
             if (audioFiles.length) {
               FileUploadActions.uploadFiles(audioFiles)
             }
-            // MusicStore.saveSong(item.files)
-            // console.log(item.files)
           }
         }
       })
@@ -25,10 +24,10 @@ const FileUploader = React.createClass({
   render () {
     return (
       <div className='upload-field icon--upload'
-      {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
+        {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
       </div>
     )
   }
 })
 
-module.exports = FileUploader
+export default FileUploader

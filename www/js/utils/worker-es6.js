@@ -1,33 +1,20 @@
 /* global self */
-self.importScripts('../../pouchdb.min.js')
-self.importScripts('../../bluebird.min.js')
-self.importScripts('../../id3js.min.js')
-self.importScripts('../../blob-util.min.js')
-self.importScripts('../../runtime.min.js')
-self.importScripts('../../array-from.js')
-self.importScripts('../../pouchdb-replication-stream.js')
-self.importScripts('../../concat-stream.js')
+self.importScripts('../../dist/worker-addons.min.js')
 // PouchDB.debug.enable('*')
 self.PouchDB.plugin(self.pouchdbReplicationStream.plugin)
 self.PouchDB.adapter('writableStream', self.pouchdbReplicationStream.adapters.writableStream);
 
-const db = new self.PouchDB('offlineAudio-V4')
+const db = new self.PouchDB('offlineAudio-V5')
 const readTags = Promise.promisify(self.id3js)
 
-function readFile (file) {
-  return new Promise(function (resolve, reject) {
-    let reader = new self.FileReader()
-    reader.onload = (function (file) {
-      return function (e) {
-        console.debug('File read into memory', Date(Date.now()))
-        resolve(e.target.result)
-      }
-    })(file)
+const readFile = file =>
+  new Promise((resolve, reject) => {
+    const reader = new self.FileReader()
+    reader.onload = (file => e => resolve(e.target.result))(file)
     reader.readAsArrayBuffer(file)
   })
-}
 
-function addBlobAsAttachment (doc, blob, name, type) {
+const addBlobAsAttachment = (doc, blob, name, type) => {
   doc['_attachments'] = {
     [name]: {
       data: blob,
@@ -37,9 +24,9 @@ function addBlobAsAttachment (doc, blob, name, type) {
   return doc
 }
 
-function addSong (file) {
-  return new Promise(function (resolve, reject) {
-    songExists(file).then(function (exists) {
+const addSong = file =>
+  new Promise((resolve, reject) => {
+    songExists(file).then(exists => {
       if (exists) {
         resolve()
       } else {
@@ -49,33 +36,24 @@ function addSong (file) {
         const blob = readFile(file).then(arrayBuffer => self.blobUtil.arrayBufferToBlob(arrayBuffer, type))
 
         Promise.join(doc, blob, name, type, addBlobAsAttachment)
-        .then(function (doc) {
-          console.debug('Executing db.post', Date(Date.now()))
-          return db.post(doc)
-        })
-        .then(function (doc) {
-          console.debug('Executed db.post', Date(Date.now()))
-          console.debug('Executing db.get', Date(Date.now()))
-          return db.get(doc.id)
-        })
-        .then(function (song) {
-          console.debug('Executed db.get', Date(Date.now()))
+        .then(doc => db.post(doc))
+        .then(doc => db.get(doc.id))
+        .then(song => {
           self.postMessage(song)
           return resolve(file.size)
         })
-          .catch(err => console.error(err))
+        .catch(err => console.error(err))
       }
     })
   })
-}
 
-function generateDoc (file) {
-  return readTags(file).then(function (tags) {
+const generateDoc = file =>
+  readTags(file).then(tags => {
     const {album, title, year} = tags
     const {genre, track} = tags.v1
     let {artist} = tags
 
-    artist = Array.from(artist || 'Unknown Artist').filter(function (c) {return c !== '\x00'}).join('')
+    artist = Array.from(artist || 'Unknown Artist').filter(c => c !== '\x00').join('') // TODO: investigate into why artist names break
 
     return {
       _id: [artist, album, title].join('-||-||-'),
@@ -86,97 +64,83 @@ function generateDoc (file) {
       genre: genre || 'Unknown Genre',
       year: year || 0,
       favourite: false,
-      duration: 0 // Need to find a way to grab duration from file
+      duration: 0 // TODO: Need to find a way to grab duration from file. Only way so far is to buffer song completely.
     }
   })
-}
 
-function songExists (file) {
-  return generateDoc(file)
+const songExists = file =>
+  generateDoc(file)
   .then(doc => db.get(doc._id))
   .then(data => true)
-  .catch(function (err) {
+  .catch(err => {
     if (err['status'] === 404) {
       return false
     } else {
       throw (err)
     }
   })
-}
 
-function read () {
-  return db.allDocs({include_docs: true})
+const read = () =>
+  db.allDocs({include_docs: true})
   .then(docs => self.postMessage(docs))
-}
 
-function getTracksByArtist (artist) {
-  return db.allDocs()
-    .then(function (response) {
-      return response.rows.filter(function (doc) {
-        return doc.id.split('-||-||-')[0] === artist
-      })
-    })
-    .then(tracks => self.postMessage(tracks))
-}
+const getTracksByArtist = artist =>
+  db.allDocs()
+  .then(response => response.rows.filter(doc => doc.id.split('-||-||-')[0] === artist))
+  .then(tracks => self.postMessage(tracks))
 
-function getArtists () {
-  return db.allDocs()
-  .then(function (response) {
-    console.log(response.rows.reduce(function (artists, doc) {
+const getArtists = () =>
+  db.allDocs()
+  .then(response => {
+    response.rows.reduce((artists, doc) => {
       let artist = doc.id.split('-||-||-')[0]
       artists.add(artist)
       return artists
-    }, new Set()))
+    }, new Set())
   })
-}
 
-function getAlbums () {
-  return db.allDocs()
-  .then(function (response) {
-    console.log(response.rows.reduce(function (artists, doc) {
+const getAlbums = () =>
+  db.allDocs()
+  .then(response => {
+    response.rows.reduce((artists, doc) => {
       let artist = doc.id.split('-||-||-')[1]
       artists.add(artist)
       return artists
-    }, new Set()))
+    }, new Set())
   })
-}
 
-function getTracks () {
-  return db.allDocs()
-  .then(function (response) {
-    console.log(response.rows.reduce(function (artists, doc) {
+const getTracks = () =>
+  db.allDocs()
+  .then(respons => {
+    response.rows.reduce((artists, doc) => {
       let artist = doc.id.split('-||-||-')[2]
       artists.add(artist)
       return artists
-    }, new Set()))
+    }, new Set())
   })
-}
 
-function getAttachment (id, attachment) {
-  return db.getAttachment(id, attachment)
-    .then(attachment => self.blobUtil.blobToArrayBuffer(attachment))
-    .then(attachment => self.postMessage(attachment))
-}
+const getAttachment = (id, attachment) =>
+  db.getAttachment(id, attachment)
+  .then(attachment => self.blobUtil.blobToArrayBuffer(attachment))
+  .then(attachment => self.postMessage(attachment))
 
-function deleteTrack (id, rev) {
-  return db.remove(id, rev)
+const deleteTrack = (id, rev) =>
+  db.remove(id, rev)
   .then(result => self.postMessage(result))
   .catch(err => console.log(err))
-}
 
-function toggleFavouriteTrack (id, rev) {
-  return db.get(id, {rev})
-  .then(function (doc) {
+const toggleFavouriteTrack = (id, rev) =>
+  db.get(id, {rev})
+  .then((doc) => {
     doc.favourite = !doc.favourite
     return db.put(doc);
   })
   .then(result => self.postMessage(result))
   .catch(err => console.log(err))
-}
 
-function updateTrack (id, rev, artist, album, title, genre, number, year) {
+const updateTrack = (id, rev, artist, album, title, genre, number, year) => {
   const oldTrack = Promise.resolve(db.get(id, {rev}))
-  const newTrack = oldTrack.then(function (doc) {
+  const newTrack = oldTrack.then(doc => {
     doc.id = createId(artist, album, title)
     doc.artist = artist
     doc.album = album
@@ -200,18 +164,12 @@ function updateTrack (id, rev, artist, album, title, genre, number, year) {
   .catch(err => console.log(err))
 }
 
-function createId (artist, album, title) {
-  return [artist, album, title].join('-||-||-')
-}
+const createId = (artist, album, title) => [artist, album, title].join('-||-||-')
 
-function exportDb () {
-  return new Promise(function(resolve, reject) {
-    var ws = new self.concatStream(function(data) {
-      resolve(data)
-    });
-    db.dump(ws).then(function (res) {
-      console.log(res)
-    });
+const exportDb = () => {
+  new Promise((resolve, reject) => {
+    var ws = new self.concatStream((data) => resolve(data))
+    db.dump(ws).then(res => console.log(res))
   })
   .then(result => self.postMessage(result))
   .catch(err => console.log(err))
@@ -225,51 +183,53 @@ const importFiles = Promise.coroutine(function * chunkFiles (files) {
   console.debug('Imported size in bytes:', overallSize, 'In MB:', overallSize / 1024 / 1024)
 })
 
-self.addEventListener('message', function (event) {
+const close_thread = () => self.close()
+
+self.addEventListener('message', event => {
   const data = event.data
   switch (data.cmd) {
     case 'addSongs':
       importFiles(data.data)
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'read':
       read()
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'getArtists':
       getArtists()
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'getAlbums':
       getAlbums()
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'getTracks':
       getTracks()
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'getTracksByArtist':
       getTracksByArtist(data.data)
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'getAttachment':
       getAttachment(data.data.id, data.data.attachment)
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'deleteTrack':
       deleteTrack(data.data.id, data.data.rev)
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'toggleFavouriteTrack':
       toggleFavouriteTrack(data.data.id, data.data.rev)
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'updateTrack':
       updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year)
-      .then(() => self.close())
+      .then(close_thread)
       break
     case 'exportDb':
       exportDb()
-      .then(() => self.close())
+      .then(close_thread)
   }
 })

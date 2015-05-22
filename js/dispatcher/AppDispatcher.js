@@ -1,4 +1,4 @@
-const Dispatcher = require('flux').Dispatcher
+import {Dispatcher} from 'flux'
 
 // Create dispatcher instance
 const AppDispatcher = new Dispatcher()
@@ -11,4 +11,4 @@ AppDispatcher.handleAction = function (action) {
   })
 }
 
-module.exports = AppDispatcher
+export default AppDispatcher

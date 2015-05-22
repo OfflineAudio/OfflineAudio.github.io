@@ -1,128 +1,72 @@
 /*eslint-env browser, es6 */
-const PouchDB = require('pouchdb')
-const Promise = require('bluebird')
+import PouchDB from 'pouchdb'
+import Promise from 'bluebird'
 PouchDB.debug.enable('*')
 
 const db = new PouchDB('offlineAudio-V4')
 
-function addSongs (files, cb) {
+const addSongs = (files, cb) => {
   const w = new Worker('/js/utils/worker.js')
-  w.addEventListener('message', function (ev) {
-    cb(null, ev.data)
+  w.addEventListener('message', ev => cb(null, ev.data))
+  w.postMessage({cmd: 'addSongs', data: files})
+}
+
+const read = () =>
+  new Promise((resolve, reject) => {
+    const w = new Worker('/js/utils/worker.js')
+    w.addEventListener('message', ev => resolve(ev.data))
+    w.postMessage({cmd: 'read'})
   })
 
-  w.postMessage({cmd: 'addSongs', data: files}) // send the worker a message
-}
-
-function read () {
-  return new Promise(function (resolve, reject) {
-      const w = new Worker('/js/utils/worker.js')
-      w.addEventListener('message', function (ev) {
-        resolve(ev.data)
-      })
-      w.postMessage({cmd: 'read'})
-    })
-}
-
-function getArtists () {
-  return db.allDocs()
-    .then(function (response) {
-      console.log(response.rows.reduce(function (artists, doc) {
-        let artist = doc.id.split('-||-||-')[0]
-        artists.add(artist)
-        return artists
-      }, new Set()))
-    })
-}
-
-function getAlbums () {
-  return db.allDocs()
-    .then(function (response) {
-      console.log(response.rows.reduce(function (artists, doc) {
-        let artist = doc.id.split('-||-||-')[1]
-        artists.add(artist)
-        return artists
-      }, new Set()))
-    })
-}
-
-function getTracks () {
-  return db.allDocs()
-    .then(function (response) {
-      console.log(response.rows.reduce(function (artists, doc) {
-        let artist = doc.id.split('-||-||-')[2]
-        artists.add(artist)
-        return artists
-      }, new Set()))
-    })
-}
-
-function getAttachment (id, attachment) {
-  return new Promise(function (resolve, reject) {
+const getAttachment = (id, attachment) =>
+  new Promise((resolve, reject) => {
     const w = new Worker('/js/utils/worker.js')
-    w.addEventListener('message', function (ev) {
-      resolve(ev.data)
-    })
+    w.addEventListener('message', ev => resolve(ev.data))
     w.postMessage({cmd: 'getAttachment', data: {id: id, attachment: attachment}})
   })
-}
 
-function deleteTrack (id, rev) {
-  return new Promise(function (resolve, reject) {
+const deleteTrack = (id, rev) =>
+  new Promise((resolve, reject) => {
     const w = new Worker('/js/utils/worker.js')
-    w.addEventListener('message', function (ev) {
-      resolve(ev.data)
-    })
+    w.addEventListener('message', ev => resolve(ev.data))
     w.postMessage({cmd: 'deleteTrack', data: {id: id, rev: rev}})
   })
-}
 
-function favourite (id, rev) {
-  return new Promise(function (resolve, reject) {
+const favourite = (id, rev) =>
+  new Promise((resolve, reject) => {
     const w = new Worker('/js/utils/worker.js')
-    w.addEventListener('message', function (ev) {
-      resolve(ev.data)
-    })
+    w.addEventListener('message', ev => resolve(ev.data))
     w.postMessage({cmd: 'toggleFavouriteTrack', data: {id: id, rev: rev}})
   })
-}
 
-function updateTrack (id, rev, artist, album, title, genre, number, year) {
-  return new Promise(function (resolve, reject) {
+const updateTrack = (id, rev, artist, album, title, genre, number, year) =>
+  new Promise((resolve, reject) => {
     const w = new Worker('/js/utils/worker.js')
-    w.addEventListener('message', function (ev) {
-      resolve(ev.data)
-    })
+    w.addEventListener('message', ev => resolve(ev.data))
     w.postMessage({cmd: 'updateTrack', data: {id, rev, artist, album, title, genre, number, year}})
   })
-}
 
-function exportDb() {
-  return new Promise(function (resolve, reject) {
+const exportDb = () =>
+  new Promise((resolve, reject) => {
     const w = new Worker('/js/utils/worker.js')
-    w.addEventListener('message', function (ev) {
-      // debugger;
+    w.addEventListener('message', ev => {
       download('test.txt', ev.data)
       resolve(ev.data)
     })
     w.postMessage({cmd: 'exportDb'})
   })
-}
 
-function download(filename, text) {
-  var pom = self.document.createElement('a');
-  pom.href = window.URL.createObjectURL(new Blob([text], {type: 'text/csv'}));
+const download = (filename, text) => {
+  const pom = self.document.createElement('a')
+  pom.href = window.URL.createObjectURL(new Blob([text], {type: 'text/csv'}))
   pom.download = filename
-  pom.click();
+  pom.click()
 }
 
-module.exports = {
+export default {
   addSongs,
   read,
   getAttachment,
-  getArtists,
-  getTracks,
-  getAlbums,
   deleteTrack,
   favourite,
   updateTrack,

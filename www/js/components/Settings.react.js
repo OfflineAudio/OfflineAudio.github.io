@@ -1,5 +1,5 @@
-const React = require('react')
-const LibraryActions = require('../actions/LibraryActions')
+import React from 'react'
+import * as LibraryActions from '../actions/LibraryActions'
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
 
 const Settings = React.createClass({
@@ -14,4 +14,4 @@ const Settings = React.createClass({
   }
 })
 
-module.exports = Settings
+export default Settings

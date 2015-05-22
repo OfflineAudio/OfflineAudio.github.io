@@ -1,11 +1,11 @@
-const AppDispatcher = require('../dispatcher/AppDispatcher')
-const EventEmitter = require('events').EventEmitter
-const FileUploaderConstants = require('../constants/FileUploaderConstants')
-const LibraryConstants = require('../constants/LibraryConstants')
-const _ = require('lodash')
+import AppDispatcher from '../dispatcher/AppDispatcher'
+import {EventEmitter} from 'events'
+import FileUploaderConstants from '../constants/FileUploaderConstants'
+import LibraryConstants from '../constants/LibraryConstants'
+import _ from 'lodash'
 
 // Define initial data points
-var _library = {} // Artist -> Album -> Title
+let _library = {} // Artist -> Album -> Title
 
 function artistExists (artist) {
   return !!_library[artist]
@@ -82,6 +82,7 @@ function addSong (file) {
 }
 
 function deleteSong (song) {
+  // TODO: Figure out how the rev is changing here, causing deletes to never happen.
   if (_library[song.artist][song.album][song.title].id == song.id && _library[song.artist][song.album][song.title].rev == song.rev) {
     delete _library[song.artist][song.album][song.title]
     if (isEmpty(_library[song.artist][song.album])) {
@@ -102,7 +103,6 @@ function toggleFavourite(song) {
 
 function updateTrack (data) {
   const [artist, album, title] = data.oldTrackId.split('-||-||-')
-  debugger
   deleteSong({artist, album, title, rev: data.oldTrackRev, id:data.oldTrackId})
   addSong(data.track)
 }
@@ -212,7 +212,6 @@ AppDispatcher.register(function (payload) {
       toggleFavourite(action.data)
       break
     case LibraryConstants.UPDATE_TRACK:
-      debugger
       updateTrack(action.data)
       break
     default:
@@ -225,4 +224,4 @@ AppDispatcher.register(function (payload) {
   return true
 })
 
-module.exports = LibraryStore
+export default LibraryStore

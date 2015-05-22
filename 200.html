@@ -8,22 +8,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="Offline Audio Search">
     <link rel="stylesheet" href="/style.css">
-    <style type="text/css">
-    .btn--toggled {
-      color: #D84E5A;
-    }
-    </style>
+    <link href="/favicon.ico" rel="icon" type="image/x-icon">
 </head>
 <body>
   <script>
-    var stylesheet = document.createElement('link');
-            stylesheet.href = '//fonts.googleapis.com/css?family=Varela+Round';
-            stylesheet.rel = 'stylesheet';
-            stylesheet.type = 'text/css';
-    document.head.appendChild(stylesheet);
+    navigator.serviceWorker.register('worker.js').then(function(reg) {
+      console.log('◕‿◕', reg)
+    }, function(err) {
+      console.log('ಠ_ಠ', err)
+    })
   </script>
-  <script src="/array-from.js"></script>
-  <script src="/browser-polyfill.js"></script>
-  <script src="/dist/app.js"></script>
+  <script src="/dist/app.min.js" async></script>
 </body>
 </html>

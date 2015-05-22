@@ -1,8 +1,8 @@
-const React = require('react')
-const Link = require('react-router').Link
-const PlayerActions = require('../actions/PlayerActions')
+import React from 'react'
+import {Link} from 'react-router'
+import * as PlayerActions from '../actions/PlayerActions'
+import PropCheckMixin from '../mixins/PropCheckMixin'
 const PureRenderMixin = require('react/addons').addons.PureRenderMixin
-const PropCheckMixin = require('../mixins/PropCheckMixin')
 
 const PlayerMenu = React.createClass({
   mixins: [PureRenderMixin, PropCheckMixin],
@@ -50,4 +50,4 @@ const PlayerMenu = React.createClass({
   }
 })
 
-module.exports = PlayerMenu
+export default PlayerMenu
