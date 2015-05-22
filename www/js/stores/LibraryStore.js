@@ -82,6 +82,7 @@ function addSong (file) {
 }
 
 function deleteSong (song) {
+  // TODO: Figure out how the rev is changing here, causing deletes to never happen.
   if (_library[song.artist][song.album][song.title].id == song.id && _library[song.artist][song.album][song.title].rev == song.rev) {
     delete _library[song.artist][song.album][song.title]
     if (isEmpty(_library[song.artist][song.album])) {
@@ -102,7 +103,6 @@ function toggleFavourite(song) {
 
 function updateTrack (data) {
   const [artist, album, title] = data.oldTrackId.split('-||-||-')
-  debugger
   deleteSong({artist, album, title, rev: data.oldTrackRev, id:data.oldTrackId})
   addSong(data.track)
 }
@@ -212,7 +212,6 @@ AppDispatcher.register(function (payload) {
       toggleFavourite(action.data)
       break
     case LibraryConstants.UPDATE_TRACK:
-      debugger
       updateTrack(action.data)
       break
     default:

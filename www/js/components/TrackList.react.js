@@ -14,7 +14,7 @@ export default class TrackList extends PureComponent {
       return <Track key={track.rev} rev={track.rev} id={track.id} artist={track.artist} album={track.album} title={track.title} trackNumber={track.number} duration={track.genre} playing={playing} favourite={track.favourite} attachment={file} genre={track.genre}/>
     })
     return (
-      <ul className="list-block tracklist">
+      <ul className='list-block tracklist'>
         {Tracks}
       </ul>
     )

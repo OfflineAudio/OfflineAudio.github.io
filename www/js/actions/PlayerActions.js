@@ -1,8 +1,8 @@
+/* global AudioContext */
 import AppDispatcher from '../dispatcher/AppDispatcher'
 import PlayerConstants from '../constants/PlayerConstants'
 import LibraryConstants from '../constants/LibraryConstants'
 import Library from '../utils/Library'
-import _ from 'lodash'
 // TODO: Figure out which audio types the browser supports and restrict playback to those.
 const audio = new AudioContext()
 

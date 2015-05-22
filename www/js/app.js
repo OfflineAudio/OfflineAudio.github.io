@@ -6,7 +6,7 @@ import routes from './routes'
 // const a11y = require('react-a11y')
 // a11y()
 
-Notification.requestPermission(function(permission){});
+Notification.requestPermission(permission => ({}))
 
 Router.run(routes, Router.HistoryLocation, function (Handler) {
   React.render(<Handler/>, document.body)

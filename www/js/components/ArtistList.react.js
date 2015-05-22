@@ -12,9 +12,9 @@ export default class ArtistList extends PureComponent {
     })
 
     return (
-      <ul className="list-block filter">
-        <li className="filter__item filter__item--heading gamma">
-          <Link to="artists">Artists</Link>
+      <ul className='list-block filter'>
+        <li className='filter__item filter__item--heading gamma'>
+          <Link to='artists'>Artists</Link>
         </li>
         {artistList}
       </ul>
