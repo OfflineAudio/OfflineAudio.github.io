@@ -1,6 +1,6 @@
-const keyMirror = require('react/lib/keyMirror')
+import keyMirror from 'react/lib/keyMirror'
 
-module.exports = keyMirror({
+const LibraryConstants = keyMirror({
   LIBRARY_UPDATE: null,
   LIBRARY_UPDATE_SUCCESS: null,
   LIBRARY_UPDATE_FAIL: null,
@@ -8,3 +8,5 @@ module.exports = keyMirror({
   FAVOURITE: null,
   UPDATE_TRACK: null
 })
+
+export default LibraryConstants

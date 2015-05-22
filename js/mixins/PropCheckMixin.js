@@ -18,4 +18,4 @@ const PropCheckMixin = {
   }
 }
 
-module.exports = PropCheckMixin
+export default PropCheckMixin

@@ -1,14 +1,9 @@
-const React = require('react')
-const Router = require('react-router')
-const Artist = require('./Artist.react')
+import React from 'react'
+import {Link} from 'react-router'
+import Artist from './Artist.react'
+import PureComponent from './PureComponent.react'
 
-const Link = Router.Link
-
-const ArtistList = React.createClass({
-  displayName: 'ArtistList',
-  propTypes: {
-    artists: React.PropTypes.array.isRequired
-  },
+export default class ArtistList extends PureComponent {
   render () {
     const {artists} = this.props
 
@@ -25,6 +20,4 @@ const ArtistList = React.createClass({
       </ul>
     )
   }
-})
-
-module.exports = ArtistList
+}

@@ -1797,6 +1797,9 @@ module.exports = isArray || function (val) {
 			length += this.byteLength;
 		}
 		if(bom) {
+      if(offset + 1 > this.byteLength) {
+        return "";
+      }
 			var bomInt = this.getUint16(offset);
 			if(bomInt === 0xFFFE) {
 				littleEndian = true;

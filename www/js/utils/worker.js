@@ -11,28 +11,27 @@ self.PouchDB.adapter("writableStream", self.pouchdbReplicationStream.adapters.wr
 var db = new self.PouchDB("offlineAudio-V5");
 var readTags = Promise.promisify(self.id3js);
 
-function readFile(file) {
+var readFile = function (file) {
   return new Promise(function (resolve, reject) {
     var reader = new self.FileReader();
     reader.onload = (function (file) {
       return function (e) {
-        console.debug("File read into memory", Date(Date.now()));
-        resolve(e.target.result);
+        return resolve(e.target.result);
       };
     })(file);
     reader.readAsArrayBuffer(file);
   });
-}
+};
 
-function addBlobAsAttachment(doc, blob, name, type) {
+var addBlobAsAttachment = function (doc, blob, name, type) {
   doc._attachments = _defineProperty({}, name, {
     data: blob,
     content_type: type
   });
   return doc;
-}
+};
 
-function addSong(file) {
+var addSong = function (file) {
   return new Promise(function (resolve, reject) {
     songExists(file).then(function (exists) {
       if (exists) {
@@ -47,14 +46,10 @@ function addSong(file) {
           });
 
           Promise.join(doc, blob, name, type, addBlobAsAttachment).then(function (doc) {
-            console.debug("Executing db.post", Date(Date.now()));
             return db.post(doc);
           }).then(function (doc) {
-            console.debug("Executed db.post", Date(Date.now()));
-            console.debug("Executing db.get", Date(Date.now()));
             return db.get(doc.id);
           }).then(function (song) {
-            console.debug("Executed db.get", Date(Date.now()));
             self.postMessage(song);
             return resolve(file.size);
           })["catch"](function (err) {
@@ -64,9 +59,9 @@ function addSong(file) {
       }
     });
   });
-}
+};
 
-function generateDoc(file) {
+var generateDoc = function (file) {
   return readTags(file).then(function (tags) {
     var album = tags.album;
     var title = tags.title;
@@ -78,7 +73,7 @@ function generateDoc(file) {
 
     artist = Array.from(artist || "Unknown Artist").filter(function (c) {
       return c !== "\u0000";
-    }).join("");
+    }).join(""); // TODO: investigate into why artist names break
 
     return {
       _id: [artist, album, title].join("-||-||-"),
@@ -89,12 +84,12 @@ function generateDoc(file) {
       genre: genre || "Unknown Genre",
       year: year || 0,
       favourite: false,
-      duration: 0 // Need to find a way to grab duration from file
+      duration: 0 // TODO: Need to find a way to grab duration from file. Only way so far is to buffer song completely.
     };
   });
-}
+};
 
-function songExists(file) {
+var songExists = function (file) {
   return generateDoc(file).then(function (doc) {
     return db.get(doc._id);
   }).then(function (data) {
@@ -106,15 +101,15 @@ function songExists(file) {
       throw err;
     }
   });
-}
+};
 
-function read() {
+var read = function () {
   return db.allDocs({ include_docs: true }).then(function (docs) {
     return self.postMessage(docs);
   });
-}
+};
 
-function getTracksByArtist(artist) {
+var getTracksByArtist = function (artist) {
   return db.allDocs().then(function (response) {
     return response.rows.filter(function (doc) {
       return doc.id.split("-||-||-")[0] === artist;
@@ -122,55 +117,55 @@ function getTracksByArtist(artist) {
   }).then(function (tracks) {
     return self.postMessage(tracks);
   });
-}
+};
 
-function getArtists() {
+var getArtists = function () {
   return db.allDocs().then(function (response) {
-    console.log(response.rows.reduce(function (artists, doc) {
+    response.rows.reduce(function (artists, doc) {
       var artist = doc.id.split("-||-||-")[0];
       artists.add(artist);
       return artists;
-    }, new Set()));
+    }, new Set());
   });
-}
+};
 
-function getAlbums() {
+var getAlbums = function () {
   return db.allDocs().then(function (response) {
-    console.log(response.rows.reduce(function (artists, doc) {
+    response.rows.reduce(function (artists, doc) {
       var artist = doc.id.split("-||-||-")[1];
       artists.add(artist);
       return artists;
-    }, new Set()));
+    }, new Set());
   });
-}
+};
 
-function getTracks() {
-  return db.allDocs().then(function (response) {
-    console.log(response.rows.reduce(function (artists, doc) {
+var getTracks = function () {
+  return db.allDocs().then(function (respons) {
+    response.rows.reduce(function (artists, doc) {
       var artist = doc.id.split("-||-||-")[2];
       artists.add(artist);
       return artists;
-    }, new Set()));
+    }, new Set());
   });
-}
+};
 
-function getAttachment(id, attachment) {
+var getAttachment = function (id, attachment) {
   return db.getAttachment(id, attachment).then(function (attachment) {
     return self.blobUtil.blobToArrayBuffer(attachment);
   }).then(function (attachment) {
     return self.postMessage(attachment);
   });
-}
+};
 
-function deleteTrack(id, rev) {
+var deleteTrack = function (id, rev) {
   return db.remove(id, rev).then(function (result) {
     return self.postMessage(result);
   })["catch"](function (err) {
     return console.log(err);
   });
-}
+};
 
-function toggleFavouriteTrack(id, rev) {
+var toggleFavouriteTrack = function (id, rev) {
   return db.get(id, { rev: rev }).then(function (doc) {
     doc.favourite = !doc.favourite;
     return db.put(doc);
@@ -179,9 +174,9 @@ function toggleFavouriteTrack(id, rev) {
   })["catch"](function (err) {
     return console.log(err);
   });
-}
+};
 
-function updateTrack(id, rev, artist, album, title, genre, number, year) {
+var updateTrack = function (id, rev, artist, album, title, genre, number, year) {
   var oldTrack = Promise.resolve(db.get(id, { rev: rev }));
   var newTrack = oldTrack.then(function (doc) {
     doc.id = createId(artist, album, title);
@@ -208,26 +203,26 @@ function updateTrack(id, rev, artist, album, title, genre, number, year) {
   })["catch"](function (err) {
     return console.log(err);
   });
-}
+};
 
-function createId(artist, album, title) {
+var createId = function (artist, album, title) {
   return [artist, album, title].join("-||-||-");
-}
+};
 
-function exportDb() {
-  return new Promise(function (resolve, reject) {
+var exportDb = function () {
+  new Promise(function (resolve, reject) {
     var ws = new self.concatStream(function (data) {
-      resolve(data);
+      return resolve(data);
     });
     db.dump(ws).then(function (res) {
-      console.log(res);
+      return console.log(res);
     });
   }).then(function (result) {
     return self.postMessage(result);
   })["catch"](function (err) {
     return console.log(err);
   });
-}
+};
 
 var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(files) {
   var overallSize, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, file;
@@ -304,62 +299,44 @@ var importFiles = Promise.coroutine(regeneratorRuntime.mark(function chunkFiles(
   }, chunkFiles, this, [[4, 16, 20, 28], [21,, 23, 27]]);
 }));
 
+var close_thread = function () {
+  return self.close();
+};
+
 self.addEventListener("message", function (event) {
   var data = event.data;
   switch (data.cmd) {
     case "addSongs":
-      importFiles(data.data).then(function () {
-        return self.close();
-      });
+      importFiles(data.data).then(close_thread);
       break;
     case "read":
-      read().then(function () {
-        return self.close();
-      });
+      read().then(close_thread);
       break;
     case "getArtists":
-      getArtists().then(function () {
-        return self.close();
-      });
+      getArtists().then(close_thread);
       break;
     case "getAlbums":
-      getAlbums().then(function () {
-        return self.close();
-      });
+      getAlbums().then(close_thread);
       break;
     case "getTracks":
-      getTracks().then(function () {
-        return self.close();
-      });
+      getTracks().then(close_thread);
       break;
     case "getTracksByArtist":
-      getTracksByArtist(data.data).then(function () {
-        return self.close();
-      });
+      getTracksByArtist(data.data).then(close_thread);
       break;
     case "getAttachment":
-      getAttachment(data.data.id, data.data.attachment).then(function () {
-        return self.close();
-      });
+      getAttachment(data.data.id, data.data.attachment).then(close_thread);
       break;
     case "deleteTrack":
-      deleteTrack(data.data.id, data.data.rev).then(function () {
-        return self.close();
-      });
+      deleteTrack(data.data.id, data.data.rev).then(close_thread);
       break;
     case "toggleFavouriteTrack":
-      toggleFavouriteTrack(data.data.id, data.data.rev).then(function () {
-        return self.close();
-      });
+      toggleFavouriteTrack(data.data.id, data.data.rev).then(close_thread);
       break;
     case "updateTrack":
-      updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year).then(function () {
-        return self.close();
-      });
+      updateTrack(data.data.id, data.data.rev, data.data.artist, data.data.album, data.data.title, data.data.genre, data.data.number, data.data.year).then(close_thread);
       break;
     case "exportDb":
-      exportDb().then(function () {
-        return self.close();
-      });
+      exportDb().then(close_thread);
   }
 });

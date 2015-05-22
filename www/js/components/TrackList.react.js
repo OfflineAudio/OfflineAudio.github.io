@@ -1,18 +1,12 @@
-const React = require('react')
-const _ = require('lodash')
-const Track = require('./Track.react')
-const PureRenderMixin = require('react/addons').addons.PureRenderMixin
-const PropCheckMixin = require('../mixins/PropCheckMixin')
+import React from 'react'
+import _ from 'lodash'
+import Track from './Track.react'
+import PureComponent from './PureComponent.react'
+// import PropCheckMixin from '../mixins/PropCheckMixin'
 
-const TrackList = React.createClass({
-  mixins: [PureRenderMixin, PropCheckMixin],
-  displayName: 'TrackList',
-  propTypes: {
-    tracks: React.PropTypes.array.isRequired
-  },
+export default class TrackList extends PureComponent {
   render () {
     const tracks = _.map(this.props.tracks, function (track) { return track[Object.keys(track)[0]] })
-    const duration = '4:20' // FIXME, I can't work so switch to GENRE
     const playing = true
 
     const Tracks = _.map(tracks, function (track) {
@@ -25,6 +19,4 @@ const TrackList = React.createClass({
       </ul>
     )
   }
-})
-
-module.exports = TrackList
+}

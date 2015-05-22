@@ -1,18 +1,8 @@
-const React = require('react')
-const Router = require('react-router')
-const PureRenderMixin = require('react/addons').addons.PureRenderMixin
+import React from 'react'
+import {Link} from 'react-router'
+import PureComponent from './PureComponent.react'
 
-const Link = Router.Link
-
-const Artist = React.createClass({
-  mixins: [PureRenderMixin],
-  displayName: 'Artist',
-  propTypes: {
-    // An optional string prop named "description".
-    artist: React.PropTypes.string.isRequired
-  },
-  handleClick (event) {
-  },
+export default class Artist extends PureComponent {
   render () {
     const {artist} = this.props
 
@@ -24,6 +14,4 @@ const Artist = React.createClass({
       </li>
     )
   }
-})
-
-module.exports = Artist
+}

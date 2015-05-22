@@ -1,11 +1,11 @@
-const AppDispatcher = require('../dispatcher/AppDispatcher')
-const EventEmitter = require('events').EventEmitter
-const FileUploaderConstants = require('../constants/FileUploaderConstants')
-const LibraryConstants = require('../constants/LibraryConstants')
-const _ = require('lodash')
+import AppDispatcher from '../dispatcher/AppDispatcher'
+import {EventEmitter} from 'events'
+import FileUploaderConstants from '../constants/FileUploaderConstants'
+import LibraryConstants from '../constants/LibraryConstants'
+import _ from 'lodash'
 
 // Define initial data points
-var _library = {} // Artist -> Album -> Title
+let _library = {} // Artist -> Album -> Title
 
 function artistExists (artist) {
   return !!_library[artist]
@@ -225,4 +225,4 @@ AppDispatcher.register(function (payload) {
   return true
 })
 
-module.exports = LibraryStore
+export default LibraryStore

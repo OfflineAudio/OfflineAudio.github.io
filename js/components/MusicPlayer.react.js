@@ -1,21 +1,17 @@
-const React = require('react')
-const LibraryStore = require('../stores/LibraryStore')
-const PlayerMenu = require('./PlayerMenu.react')
-const PlayerControls = require('./PlayerControls.react')
-const PlayerSideMenu = require('./PlayerSideMenu.react')
-const LibraryActions = require('../actions/LibraryActions')
-const PlayerStore = require('../stores/PlayerStore')
-const Router = require('react-router')
-const RouteHandler = Router.RouteHandler
+import React from 'react'
+import LibraryStore from '../stores/LibraryStore'
+import PlayerMenu from './PlayerMenu.react'
+import PlayerControls from './PlayerControls.react'
+import PlayerSideMenu from './PlayerSideMenu.react'
+import * as LibraryActions from '../actions/LibraryActions'
+import PlayerStore from '../stores/PlayerStore'
+import {RouteHandler} from 'react-router'
 
 // Method to retrieve state from Stores
 function getState () {
   return {
-    // const library = LibraryStore.getLibrary()
     artists: LibraryStore.getArtists(),
-    // const albums = LibraryStore.getAlbums()
     artist: PlayerStore.getArtist() || '',
-    // const album = PlayerStore.getAlbum() || ''
     title: PlayerStore.getTitle() || '',
     currentTime: PlayerStore.getCurrentTime() || 0,
     duration: PlayerStore.getDuration() || 0,
@@ -32,29 +28,24 @@ function getState () {
   }
 }
 
-// Define main Controller View
 const MusicPlayer = React.createClass({
   displayName: 'MusicPlayer',
 
-  // Get initial state from stores
   getInitialState () {
     return getState()
   },
 
-  // Add change listeners to stores
   componentDidMount () {
     LibraryStore.addChangeListener(this._onChange)
     PlayerStore.addChangeListener(this._onChange)
     LibraryActions.update()
   },
 
-  // Remove change listers from stores
   componentWillUnmount () {
     LibraryStore.removeChangeListener(this._onChange)
     PlayerStore.removeChangeListener(this._onChange)
   },
 
-  // Render our child components, passing state via props
   render () {
     return (
       <div>
@@ -73,11 +64,10 @@ const MusicPlayer = React.createClass({
     )
   },
 
-  // Method to setState based upon Store changes
   _onChange () {
     this.setState(getState())
   }
 
 })
 
-module.exports = MusicPlayer
+export default MusicPlayer

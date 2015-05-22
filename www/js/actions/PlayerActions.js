@@ -1,114 +1,111 @@
-const AppDispatcher = require('../dispatcher/AppDispatcher')
-const PlayerConstants = require('../constants/PlayerConstants')
-const LibraryConstants = require('../constants/LibraryConstants')
-const Library = require('../utils/Library')
-const _ = require('lodash')
+import AppDispatcher from '../dispatcher/AppDispatcher'
+import PlayerConstants from '../constants/PlayerConstants'
+import LibraryConstants from '../constants/LibraryConstants'
+import Library from '../utils/Library'
+import _ from 'lodash'
+// TODO: Figure out which audio types the browser supports and restrict playback to those.
 const audio = new AudioContext()
 
-const PlayerActions = {
-  delete (id, rev, artist, album, title) {
-    Library.deleteTrack(id, rev)
-    .then(result => {
-      AppDispatcher.handleAction({
-        actionType: LibraryConstants.DELETE_TRACK,
-        data: {id, rev, artist, album, title}
-      })
-    })
-    // do something optimistic, also, handle error case
-  },
-  mute () {
+export const deleteTrack = (id, rev, artist, album, title) => {
+  Library.deleteTrack(id, rev)
+  .then(result => {
     AppDispatcher.handleAction({
-      actionType: PlayerConstants.MUTE
+      actionType: LibraryConstants.DELETE_TRACK,
+      data: {id, rev, artist, album, title}
     })
-  },
-  stop () {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.STOP
-    })
-  },
-  emptyQueue () {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.EMPTY_QUEUE
-    })
-  },
-  addToQueue (id, attachment) {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.ADD_TO_QUEUE,
-      data: {id, attachment}
-    })
-  },
-  shuffle () {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.SHUFFLE
-    })
-  },
-  repeat () {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.REPEAT
-    })
-  },
-  previousTrack (track) {
-    return Library.getAttachment(track.id, track.attachment)
-    .then(buffer => {
-      return new Promise(function(resolve, reject) {
-        audio.decodeAudioData(buffer, buffer => resolve(buffer))
-      })
-    })
-    .then(blob => {
-      const {id, attachment} = track
-      AppDispatcher.handleAction({
-        actionType: PlayerConstants.PREVIOUS,
-        data: {id, attachment, blob}
-      })
-      return track
-    })
-  },
-  nextTrack (track) {
-    return Library.getAttachment(track.id, track.attachment)
-    .then(buffer => {
-      return new Promise(function(resolve, reject) {
-        audio.decodeAudioData(buffer, buffer => resolve(buffer))
-      })
-    })
-    .then(blob => {
-      const {id, attachment} = track
-      AppDispatcher.handleAction({
-        actionType: PlayerConstants.NEXT,
-        data: {id, attachment, blob}
-      })
-      return track
-    })
-  },
-  playSong(id, attachment) {
-    Library.getAttachment(id, attachment)
-    .then(buffer => {
-      return new Promise(function(resolve, reject) {
-        audio.decodeAudioData(buffer, buffer => resolve(buffer))
-      })
-    })
-    .then(blob => {
-      AppDispatcher.handleAction({
-        actionType: PlayerConstants.PLAY_SONG,
-        data: {id, attachment, blob}
-      })
-    })
-  },
-  play () {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.PLAY
-    })
-  },
-  pause () {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.PAUSE
-    })
-  },
-  updateVolume (value) {
-    AppDispatcher.handleAction({
-      actionType: PlayerConstants.VOLUME,
-      data: value
-    })
-  }
+  })
+  // do something optimistic, also, handle error case
 }
 
-module.exports = PlayerActions
+export const mute = () =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.MUTE
+  })
+
+export const stop = () =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.STOP
+  })
+
+export const emptyQueue = () =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.EMPTY_QUEUE
+  })
+
+export const addToQueue = (id, attachment) =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.ADD_TO_QUEUE,
+    data: {id, attachment}
+  })
+
+export const shuffle = () =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.SHUFFLE
+  })
+
+export const repeat = () =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.REPEAT
+  })
+
+export const previousTrack = track =>
+  Library.getAttachment(track.id, track.attachment)
+  .then(buffer =>
+    new Promise((resolve, reject) =>
+      audio.decodeAudioData(buffer, buffer => resolve(buffer))
+    )
+  )
+  .then(blob => {
+    const {id, attachment} = track
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.PREVIOUS,
+      data: {id, attachment, blob}
+    })
+    return track
+  })
+
+export const nextTrack = track =>
+  Library.getAttachment(track.id, track.attachment)
+  .then(buffer =>
+    new Promise((resolve, reject) =>
+      audio.decodeAudioData(buffer, buffer => resolve(buffer))
+    )
+  )
+  .then(blob => {
+    const {id, attachment} = track
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.NEXT,
+      data: {id, attachment, blob}
+    })
+    return track
+  })
+
+export const playSong = (id, attachment) =>
+  Library.getAttachment(id, attachment)
+  .then(buffer =>
+    new Promise((resolve, reject) =>
+      audio.decodeAudioData(buffer, buffer => resolve(buffer))
+    )
+  )
+  .then(blob =>
+    AppDispatcher.handleAction({
+      actionType: PlayerConstants.PLAY_SONG,
+      data: {id, attachment, blob}
+    })
+  )
+
+export const play = () =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.PLAY
+  })
+
+export const pause = () =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.PAUSE
+  })
+
+export const updateVolume = value =>
+  AppDispatcher.handleAction({
+    actionType: PlayerConstants.VOLUME,
+    data: value
+  })

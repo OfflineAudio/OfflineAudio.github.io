@@ -1,21 +1,19 @@
-const React = require('react')
-const Artist = require('./Artist.react')
-const Router = require('react-router')
-const PropCheckMixin = require('../mixins/PropCheckMixin')
+import React from 'react'
+import Artist from './Artist.react'
+import Router from 'react-router'
+// import PropCheckMixin from '../mixins/PropCheckMixin' //TODO: Figure out how to nicely use Mixins in ES6 Classes - decorator?
+import PureComponent from './PureComponent.react'
 
-const Library = React.createClass({
-  mixins: [PropCheckMixin],
-  displayName: 'Library',
+export default class Library extends PureComponent {
   propTypes: {
-    // An optional string prop named "description".
     artists: React.PropTypes.array.isRequired,
     library: React.PropTypes.object.isRequired,
     showOnlyArtists: React.PropTypes.bool.isRequired
-  },
-  mixins: [Router.State],
+  }
+
   render () {
     const showOnlyArtists = this.props.showOnlyArtists
-    const artists = this.props.artists || this.getParams()
+    const artists = this.props.artists || this.context.router.getCurrentParams()
     const library = this.props.library
     const Artists = artists.map((artist) => <Artist name={artist} albums={library[artist]} showOnlyArtists={showOnlyArtists} />)
 
@@ -25,6 +23,9 @@ const Library = React.createClass({
       </div>
     )
   }
-})
+}
 
-module.exports = Library
+Library.contextTypes = {
+  router: React.PropTypes.func.isRequired
+}
+

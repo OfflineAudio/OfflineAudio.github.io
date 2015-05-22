@@ -1,7 +1,7 @@
-const AppDispatcher = require('../dispatcher/AppDispatcher')
-const EventEmitter = require('events').EventEmitter
-const PlayerConstants = require('../constants/PlayerConstants')
-const _ = require('lodash')
+import AppDispatcher from '../dispatcher/AppDispatcher'
+import {EventEmitter} from 'events'
+import PlayerConstants from '../constants/PlayerConstants'
+import _ from 'lodash'
 
 // Define initial data points
 let _artist
@@ -342,4 +342,4 @@ AppDispatcher.register(function (payload) {
 
 setInterval(PlayerStore.emitChange.bind(PlayerStore), 500)
 
-module.exports = PlayerStore
+export default PlayerStore
